@@ -23,7 +23,7 @@ const Loadable = Component => (props) =>
 //pages
 const LoginPage = Loadable(lazy(() => import("./pages/auth/login")));
 const Dashboard = Loadable(lazy(() => import("./pages/admin/dashboard.jsx")));
-const ErrorPage = Loadable(lazy(() => import("./pages/error")));
+const ErrorPage = Loadable(lazy(() => import("./pages/Error")));
 const CreatePayment = Loadable(lazy(() => import("./pages/admin/CreatePayment")));
 const PaymentHistory = Loadable(lazy(() => import("./pages/admin/PaymentHistory")));
 const Settings = Loadable(lazy(() => import("./pages/admin/Settings")));
