@@ -48,12 +48,12 @@ function PaymentHistory() {
     }
 
     const handlePaymentConsolidation = deposit_id => {
-
+        Alert('success', 'loading', 30);
         ApiService.post('/consolidate-payment', {deposit_id})
             .then((response) => {
 
                 if (response.status === "success") {
-                    Alert('success', 'Success: payment set for consolidation within a minute', 3000);
+                    Alert('success', 'Success: payment set for consolidation within a minute', 3);
                 }
 
             }, err => {
