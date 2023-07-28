@@ -57,24 +57,6 @@ const ApiService = {
         })
 
     },
-
-    post(endpoint, data = {}) {
-    
-        return new Promise((resolve, reject) => {
-            
-            axios.post(`${this.baseURL}${endpoint}`, data, {
-                headers: {
-                    Authorization: `Bearer ${authToken()}`
-                }
-            })
-            .then(response => resolve(response.data), (err)=>{
-                reject(err)
-            })
-
-        })
-
-    }
-
 };
 
 export default ApiService;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 //router
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
@@ -7,22 +7,29 @@ import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom"
 import "./index.css";
 
 //servises
-import userService from "./services/userService"
+// import userService from "./services/UserService"
 
 //layouts
 import AdminLayout from "./pages/admin/adminLayout";
 
-//pages
-import LoginPage from "./pages/auth/login";
-import Dashboard from "./pages/admin/dashboard.jsx";
-import ErrorPage from "./pages/error";
-import CreatePayment from "./pages/admin/CreatePayment";
-import PaymentHistory from "./pages/admin/PaymentHistory";
-import Settings from "./pages/admin/Settings";
-import ApiTokens from "./pages/admin/ApiTokens";
-import CreateToken from "./pages/admin/CreateToken";
-import ProtectedRoute from "./router/ProtectedRoute";
+// Lazy Loading to reduce chunk size for production
+const Loadable = Component => (props) =>
+	(
+		<Suspense fallback={<h1>loading...</h1>}>
+			<Component {...props} />
+		</Suspense>
+	);
 
+//pages
+const LoginPage = Loadable(lazy(() => import("./pages/auth/login")));
+const Dashboard = Loadable(lazy(() => import("./pages/admin/dashboard.jsx")));
+const ErrorPage = Loadable(lazy(() => import("./pages/error")));
+const CreatePayment = Loadable(lazy(() => import("./pages/admin/CreatePayment")));
+const PaymentHistory = Loadable(lazy(() => import("./pages/admin/PaymentHistory")));
+const Settings = Loadable(lazy(() => import("./pages/admin/Settings")));
+const ApiTokens = Loadable(lazy(() => import("./pages/admin/ApiTokens")));
+const CreateToken = Loadable(lazy(() => import("./pages/admin/CreateToken")));
+const ProtectedRoute = Loadable(lazy(() => import("./router/ProtectedRoute")));
 
 
 const router = createBrowserRouter([
