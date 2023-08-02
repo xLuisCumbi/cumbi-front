@@ -6,11 +6,11 @@ import ApiService from '../../services/ApiService';
 function CreatePayment() {
 
     const [paymentFormData, setpaymentFormData] = useState({
-        title: 'Sample Invoice',
-        amount: 100,
+        title: 'Titulo',
+        amount: 0,
         network: 'ETHEREUM',
         coin: 'USDT',
-        description: 'Short  description about this invoice',
+        description: 'Descripcion corta de la cuenta de cobro',
     });
 
     const [payementCreated, setPaymentCreated] = useState({ value: false, link: '' });
@@ -29,6 +29,7 @@ function CreatePayment() {
         }
 
         Alert('success', 'loading', 30);
+        console.log('paymentFormData', paymentFormData);
         ApiService.post('/create-invoice', { ...paymentFormData })
             .then((response) => {
 
@@ -74,19 +75,19 @@ function CreatePayment() {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        value={paymentFormData.title}
+                                        placeholder={paymentFormData.title}
                                         onChange={(e) => setpaymentFormData({ ...paymentFormData, title: e.target.value })}
                                         required
                                     />
                                 </div>
                                 <div className="col-md-6 mt-3">
                                     <label className="form-label">
-                                        Amount
+                                        Amount COP
                                     </label>
                                     <input
                                         type="number"
                                         className="form-control"
-                                        value={paymentFormData.amount}
+                                        placeholder={paymentFormData.amount}
                                         onChange={(e) => setpaymentFormData({ ...paymentFormData, amount: e.target.value })}
                                         required
                                     />
@@ -128,7 +129,7 @@ function CreatePayment() {
                                     <textarea
                                         type="text"
                                         className="form-control"
-                                        value={paymentFormData.description}
+                                        placeholder={paymentFormData.description}
                                         onChange={(e) => setpaymentFormData({ ...paymentFormData, description: e.target.value })}
                                         required
                                     ></textarea>
@@ -153,11 +154,11 @@ function CreatePayment() {
 
                         <p>Invoice Successfully Created</p>
                         <p> Kindy copy the invoice link below to share</p>
-                        
+
                         <div onClick={handleLinkCopy} className="bg-success text-white p-3 ">
                             { payementCreated.link }
                         </div>
- 
+
                         <small style={{fontSize: '80%'}}  className="small">kinldy click on the green box to copy</small>
 
                     </div>

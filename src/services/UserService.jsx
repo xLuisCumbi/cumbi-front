@@ -1,37 +1,31 @@
-
-import ApiService from './ApiService'
+import ApiService from "./ApiService";
 
 function Login(email, password) {
-
     return new Promise((resolve) => {
-
-        ApiService.post('/login', { email, password })
-        .then((response) => {
-            
-            if (response.status === "success") {
-                localStorage.setItem('user', JSON.stringify(response.user));
+        ApiService.post("/login", { email, password }).then(
+            (response) => {
+                if (response.status === "success") {
+                    localStorage.setItem("user", JSON.stringify(response.user));
+                }
+                resolve(response);
+            },
+            (err) => {
+                console.log('err', err.stack);
+                resolve({
+                    status: "failed",
+                    message: "request error: kindly try again",
+                });
             }
-
-            resolve(response);
-
-        }, err => {
-
-            resolve({ "status": "failed", "message": "request error: kinldy try again" });
-
-        })
-
-    })
-
+        );
+    });
 }
 
 function logout() {
-
-    localStorage.removeItem('user');
-
+    localStorage.removeItem("user");
 }
 
 function isLogin() {
-    let user = JSON.parse(localStorage.getItem('user'));
+    let user = JSON.parse(localStorage.getItem("user"));
 
     if (user && user.authToken) {
         return true;
@@ -43,7 +37,7 @@ function isLogin() {
 const UserService = {
     Login,
     logout,
-    isLogin 
+    isLogin,
 };
 
 export default UserService;

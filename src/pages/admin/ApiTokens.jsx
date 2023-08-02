@@ -21,7 +21,7 @@ function ApiTokens() {
             .then((response) => {
 
                 if (response.status === "success") {
-
+                    console.log('response.tokens', response.tokens);
                     setTokens(response.tokens);
                     setLoadingStatus(false);
 
@@ -96,7 +96,7 @@ function ApiTokens() {
 
                                             <tr key={i}>
                                                 <td>{d.token_name}</td>
-                                                <td>{d.token.substr(0, 30) + '...'}</td>
+                                                <td>{d.token ? d.token.substr(0, 30) + '...' : ''}</td>
                                                 <td>
                                                     <button onClick={() => handleTokenCopy(d.token)} className="btn btn-primary btn-sm m-1 text-white">Copy Token</button>
                                                     <button onClick={() => handleTokenDelete(d.id)} className="btn btn-danger btn-sm m-1 text-white">Delete</button>

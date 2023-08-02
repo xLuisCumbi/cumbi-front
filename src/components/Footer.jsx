@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 function Footer() {
 
     return (
@@ -8,7 +6,7 @@ function Footer() {
                 &copy; Copyright <strong><span>Cumbi</span></strong>. All Rights Reserved
             </div>
             <div className="credits">
-                Designed And Developed By <a href="mailto:oluwayomitimileyin1105@gmail.com">ExquisiteDev</a>
+                Designed And Developed By <a href="cumbi.co">Cumbi</a>
             </div>
         </footer>
     );

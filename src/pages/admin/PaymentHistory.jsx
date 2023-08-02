@@ -35,6 +35,8 @@ function PaymentHistory() {
 
             }, err => {
 
+                console.log('err', err);
+                console.log('stack', err.stack)
                 Alert('failed', 'Error in fetching deposits', 3);
 
             });
