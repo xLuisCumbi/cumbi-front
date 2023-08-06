@@ -46,6 +46,13 @@ function Sidebar() {
             </li>
 
             <li className="nav-item">
+              <a className={route == 'create-payment' ? 'nav-link' : 'nav-link collapsed'} onClick={()=> navigate('/admin/create-user')}>
+                <i className="bi bi-person"></i>
+                <span>Create User</span>
+              </a>
+            </li>
+
+            <li className="nav-item">
               <a className={route == 'payment-history' ? 'nav-link' : 'nav-link collapsed'} onClick={()=> navigate('/admin/payment-history')}>
                 <i className="bi bi-cash"></i>
                 <span>Payment History</span>
