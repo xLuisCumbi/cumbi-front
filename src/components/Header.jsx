@@ -16,7 +16,6 @@ export default function Header() {
         <div className="d-flex align-items-center justify-content-between">
           <a href="index.html" className="logo d-flex align-items-center text-decoration-none">
             <img src="/images/logo.png" alt="" />
-            <span className="d-none d-lg-block">CumbiAdmin</span>
           </a>
         </div>
 

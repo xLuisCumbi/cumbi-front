@@ -1,49 +1,35 @@
-import { useState  } from "react";
-import  Alert from "../../components/Alert";
+import { useState } from "react";
+import Alert from "../../components/Alert";
 import UserService from "../../services/UserService";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
-    
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPasword] = useState("");
- 
+
     const handleLoignSubmit = async (e) => {
-
         e.preventDefault();
-       
-        if(email == ''){
-            
-            Alert('failed', 'Kinldy input email', 3);
 
-        }else if(password == ''){
+        if (email == "") {
+            Alert("failed", "Kinldy input email", 3);
+        } else if (password == "") {
+            Alert("failed", "Kinldy input password", 3);
+        } else {
+            Alert("success", "loading", 30);
 
-            Alert('failed', 'Kinldy input password', 3);
-
-        }else{
-
-            Alert('success', 'loading', 30);
-            
             const login = await UserService.Login(email, password);
-            if(login.status === 'success'){
+            if (login.status === "success") {
+                Alert("success", "Login Successful", 3);
 
-                Alert('success', 'Login Successful', 3);
-
-                navigate('/admin');
-
-            }else{
-                Alert('failed', login.message, 5);
+                navigate("/admin");
+            } else {
+                Alert("failed", login.message, 5);
             }
-
         }
+    };
 
-    }
-
-
-    
     return (
-        
         <>
             <main>
                 <div className="container">
@@ -57,7 +43,7 @@ export default function LoginPage() {
                                             className="logo d-flex align-items-center w-auto text-decoration-none"
                                         >
                                             <img src="/images/logo.png" alt="" />
-                                            <span className="d-none d-lg-block">CumbiAdmin</span>
+                                            <span className="d-none d-lg-block">Cumbi Dashboard</span>
                                         </a>
                                     </div>
 
@@ -65,14 +51,18 @@ export default function LoginPage() {
                                         <div className="card-body">
                                             <div className="pt-4 pb-2">
                                                 <h5 className="card-title text-center pb-0 fs-4">
-                                                    Login to Your Account
+                                                    Iniciar sesión
                                                 </h5>
                                                 <p className="text-center small">
-                                                    Enter your email & password to login
+                                                    Email
                                                 </p>
-                                            </div>                                       
+                                            </div>
 
-                                            <form className="row g-3 needs-validation" noValidate onSubmit={ handleLoignSubmit }>
+                                            <form
+                                                className="row g-3 needs-validation"
+                                                noValidate
+                                                onSubmit={handleLoignSubmit}
+                                            >
                                                 <div className="col-12">
                                                     <label htmlFor="yourEmail" className="form-label">
                                                         Email
@@ -82,7 +72,7 @@ export default function LoginPage() {
                                                         className="form-control"
                                                         id="email"
                                                         value={email}
-                                                        onChange={ (e) => setEmail(e.target.value)}
+                                                        onChange={(e) => setEmail(e.target.value)}
                                                         required
                                                     />
                                                 </div>
@@ -96,7 +86,7 @@ export default function LoginPage() {
                                                         className="form-control"
                                                         id="password"
                                                         value={password}
-                                                        onChange={ (e) => setPasword(e.target.value)}
+                                                        onChange={(e) => setPasword(e.target.value)}
                                                         required
                                                     />
                                                 </div>
