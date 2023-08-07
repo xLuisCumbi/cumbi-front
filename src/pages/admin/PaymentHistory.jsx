@@ -33,10 +33,7 @@ function PaymentHistory() {
             });
     }, []);
 
-
-
     const handleShowPaymentDetails = (i) => {
-        
         const d = deposits[i];
         setSelectedDeposit(d);
         new bootstrap.Modal(document.getElementById('largeModal')).show();
