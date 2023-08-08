@@ -3,8 +3,15 @@ import { config } from '../config/default';
 import { authToken } from '../helpers/authHeader';
 
 const ApiService = {
+  // Base URL for API endpoints
   baseURL: config.apiUrl,
 
+  /**
+   * Sends a GET request to the specified endpoint.
+   * @param {string} endpoint - The API endpoint.
+   * @param {Object} params - The query parameters for the GET request.
+   * @returns {Promise<Object>} - The response data.
+   */
   get(endpoint, params = {}) {
     return new Promise((resolve, reject) => {
       axios
@@ -23,7 +30,16 @@ const ApiService = {
     });
   },
 
+  /**
+   * Sends a POST request to the specified endpoint.
+   * @param {string} endpoint - The API endpoint.
+   * @param {Object} data - The payload for the POST request.
+   * @returns {Promise<Object>} - The response data.
+   */
   post(endpoint, data = {}) {
+    console.log('post request authToken', authToken());
+    console.log('post request data', data);
+    console.log('post request endpoint', endpoint);
     return new Promise((resolve, reject) => {
       axios
         .post(`${this.baseURL}${endpoint}`, data, {
@@ -40,6 +56,38 @@ const ApiService = {
     });
   },
 
+  /**
+   * Sends a POST request with credentials to the specified endpoint.
+   * @param {string} endpoint - The API endpoint.
+   * @param {Object} data - The payload for the POST request.
+   * @param {Object} additionalHeaders - Any additional headers for the request.
+   * @returns {Promise<Object>} - The response data.
+   */
+  postWithCredentials(endpoint, data = {}, additionalHeaders = {}) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(`${this.baseURL}${endpoint}`, data, {
+          headers: {
+            ...additionalHeaders,
+            Authorization: `Bearer ${authToken()}`,
+          },
+          withCredentials: true,
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
+  /**
+   * Sends a PUT request to the specified endpoint.
+   * @param {string} endpoint - The API endpoint.
+   * @param {Object} data - The payload for the PUT request.
+   * @returns {Promise<Object>} - The response data.
+   */
   put(endpoint, data = {}) {
     return new Promise((resolve, reject) => {
       axios

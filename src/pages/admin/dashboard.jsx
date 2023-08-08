@@ -29,6 +29,7 @@ export default function Dashboard() {
             }
 
         }, err => {
+            console.log('err', err.stack);
 
             navigate('/admin/error?message=Error Making Request Kinldy: Check Your Internet Connectivity Or reload page');
 

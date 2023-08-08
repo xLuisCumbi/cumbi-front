@@ -18,6 +18,7 @@ export default function LoginPage() {
         } else {
             Alert("success", "loading", 30);
 
+            console.log('email', email);
             const login = await UserService.Login(email, password);
             if (login.status === "success") {
                 Alert("success", "Login Successful", 3);
