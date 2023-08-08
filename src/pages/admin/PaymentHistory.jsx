@@ -18,7 +18,9 @@ function PaymentHistory() {
         if (reqRef.current) return;
         reqRef.current = true;
 
-        ApiService.post('/fetch-deposits')
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        ApiService.post('/fetch-deposits', { user }) // Pass the user
             .then((response) => {
                 if (response.status === "success") {
                     setDeposits(response.deposits || []);

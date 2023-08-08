@@ -10,7 +10,6 @@ function Login(email, password) {
       (response) => {
         if (response.status === 'success') {
           localStorage.setItem('user', JSON.stringify(response.user));
-          console.log('response.user', response.user);
           localStorage.setItem('userRole', response.user.role); // Save the user's role
 
         }
@@ -18,6 +17,7 @@ function Login(email, password) {
       },
       (err) => {
         console.error("Error in login request:", err);
+        console.log('error stack in login request', errr.stack);
         resolve({
           status: 'failed',
           message: 'request error: kindly try again',
