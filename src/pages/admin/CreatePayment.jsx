@@ -4,14 +4,17 @@ import Alert from "../../components/Alert";
 import ApiService from "../../services/ApiService";
 
 function CreatePayment() {
+    // Get the user data from local storage
+    const user = JSON.parse(localStorage.getItem('user'));
+
     const [paymentFormData, setPaymentFormData] = useState({
         title: "Titulo",
         amount: 0,
         network: "ETHEREUM",
         coin: "USDT",
         description: "Descripcion corta de la cuenta de cobro",
+        user: user.id, // use the user's ID from local storage
     });
-
     const [paymentCreated, setPaymentCreated] = useState({
         value: false,
         link: "",
@@ -28,7 +31,7 @@ function CreatePayment() {
         }
 
         Alert("success", "loading", 30);
-        console.log("paymentFormData", paymentFormData);
+        console.log("paymentFormData submit", paymentFormData);
         ApiService.post("/create-invoice", { ...paymentFormData }).then(
             (response) => {
                 if (response.status === "success") {
@@ -40,6 +43,9 @@ function CreatePayment() {
                 }
             },
             (err) => {
+                console.log('paymentFormData in response', paymentFormData);
+                console.log('err', err);
+                console.log('err.stack', err.stack);
                 Alert("failed", "Error in creating invoice", 3);
             }
         );

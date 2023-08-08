@@ -10,8 +10,9 @@ function Login(email, password) {
       (response) => {
         if (response.status === 'success') {
           localStorage.setItem('user', JSON.stringify(response.user));
-          console.log('response', response);
+          console.log('response.user', response.user);
           localStorage.setItem('userRole', response.user.role); // Save the user's role
+
         }
         resolve(response);
       },
@@ -39,7 +40,6 @@ function logout() {
 
 function isLogin() {
   let user = JSON.parse(localStorage.getItem('user'));
-  console.log(user);
 
   if (user && user.authToken) {
     return true;

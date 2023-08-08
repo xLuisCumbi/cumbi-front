@@ -19,8 +19,6 @@ function Sidebar() {
     // Get the current user role from UserService
     const role = UserService.getCurrentUserRole();
     setUserRole(role);
-
-    console.log('role', role);
   }, [location])
 
   const handleLogout = () => {

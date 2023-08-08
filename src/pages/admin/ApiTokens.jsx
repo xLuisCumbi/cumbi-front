@@ -16,7 +16,6 @@ function ApiTokens() {
 
         ApiService.post('/fetch-tokens')
             .then((response) => {
-                console.log('response', response);
                 if (response.status === "success") {
                     setTokens(response.tokens || []);
                     setLoadingStatus(false);

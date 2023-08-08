@@ -37,9 +37,7 @@ const ApiService = {
    * @returns {Promise<Object>} - The response data.
    */
   post(endpoint, data = {}) {
-    console.log('post request authToken', authToken());
-    console.log('post request data', data);
-    console.log('post request endpoint', endpoint);
+
     return new Promise((resolve, reject) => {
       axios
         .post(`${this.baseURL}${endpoint}`, data, {
