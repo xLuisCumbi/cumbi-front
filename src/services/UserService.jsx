@@ -17,7 +17,7 @@ function Login(email, password) {
       },
       (err) => {
         console.error("Error in login request:", err);
-        console.log('error stack in login request', errr.stack);
+        console.log('error stack in login request', err.stack);
         resolve({
           status: 'failed',
           message: 'request error: kindly try again',
