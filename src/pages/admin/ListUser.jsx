@@ -19,12 +19,11 @@ function ListUser() {
         reqRef.current = true;
 
         const user = JSON.parse(localStorage.getItem('user'));
-        console.log(user)
-        ApiService.get('/business', { params: user })
+
+        ApiService.post('/business', user)
             .then((response) => {
-                console.log(response)
                 if (response.status === "success") {
-                    // setUsers(response.business || []);
+                    setUsers(response.users || []);
                     setLoadingStatus(false);
                 }
             })
@@ -43,27 +42,38 @@ function ListUser() {
     // Use react-table to define the columns and data for the table
     const columns = React.useMemo(
         () => [
-            // {
-            //     Header: 'Username',
-            //     accessor: 'username',
-            // },
-            // {
-            //     Header: 'Email',
-            //     accessor: 'email',
-            // },
-            // {
-            //     Header: 'Role',
-            //     accessor: 'role',
-            // },
+            {
+                Header: 'Username',
+                accessor: 'username',
+            },
+            {
+                Header: 'Email',
+                accessor: 'email',
+            },
+            {
+                Header: 'Role',
+                accessor: 'role',
+            },
             {
                 Header: 'Action',
                 Cell: ({ row }) => (
-                    <button
-                        className="btn btn-primary text-white btn-sm w-100"
-                        onClick={() => handleShowPaymentDetails(row.index)}
-                    >
-                        View More
-                    </button>
+                    <>
+                        {/* <button
+                            className="btn btn-primary text-white btn-sm"
+                            onClick={() => handleShowPaymentDetails(row.index)}
+                        >
+                            <i className="bi bi-person"></i>
+                        </button> */}
+                        <a className="btn" onClick={() => navigate('/admin/create-user')}>
+                            <i className="bi bi-pencil"></i>
+                        </a>
+                        <a className="btn" onClick={() => navigate('/admin/create-user')}>
+                            <i className="bi bi-person-dash"></i>
+                        </a>
+                        <a className="btn" style={{ color: "red" }} onClick={() => navigate('/admin/create-user')}>
+                            <i className="bi bi-trash3"></i>
+                        </a>
+                    </>
                 ),
             },
         ],

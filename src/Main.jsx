@@ -19,11 +19,11 @@ import CreateUser from './pages/admin/CreateUser';
 
 // Lazy Loading to reduce chunk size for production
 const Loadable = (Component) => (props) =>
-  (
-    <Suspense fallback={<h1>loading...</h1>}>
-      <Component {...props} />
-    </Suspense>
-  );
+(
+  <Suspense fallback={<h1>loading...</h1>}>
+    <Component {...props} />
+  </Suspense>
+);
 
 //pages
 const LoginPage = Loadable(lazy(() => import('./pages/auth/Login')));
@@ -64,7 +64,7 @@ const router = createBrowserRouter([
         element: <CreatePayment />,
       },
       {
-        path: 'create-user',
+        path: 'create-user/:id?',
         element: <CreateUser />,
       },
       {

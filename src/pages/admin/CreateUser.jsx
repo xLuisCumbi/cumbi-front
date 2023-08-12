@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PageTitle from '../../components/PageTitle';
 import Alert from '../../components/Alert';
 import ApiService from '../../services/ApiService';
@@ -11,7 +11,9 @@ function CreateUser() {
     domain: '',
     email: '',
     password: '',
+    role: '',
   });
+  // const [searchParams] = useSearchParams();
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -33,6 +35,15 @@ function CreateUser() {
       }
     );
   };
+
+  useEffect(() => {
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    setUserData({
+      ...userData,
+      business: user.business,
+    })
+  }, []);
 
   return (
     <div>
@@ -74,7 +85,7 @@ function CreateUser() {
                 required
               />
             </div>
-            <div className="col-md-6 mt-3">
+            {/* <div className="col-md-6 mt-3">
               <label className="form-label">Business</label>
               <input
                 type="text"
@@ -88,8 +99,8 @@ function CreateUser() {
                 }
                 required
               />
-            </div>
-            <div className="col-md-6 mt-3">
+            </div> */}
+            {/* <div className="col-md-6 mt-3">
               <label className="form-label">Domain</label>
               <input
                 type="text"
@@ -103,7 +114,7 @@ function CreateUser() {
                 }
                 required
               />
-            </div>
+            </div> */}
             <div className="col-md-6 mt-3">
               <label className="form-label">Password</label>
               <input
@@ -118,6 +129,24 @@ function CreateUser() {
                 }
                 required
               />
+            </div>
+            <div className="col-md-6 mt-3">
+              <label className="form-label">Role</label>
+              <select
+                type="text"
+                className="form-control"
+                value={userData.role}
+                onChange={(e) =>
+                  setUserData({
+                    ...userData,
+                    role: e.target.value,
+                  })
+                }
+                required
+              >
+                <option value="business">Business</option>
+                <option value="admin">Admin</option>
+              </select>
             </div>
 
             <div className="col-md-12 mt-4 text-center">
