@@ -8,10 +8,10 @@ import "../..//assets/vendor/bootstrap/js/bootstrap.bundle.js";
 // Import react-table and its required components
 import { useTable } from 'react-table';
 
-function PaymentHistory() {
+function ListUser() {
     const reqRef = useRef(false);
     const [loadingStatus, setLoadingStatus] = useState(true);
-    const [deposits, setDeposits] = useState([]);
+    const [users, setUsers] = useState([]);
     const [selectedDeposit, setSelectedDeposit] = useState(null);
 
     useEffect(() => {
@@ -19,68 +19,42 @@ function PaymentHistory() {
         reqRef.current = true;
 
         const user = JSON.parse(localStorage.getItem('user'));
-
-        ApiService.post('/fetch-deposits', { user }) // Pass the user
+        console.log(user)
+        ApiService.get('/business', { params: user })
             .then((response) => {
+                console.log(response)
                 if (response.status === "success") {
-                    setDeposits(response.deposits || []);
+                    // setUsers(response.business || []);
                     setLoadingStatus(false);
                 }
             })
             .catch((err) => {
                 console.log('err', err);
                 console.log('stack', err.stack);
-                Alert('failed', 'Error in fetching deposits', 3);
-                setLoadingStatus(false); // Set loading status to false even in case of an error
+                Alert('failed', 'Error in fetching users', 3);
+                setLoadingStatus(false);
             });
-    }, []);
 
-    const handleShowPaymentDetails = (i) => {
-        const d = deposits[i];
-        setSelectedDeposit(d);
-        new bootstrap.Modal(document.getElementById('largeModal')).show();
-    };
+    });
 
-    const handlePaymentConsolidation = (deposit_id) => {
-        Alert('success', 'loading', 30);
-        ApiService.post('/consolidate-payment', { deposit_id })
-            .then((response) => {
-                if (response.status === "success") {
-                    Alert('success', 'Success: payment set for consolidation within a minute', 3);
-                }
-            })
-            .catch((err) => {
-                Alert('failed', 'Error in sending request', 3);
-            });
-    };
+
+
 
     // Use react-table to define the columns and data for the table
     const columns = React.useMemo(
         () => [
-            {
-                Header: 'Invoice/Deposit ID',
-                accessor: 'deposit_id',
-            },
-            {
-                Header: 'Type',
-                accessor: 'type',
-            },
-            {
-                Header: 'Amount',
-                accessor: 'amount',
-            },
-            {
-                Header: 'Network',
-                accessor: 'network',
-            },
-            {
-                Header: 'Coin',
-                accessor: 'coin',
-            },
-            {
-                Header: 'Status',
-                accessor: 'status',
-            },
+            // {
+            //     Header: 'Username',
+            //     accessor: 'username',
+            // },
+            // {
+            //     Header: 'Email',
+            //     accessor: 'email',
+            // },
+            // {
+            //     Header: 'Role',
+            //     accessor: 'role',
+            // },
             {
                 Header: 'Action',
                 Cell: ({ row }) => (
@@ -92,28 +66,11 @@ function PaymentHistory() {
                     </button>
                 ),
             },
-            {
-                Header: 'Consolidation',
-                Cell: ({ row }) => (
-                    <>
-                        {row.original.consolidation_status !== 'success' && row.original.status === 'success' ? (
-                            <button
-                                className="btn btn-info text-white btn-sm w-100"
-                                onClick={() => handlePaymentConsolidation(row.original.deposit_id)}
-                            >
-                                consolidate
-                            </button>
-                        ) : (
-                            <p>{row.original.status}</p>
-                        )}
-                    </>
-                ),
-            },
         ],
         []
     );
 
-    const tableInstance = useTable({ columns, data: deposits });
+    const tableInstance = useTable({ columns, data: users });
 
     // Access the table instance properties
     const {
@@ -128,15 +85,15 @@ function PaymentHistory() {
         return <PageLoading />;
     }
 
-    if (!deposits || !Array.isArray(deposits)) {
+    if (!users || !Array.isArray(users)) {
         return <div>No data available</div>; // Display a message if the data is not available or not an array
     }
 
     return (
         loadingStatus ? <PageLoading /> :
             <>
-                <PageTitle title="Payment History" />
-                <section id="payment_history" className="card bg-white p-4">
+                <PageTitle title="List Users" />
+                <section id="list_user" className="card bg-white p-4">
                     <div className="col-md-12">
                         <table style={{ fontSize: '90%' }} {...getTableProps()} className="table datatable">
                             <thead>
@@ -168,16 +125,16 @@ function PaymentHistory() {
                     </div>
                     <div className="modal fade" id="largeModal" tabIndex="-1">
                         <div className="modal-dialog modal-xl">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Modal title</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Modal title</h5>
+                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body">
-                                    <div>{selectedDeposit}</div>
+                                <div className="modal-body">
+                                    <div></div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                     {/* <button type="button" class="btn btn-primary">Save changes</button> */}
                                 </div>
                             </div>
@@ -188,4 +145,4 @@ function PaymentHistory() {
     );
 }
 
-export default PaymentHistory;
+export default ListUser;

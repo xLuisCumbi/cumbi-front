@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PageTitle from '../../components/PageTitle';
 import Alert from '../../components/Alert';
 import ApiService from '../../services/ApiService';
+import ListUser from './ListUser';
 
 function CreateUser() {
   const [userData, setUserData] = useState({
@@ -128,6 +129,7 @@ function CreateUser() {
           </div>
         </form>
       </div>
+      <ListUser />
     </div>
   );
 }
