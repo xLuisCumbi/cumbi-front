@@ -14,12 +14,12 @@ function CreatePayment() {
         coin: "USDT",
         description: "Descripción corta de la cuenta de cobro",
         user: user.id, // use the user's ID from local storage
+        trm: 0,
     });
     const [paymentCreated, setPaymentCreated] = useState({
         value: false,
         link: "",
     });
-    const [trm, setTRM] = useState(0)
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
@@ -31,14 +31,11 @@ function CreatePayment() {
             }
         }
 
-        if (paymentFormData.amount / trm < 100) {
+        if (paymentFormData.amount / paymentFormData.trm < 100) {
             Alert("failed", `El valor debe ser igual o superior al mínimo`, 3);
             return
         }
-       
         Alert("success", "loading", 30);
-        console.log("paymentFormData submit", paymentFormData);
-        return
         ApiService.post("/create-invoice", { ...paymentFormData }).then(
             (response) => {
                 if (response.status === "success") {
@@ -68,7 +65,10 @@ function CreatePayment() {
         ApiService.get("/trm").then(
             (response) => {
                 if (response.status === "success")
-                    setTRM(response.value)
+                    setPaymentFormData({
+                        ...paymentFormData,
+                        trm: response.value,
+                    })
             },
             (err) => {
                 // console.log('paymentFormData in response', paymentFormData);
@@ -77,7 +77,7 @@ function CreatePayment() {
                 // Alert("failed", "Error in creating invoice", 3);
             }
         )
-    });
+    }, []);
 
     return (
         <>
@@ -108,7 +108,7 @@ function CreatePayment() {
                                     />
                                 </div>
                                 <div className="col-md-6 mt-3">
-                                    <label className="form-label">Amount COP <span>(TRM: ${trm} Valor mínimo: ${trm * 100})</span></label>
+                                    <label className="form-label">Amount COP <span>(TRM: ${paymentFormData.trm} Valor mínimo: ${paymentFormData.trm * 100})</span></label>
                                     <input
                                         type="number"
                                         className="form-control"
