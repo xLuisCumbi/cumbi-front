@@ -1,36 +1,34 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PageTitle from "../../components/PageTitle";
 import Alert from "../../components/Alert";
 import ApiService from "../../services/ApiService";
+import ListFee from './ListFee';
+
 
 function SettingCumbi() {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const [fee, setFee] = useState([
-        { value_from: 100, value_to: 200, perc_commission: 0.2 }
-    ])
-    const [settings, setSettings] = useState({
-        trm: 0,
+    // const user = JSON.parse(localStorage.getItem("user"));
+    // const [fees, setFees] = useState([
+    //     { value_from: 100, value_to: 999, perc_commission: 2 },
+    //     { value_from: 1000, value_to: 4999, perc_commission: 1.5 },
+    //     { value_from: 5000, value_to: 19999, perc_commission: 1.2 },
+    //     { value_from: 20000, value_to: 1000000, perc_commission: 0.85 }
+    // ])
+    const [trm, setTrm] = useState(0)
+    const [setting, setSetting] = useState({
+        _id: '',
         perc_buy_house: 0,
         perc_cumbi: 0,
-        fee: fee,
+        passphrase: ''
     });
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
-
-        const data = {};
-
-
+        console.log(setting)
         Alert("success", "loading", 30);
-        ApiService.post("/update", { ...data }).then(
+        ApiService.post("/update-setting", { ...setting, trm: trm }).then(
             (response) => {
                 if (response.status === "success") {
                     Alert("success", "Settings Successfully Updated", 3);
-                    const up_user = {
-                        ...user,
-                        email: settingsFormData.email,
-                        username: settingsFormData.username,
-                    };
                 }
             },
             (err) => {
@@ -38,6 +36,37 @@ function SettingCumbi() {
             }
         );
     };
+
+    function getTRM() {
+        ApiService.get("/trm").then(
+            (response) => {
+                if (response.status === "success")
+                    setTrm(response.value)
+            },
+            (err) => {
+                console.log('err', err);
+                console.log('err.stack', err.stack);
+            }
+        )
+    }
+
+
+    useEffect(() => {
+        ApiService.get("/fetch-setting").then(
+            (response) => {
+                if (response.status === "success") {
+                    setSetting(response.setting)
+                    getTRM()
+                    console.log(response.setting)
+                }
+            },
+            (err) => {
+                console.log('err', err);
+                console.log('err.stack', err.stack);
+            }
+        )
+
+    }, []);
 
     return (
         <div>
@@ -55,14 +84,8 @@ function SettingCumbi() {
                             <input
                                 type="number"
                                 className="form-control"
-                                value={settings.trm}
+                                value={trm}
                                 readOnly
-                                // onChange={(e) =>
-                                //     setSettings({
-                                //         ...settingsFormData,
-                                //         username: e.target.value,
-                                //     })
-                                // }
                                 required
                             />
                         </div>
@@ -72,28 +95,11 @@ function SettingCumbi() {
                             <input
                                 type="number"
                                 className="form-control"
-                                value={settings.perc_buy_house}
+                                value={setting.perc_buy_house}
 
                                 onChange={(e) =>
-                                    setSettings({
-                                        ...setSettings,
-                                        perc_buy_house: e.target.value,
-                                    })
-                                }
-                                required
-                            />
-                        </div>
-
-                        <div className="col-md-6 mt-3">
-                            <label className="form-label">Comisión Casa de Compra</label>
-                            <input
-                                type="number"
-                                className="form-control"
-                                value={settings.perc_buy_house}
-
-                                onChange={(e) =>
-                                    setSettings({
-                                        ...setSettings,
+                                    setSetting({
+                                        ...setting,
                                         perc_buy_house: e.target.value,
                                     })
                                 }
@@ -106,29 +112,35 @@ function SettingCumbi() {
                             <input
                                 type="number"
                                 className="form-control"
-                                value={settings.perc_cumbi}
+                                value={setting.perc_cumbi}
 
                                 onChange={(e) =>
-                                    setSettings({
-                                        ...setSettings,
+                                    setSetting({
+                                        ...setting,
                                         perc_cumbi: e.target.value,
                                     })
                                 }
                                 required
                             />
                         </div>
+                        <div className="col-md-6 mt-3">
+                            <label className="form-label">Passphrase</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={setting.passphrase}
 
-                        <div>
-                            {
-                                fee.map((fee) => (
-                                    <>
-                                        <span>{fee.value_from}<br /></span>
-                                        <span>{fee.value_to}<br /></span>
-                                        <span>{fee.perc_commission}<br /></span>
-                                    </>
-                                ))
-                            }
+                                onChange={(e) =>
+                                    setSetting({
+                                        ...setting,
+                                        passphrase: e.target.value,
+                                    })
+                                }
+                                required
+                            />
                         </div>
+
+                        <ListFee fees={setting.fees} />
 
                         <div className="col-md-12 mt-4 text-center">
                             <button className="btn btn-primary text-white">

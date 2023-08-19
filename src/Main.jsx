@@ -77,7 +77,7 @@ const router = createBrowserRouter([
         element: <Settings />,
       },
       {
-        path: 'settings_cumbi',
+        path: 'setting_cumbi',
         element: <SettingCumbi />,
       },
       {

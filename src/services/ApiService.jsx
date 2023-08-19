@@ -37,7 +37,6 @@ const ApiService = {
    * @returns {Promise<Object>} - The response data.
    */
   post(endpoint, data = {}) {
-
     return new Promise((resolve, reject) => {
       axios
         .post(`${this.baseURL}${endpoint}`, data, {
