@@ -69,7 +69,7 @@ function Sidebar() {
           </a>
         </li>
 
-        {userRole === 'admin' && (
+        {(userRole === 'admin' || userRole === 'superadmin') && (
           <>
             <li className="nav-item">
               <a className={route == 'create-user' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/create-user')}>
@@ -84,7 +84,11 @@ function Sidebar() {
                 <span>Settings</span>
               </a>
             </li>
+          </>
+        )}
 
+        {userRole === 'superadmin' && (
+          <>
             <li className="nav-item">
               <a className={route == 'setting_cumbi' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/setting_cumbi')}>
                 <i className="bi bi-gear"></i>
@@ -93,6 +97,7 @@ function Sidebar() {
             </li>
           </>
         )}
+
 
         <li className="nav-item">
           <a className='nav-link collapsed' onClick={() => handleLogout()}>

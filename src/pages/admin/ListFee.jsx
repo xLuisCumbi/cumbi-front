@@ -9,16 +9,20 @@ import "../..//assets/vendor/bootstrap/js/bootstrap.bundle.js";
 import { useTable } from 'react-table';
 
 function ListFee(props) {
-    const reqRef = useRef(false);
+    // const reqRef = useRef(false);
     const [loadingStatus, setLoadingStatus] = useState(true);
     const [fees, setFees] = useState([]);
 
     useEffect(() => {
-        if (reqRef.current) return;
-        reqRef.current = true;
-        setFees(props.fees)
+        // if (reqRef.current) {
+        //     return;
+        // }
+        // reqRef.current = true;
+        console.log(props.fees)
+        if (props.fees)
+            setFees(props.fees)
         setLoadingStatus(false);
-    }, []);
+    }, [props.fees]);
 
 
     // Use react-table to define the columns and data for the table
@@ -67,13 +71,12 @@ function ListFee(props) {
         []
     );
 
-
+    const tableInstance = useTable({ columns, data: fees });
 
     if (!fees || !Array.isArray(fees) || fees.length === 0) {
-        return <div>No data available</div>; // Display a message if the data is not available or not an array
+        return <div>No fee available</div>; // Display a message if the data is not available or not an array
     }
 
-    const tableInstance = useTable({ columns, data: fees });
 
     // Access the table instance properties
     const {

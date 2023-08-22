@@ -4,15 +4,7 @@ import Alert from "../../components/Alert";
 import ApiService from "../../services/ApiService";
 import ListFee from './ListFee';
 
-
 function SettingCumbi() {
-    // const user = JSON.parse(localStorage.getItem("user"));
-    // const [fees, setFees] = useState([
-    //     { value_from: 100, value_to: 999, perc_commission: 2 },
-    //     { value_from: 1000, value_to: 4999, perc_commission: 1.5 },
-    //     { value_from: 5000, value_to: 19999, perc_commission: 1.2 },
-    //     { value_from: 20000, value_to: 1000000, perc_commission: 0.85 }
-    // ])
     const [trm, setTrm] = useState(0)
     const [setting, setSetting] = useState({
         _id: '',
@@ -20,10 +12,15 @@ function SettingCumbi() {
         perc_cumbi: 0,
         passphrase: ''
     });
+    const [fee, setFee] = useState({
+        name: '',
+        value_from: 0,
+        value_to: 0,
+        perc_commission: 0
+    })
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
-        console.log(setting)
         Alert("success", "loading", 30);
         ApiService.post("/update-setting", { ...setting, trm: trm }).then(
             (response) => {
@@ -35,6 +32,15 @@ function SettingCumbi() {
                 Alert("failed", "Error in creating invoice", 3);
             }
         );
+    };
+
+    const handleFormSubmitFee = (e) => {
+        e.preventDefault();
+        let fees = [...setting.fees, fee]
+        setSetting({
+            ...setting,
+            fees: fees,
+        })
     };
 
     function getTRM() {
@@ -57,7 +63,6 @@ function SettingCumbi() {
                 if (response.status === "success") {
                     setSetting(response.setting)
                     getTRM()
-                    console.log(response.setting)
                 }
             },
             (err) => {
@@ -140,7 +145,7 @@ function SettingCumbi() {
                             />
                         </div>
 
-                        <ListFee fees={setting.fees} />
+
 
                         <div className="col-md-12 mt-4 text-center">
                             <button className="btn btn-primary text-white">
@@ -150,6 +155,86 @@ function SettingCumbi() {
                         </div>
                     </div>
                 </form>
+
+                <ListFee fees={setting.fees} />
+
+                <div className="col-12 mb-3">
+                    <form
+                        className="row g-3 needs-validation"
+                        noValidate
+                        onSubmit={handleFormSubmitFee}
+                    >
+                        <div className="row">
+                            <div className="col-md-6 mt-3">
+                                <label className="form-label">Name</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={fee.name}
+                                    onChange={(e) =>
+                                        setFee({
+                                            ...fee,
+                                            name: e.target.value,
+                                        })
+                                    }
+                                    required
+                                />
+                            </div>
+                            <div className="col-md-6 mt-3">
+                                <label className="form-label">Commission</label>
+                                <input
+                                    type="number"
+                                    className="form-control"
+                                    value={fee.perc_commission}
+                                    onChange={(e) =>
+                                        setFee({
+                                            ...fee,
+                                            perc_commission: e.target.value,
+                                        })
+                                    }
+                                    required
+                                />
+                            </div>
+                            <div className="col-md-6 mt-3">
+                                <label className="form-label">Value from</label>
+                                <input
+                                    type="number"
+                                    className="form-control"
+                                    value={fee.value_from}
+                                    onChange={(e) =>
+                                        setFee({
+                                            ...fee,
+                                            value_from: e.target.value,
+                                        })
+                                    }
+                                    required
+                                />
+                            </div>
+                            <div className="col-md-6 mt-3">
+                                <label className="form-label">Value to</label>
+                                <input
+                                    type="number"
+                                    className="form-control"
+                                    value={fee.value_to}
+                                    onChange={(e) =>
+                                        setFee({
+                                            ...fee,
+                                            value_to: e.target.value,
+                                        })
+                                    }
+                                    required
+                                />
+                            </div>
+                            <div className="col-md-12 mt-4 text-center">
+                                <button className="btn btn-primary text-white">
+                                    {" "}
+                                    Add Fee{" "}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
             </div>
         </div>
     );
