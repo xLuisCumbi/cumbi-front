@@ -95,6 +95,12 @@ function Sidebar() {
                 <span>Settings Cumbi</span>
               </a>
             </li>
+            <li className="nav-item">
+              <a className={route == 'create-business' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/create-business')}>
+                <i className="bi bi-building-fill-gear"></i>
+                <span>Create Business</span>
+              </a>
+            </li>
           </>
         )}
 

@@ -53,6 +53,40 @@ const ApiService = {
     });
   },
 
+  getBusiness(endpoint, data = {}) {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(config.businessUrl + endpoint, {
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
+  postBusiness(endpoint, data = {}) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(config.businessUrl + endpoint, data, {
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
   /**
    * Sends a POST request with credentials to the specified endpoint.
    * @param {string} endpoint - The API endpoint.

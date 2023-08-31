@@ -5,13 +5,14 @@ import ApiService from '../../services/ApiService';
 import ListUser from './ListUser';
 
 function CreateUser() {
+  const [roleCur, setRoleCur] = useState('')
+  const [businessData, setBusinessData] = useState([])
   const [userData, setUserData] = useState({
     username: '',
     business: '',
-    domain: '',
     email: '',
     password: '',
-    role: '',
+    role: 'person',
   });
   // const [searchParams] = useSearchParams();
 
@@ -28,7 +29,7 @@ function CreateUser() {
     Alert('success', 'loading', 30);
     ApiService.post('/signup', { ...userData }).then(
       (response) => {
-        if (response.status === 'signUp_success') Alert('success', '', 0);
+        if (response.status === 'signUp_success') Alert('success', 'User Created', 3);
       },
       (err) => {
         Alert('failed', 'Error in creating user', 3);
@@ -39,10 +40,24 @@ function CreateUser() {
   useEffect(() => {
 
     const user = JSON.parse(localStorage.getItem('user'));
-    setUserData({
-      ...userData,
-      business: user.business,
-    })
+    setRoleCur(user.role)
+    // Si es admin puede crear usuarios de su misma empresa
+    if (user.role === 'admin')
+      setUserData({
+        ...userData,
+        business: user.business,
+      })
+    ApiService.getBusiness('').then(
+      (response) => {
+        if (response.status === 'success') {
+          setBusinessData(response.businesses)
+        }
+      },
+      (err) => {
+        Alert('failed', 'Error in creating business', 3);
+      }
+    );
+
   }, []);
 
   return (
@@ -85,36 +100,6 @@ function CreateUser() {
                 required
               />
             </div>
-            {/* <div className="col-md-6 mt-3">
-              <label className="form-label">Business</label>
-              <input
-                type="text"
-                className="form-control"
-                value={userData.business}
-                onChange={(e) =>
-                  setUserData({
-                    ...userData,
-                    business: e.target.value,
-                  })
-                }
-                required
-              />
-            </div> */}
-            {/* <div className="col-md-6 mt-3">
-              <label className="form-label">Domain</label>
-              <input
-                type="text"
-                className="form-control"
-                value={userData.domain}
-                onChange={(e) =>
-                  setUserData({
-                    ...userData,
-                    domain: e.target.value,
-                  })
-                }
-                required
-              />
-            </div> */}
             <div className="col-md-6 mt-3">
               <label className="form-label">Password</label>
               <input
@@ -144,11 +129,33 @@ function CreateUser() {
                 }
                 required
               >
+                <option value="person">Person</option>
                 <option value="business">Business</option>
                 <option value="admin">Admin</option>
               </select>
             </div>
-
+            {/* solo el superadmin puede crear usuarios para empresas en específico */}
+            {roleCur === 'superadmin' && userData.role !== "person" &&
+              <div className="col-md-6 mt-3">
+                <label className="form-label">Business</label>
+                <select
+                  type="text"
+                  className="form-control"
+                  value={userData.business}
+                  onChange={(e) =>
+                    setUserData({
+                      ...userData,
+                      business: e.target.value,
+                    })
+                  }
+                  required
+                >
+                  {businessData.map(business =>
+                    <option value={business._id} key={business._id}>{business.name}</option>)
+                  }
+                </select>
+              </div>
+            }
             <div className="col-md-12 mt-4 text-center">
               <button className="btn btn-primary text-white">
                 {' '}
@@ -157,9 +164,9 @@ function CreateUser() {
             </div>
           </div>
         </form>
-      </div>
+      </div >
       <ListUser />
-    </div>
+    </div >
   );
 }
 

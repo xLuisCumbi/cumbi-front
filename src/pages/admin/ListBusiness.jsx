@@ -3,12 +3,12 @@ import PageTitle from "../../components/PageTitle";
 import Alert from "../../components/Alert";
 import ApiService from '../../services/ApiService';
 import PageLoading from "../../components/PageLoading";
-import "../..//assets/vendor/bootstrap/js/bootstrap.bundle.js";
+import "../../assets/vendor/bootstrap/js/bootstrap.bundle.js";
 
 // Import react-table and its required components
 import { useTable } from 'react-table';
 
-function ListUser() {
+function ListBusiness() {
     const reqRef = useRef(false);
     const [loadingStatus, setLoadingStatus] = useState(true);
     const [users, setUsers] = useState([]);
@@ -19,7 +19,7 @@ function ListUser() {
         reqRef.current = true;
 
         const user = JSON.parse(localStorage.getItem('user'));
-        console.log(user)
+
         ApiService.post('/business', user)
             .then((response) => {
                 if (response.status === "success") {
@@ -155,4 +155,4 @@ function ListUser() {
     );
 }
 
-export default ListUser;
+export default ListBusiness;

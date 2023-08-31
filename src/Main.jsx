@@ -16,6 +16,7 @@ import './index.css';
 //layouts
 import AdminLayout from './pages/admin/adminLayout';
 import CreateUser from './pages/admin/CreateUser';
+import CreateBusiness from './pages/admin/CreateBusiness';
 
 // Lazy Loading to reduce chunk size for production
 const Loadable = (Component) => (props) =>
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
       {
         path: 'setting_cumbi',
         element: <SettingCumbi />,
+      },
+      {
+        path: 'create-business',
+        element: <CreateBusiness />,
       },
       {
         path: 'tokens',
