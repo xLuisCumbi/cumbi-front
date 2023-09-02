@@ -8,7 +8,7 @@ import "../../assets/vendor/bootstrap/js/bootstrap.bundle.js";
 // Import react-table and its required components
 import { useTable } from 'react-table';
 
-function ListUser() {
+function ListUserBusiness() {
     const reqRef = useRef(false);
     const [loadingStatus, setLoadingStatus] = useState(true);
     const [users, setUsers] = useState([]);
@@ -17,11 +17,10 @@ function ListUser() {
     useEffect(() => {
         if (reqRef.current) return;
         reqRef.current = true;
-        getUsers()
-    });
 
-    const getUsers = () => {
-        ApiService.get('')
+        const user = JSON.parse(localStorage.getItem('user'));
+        console.log(user)
+        ApiService.post('/business', user)
             .then((response) => {
                 if (response.status === "success") {
                     setUsers(response.users || []);
@@ -34,23 +33,11 @@ function ListUser() {
                 Alert('failed', 'Error in fetching users', 3);
                 setLoadingStatus(false);
             });
-    }
 
-    const deleteUser = (id) => {
-        return;
-        ApiService.delete(id)
-            .then((response) => {
-                if (response.status === "success") {
-                    Alert('success', 'User Deleted', 3);
-                    getUsers()
-                }
-            })
-            .catch((err) => {
-                console.log('err', err);
-                console.log('stack', err.stack);
-                Alert('failed', 'Error in fetching users', 3);
-            });
-    }
+    });
+
+
+
 
     // Use react-table to define the columns and data for the table
     const columns = React.useMemo(
@@ -58,10 +45,6 @@ function ListUser() {
             {
                 Header: 'Username',
                 accessor: 'username',
-            },
-            {
-                Header: 'Business',
-                accessor: 'business',
             },
             {
                 Header: 'Email',
@@ -75,13 +58,19 @@ function ListUser() {
                 Header: 'Action',
                 Cell: ({ row }) => (
                     <>
+                        {/* <button
+                            className="btn btn-primary text-white btn-sm"
+                            onClick={() => handleShowPaymentDetails(row.index)}
+                        >
+                            <i className="bi bi-person"></i>
+                        </button> */}
                         <a className="btn" onClick={() => navigate('/admin/create-user')}>
                             <i className="bi bi-pencil"></i>
                         </a>
                         <a className="btn" onClick={() => navigate('/admin/create-user')}>
                             <i className="bi bi-person-dash"></i>
                         </a>
-                        <a className="btn" style={{ color: "red" }} onClick={() => deleteUser(row.original._id)}>
+                        <a className="btn" style={{ color: "red" }} onClick={() => navigate('/admin/create-user')}>
                             <i className="bi bi-trash3"></i>
                         </a>
                     </>
@@ -166,4 +155,4 @@ function ListUser() {
     );
 }
 
-export default ListUser;
+export default ListUserBusiness;

@@ -53,7 +53,7 @@ const ApiService = {
     });
   },
 
-  getBusiness(endpoint, data = {}) {
+  getBusiness(endpoint) {
     return new Promise((resolve, reject) => {
       axios
         .get(config.businessUrl + endpoint, {
@@ -135,6 +135,24 @@ const ApiService = {
         );
     });
   },
+
+  delete(endpoint) {
+    return new Promise((resolve, reject) => {
+      axios
+        .delete(`${this.baseURL}/${endpoint}`, {
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  }
+
 };
 
 export default ApiService;

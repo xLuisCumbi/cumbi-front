@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import PageTitle from '../../components/PageTitle';
 import Alert from '../../components/Alert';
 import ApiService from '../../services/ApiService';
-import ListUser from './ListUser';
+import ListUserBusiness from './ListUserBusiness';
 
 function CreateUser() {
   const [roleCur, setRoleCur] = useState('')
@@ -14,7 +14,8 @@ function CreateUser() {
     password: '',
     role: 'person',
   });
-  // const [searchParams] = useSearchParams();
+
+  const [person, setPerson] = useState({})
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -37,6 +38,8 @@ function CreateUser() {
     );
   };
 
+
+
   useEffect(() => {
 
     const user = JSON.parse(localStorage.getItem('user'));
@@ -45,16 +48,24 @@ function CreateUser() {
     if (user.role === 'admin')
       setUserData({
         ...userData,
-        business: user.business,
+        business: {
+          _id: user.business,
+          name: ''
+        },
       })
     ApiService.getBusiness('').then(
       (response) => {
         if (response.status === 'success') {
           setBusinessData(response.businesses)
+          try {
+            setPerson(response.businesses.filter(business => business.name === "Person")[0])
+          } catch (e) {
+            setPerson("00000000")
+          }
         }
       },
       (err) => {
-        Alert('failed', 'Error in creating business', 3);
+        Alert('failed', 'Error fetching business', 3);
       }
     );
 
@@ -121,17 +132,30 @@ function CreateUser() {
                 type="text"
                 className="form-control"
                 value={userData.role}
-                onChange={(e) =>
-                  setUserData({
-                    ...userData,
-                    role: e.target.value,
-                  })
+                onChange={(e) => {
+                  if (e.target.value === "person") {
+                    console.log(person)
+                    setUserData({
+                      ...userData,
+                      role: e.target.value,
+                      business: {
+                        _id: person._id,
+                        name: person.name
+                      }
+                    })
+                  }
+                  else
+                    setUserData({
+                      ...userData,
+                      role: e.target.value,
+                    })
+                }
                 }
                 required
               >
-                <option value="person">Person</option>
-                <option value="business">Business</option>
-                <option value="admin">Admin</option>
+                {roleCur === 'superadmin' && <option value="person">Person</option>}
+                <option value="business">Business Person</option>
+                <option value="admin">Business Admin</option>
               </select>
             </div>
             {/* solo el superadmin puede crear usuarios para empresas en específico */}
@@ -141,11 +165,14 @@ function CreateUser() {
                 <select
                   type="text"
                   className="form-control"
-                  value={userData.business}
+                  value={userData.business._id}
                   onChange={(e) =>
                     setUserData({
                       ...userData,
-                      business: e.target.value,
+                      business: {
+                        _id: e.target.value,
+                        name: e.target.options[e.target.selectedIndex].text
+                      }
                     })
                   }
                   required
@@ -165,7 +192,7 @@ function CreateUser() {
           </div>
         </form>
       </div >
-      <ListUser />
+      <ListUserBusiness />
     </div >
   );
 }

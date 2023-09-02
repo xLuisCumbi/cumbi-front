@@ -8,8 +8,6 @@ function CreateBusiness() {
   const [businessData, setBusinessData] = useState({
     id_tax: '',
     name: '',
-    web: '',
-    country: '',
     email: '',
     payment_fee: 0.03,
   });
