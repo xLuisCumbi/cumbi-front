@@ -14,8 +14,6 @@ function Mnemonic() {
     const handleFormSubmit = (e) => {
         e.preventDefault();
         Alert("success", "loading", 30);
-
-        console.log('setting.passphrase', setting)
         ApiService.updateMnemonic("/update-mnemonic", { ...setting }).then(
             (response) => {
                 if (response.status === "success") {

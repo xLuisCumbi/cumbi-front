@@ -138,8 +138,6 @@ const ApiService = {
 
   updateMnemonic(endpoint, data = {}) {
     return new Promise((resolve, reject) => {;
-      console.log('data', data);
-      console.log('config.settingsUrl + endpoint', config.settingsUrl + endpoint);
       axios
       .post(config.settingsUrl + endpoint, data, {
         headers: {
