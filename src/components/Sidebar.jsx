@@ -74,7 +74,7 @@ function Sidebar() {
             <li className="nav-item">
               <a className={route == 'create-user' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/create-user')}>
                 <i className="bi bi-person"></i>
-                <span>Create User</span>
+                <span>Users</span>
               </a>
             </li>
 

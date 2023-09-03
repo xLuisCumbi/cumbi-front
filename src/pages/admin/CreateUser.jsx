@@ -19,9 +19,13 @@ function CreateUser() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
-    for (let i in userData) {
-      if (userData[i] === '') {
-        Alert('failed', `input ${i} is required`, 3);
+    for (let key in userData) {
+      if (key === 'business' && userData.role === 'person') {
+        continue; // Omitir validación del campo "business" para roles "person".
+      }
+
+      if (userData[key] === '' && key !== 'business') {
+        Alert('failed', `input ${key} is required`, 3);
         return;
       }
     }
