@@ -10,7 +10,6 @@ function SettingCumbi() {
         _id: '',
         perc_buy_house: 0,
         perc_cumbi: 0,
-        passphrase: ''
     });
     const [fee, setFee] = useState({
         name: '',
@@ -128,25 +127,6 @@ function SettingCumbi() {
                                 required
                             />
                         </div>
-                        <div className="col-md-6 mt-3">
-                            <label className="form-label">Passphrase</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={setting.passphrase}
-
-                                onChange={(e) =>
-                                    setSetting({
-                                        ...setting,
-                                        passphrase: e.target.value,
-                                    })
-                                }
-                                required
-                            />
-                        </div>
-
-
-
                         <div className="col-md-12 mt-4 text-center">
                             <button className="btn btn-primary text-white">
                                 {" "}

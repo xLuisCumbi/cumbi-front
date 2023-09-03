@@ -55,22 +55,21 @@ function Sidebar() {
           </a>
         </li>
 
-        <li className="nav-item">
-          <a className={route == 'create-token' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/create-token')}>
-            <i className="bi bi-key"></i>
-            <span>Create API Tokens</span>
-          </a>
-        </li>
-
-        <li className="nav-item">
-          <a className={route == 'tokens' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/tokens')}>
-            <i className="bi bi-key"></i>
-            <span>API Tokens</span>
-          </a>
-        </li>
-
         {(userRole === 'admin' || userRole === 'superadmin') && (
           <>
+          <li className="nav-item">
+            <a className={route == 'create-token' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/create-token')}>
+                <i className="bi bi-key"></i>
+                <span>Create API Tokens</span>
+            </a>
+        </li>
+
+        <li className="nav-item">
+            <a className={route == 'tokens' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/tokens')}>
+                <i className="bi bi-key"></i>
+                <span>API Tokens</span>
+            </a>
+        </li>
             <li className="nav-item">
               <a className={route == 'create-user' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/create-user')}>
                 <i className="bi bi-person"></i>
@@ -99,6 +98,12 @@ function Sidebar() {
               <a className={route == 'create-business' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/create-business')}>
                 <i className="bi bi-building-fill-gear"></i>
                 <span>Create Business</span>
+              </a>
+            </li>
+            <li className="nav-item">
+              <a className={route == 'mnemonic' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/mnemonic')}>
+              <i className="bi bi-puzzle"></i>
+                <span>Mnemonic</span>
               </a>
             </li>
           </>

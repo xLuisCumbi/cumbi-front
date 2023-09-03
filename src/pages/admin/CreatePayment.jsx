@@ -31,10 +31,6 @@ function CreatePayment() {
             }
         }
 
-        if (paymentFormData.amount / paymentFormData.trm < 100) {
-            Alert("failed", `El valor debe ser igual o superior al mínimo`, 3);
-            return
-        }
         Alert("success", "loading", 30);
         ApiService.post("/create-invoice", { ...paymentFormData }).then(
             (response) => {
@@ -108,7 +104,7 @@ function CreatePayment() {
                                     />
                                 </div>
                                 <div className="col-md-6 mt-3">
-                                    <label className="form-label">Amount COP <span>(TRM: ${paymentFormData.trm} Valor mínimo: ${paymentFormData.trm * 100})</span></label>
+                                    <label className="form-label">Amount USD <span>(TRM: ${paymentFormData.trm * 0.97} )</span></label>
                                     <input
                                         type="number"
                                         className="form-control"
