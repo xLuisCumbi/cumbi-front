@@ -21,6 +21,9 @@ function CreatePayment() {
         link: "",
     });
 
+    const [amountBankFiat, setAmountBankFiat] = useState(0);
+
+
     const handleFormSubmit = (e) => {
         e.preventDefault();
 
@@ -30,6 +33,10 @@ function CreatePayment() {
                 return;
             }
         }
+
+        // Calcular el valor de amountBankFiat
+        const calculatedAmountBankFiat = paymentFormData.trm * 0.97 * paymentFormData.amount - (paymentFormData.trm * 0.97 * paymentFormData.amount * 0.03);
+        setAmountBankFiat(calculatedAmountBankFiat);
 
         Alert("success", "loading", 30);
         ApiService.post("/create-invoice", { ...paymentFormData }).then(
@@ -49,6 +56,19 @@ function CreatePayment() {
                 Alert("failed", "Error in creating invoice", 3);
             }
         );
+    };
+
+    // Función para actualizar paymentFormData.amount y calcular amountBankFiat
+    const handleAmountChange = (e) => {
+        const newAmount = e.target.value;
+        const calculatedAmountBankFiat = paymentFormData.trm * 0.97 * newAmount - (paymentFormData.trm * 0.97 * newAmount * 0.03);
+
+        setAmountBankFiat(calculatedAmountBankFiat);
+
+        setPaymentFormData({
+            ...paymentFormData,
+            amount: newAmount,
+        });
     };
 
     const handleLinkCopy = () => {
@@ -89,7 +109,7 @@ function CreatePayment() {
                         >
                             <div className="row">
                                 <div className="col-md-6 mt-3">
-                                    <label className="form-label">Title</label>
+                                    <label className="form-label">Título</label><hr></hr>
                                     <input
                                         type="text"
                                         className="form-control"
@@ -104,17 +124,14 @@ function CreatePayment() {
                                     />
                                 </div>
                                 <div className="col-md-6 mt-3">
-                                    <label className="form-label">Amount USD <span>(TRM: ${paymentFormData.trm * 0.97} )</span></label>
+                                    <label className="form-label">Monto en USD <span> | (TRM: <b>${(paymentFormData.trm * 0.98).toLocaleString()} )</b></span> | <p>Ud recibirá: <b>${amountBankFiat.toLocaleString()}</b> COP en su cuenta de banco</p>
+                                    </label>
                                     <input
                                         type="number"
                                         className="form-control"
                                         placeholder={paymentFormData.amount}
-                                        onChange={(e) =>
-                                            setPaymentFormData({
-                                                ...paymentFormData,
-                                                amount: e.target.value,
-                                            })
-                                        }
+                                        value={paymentFormData.amount} // Usar el valor actual de amount
+                                        onChange={handleAmountChange} // Usar la nueva función de cambio
                                         required
                                     />
                                 </div>
@@ -186,8 +203,7 @@ function CreatePayment() {
                             className="bi bi-check-circle text-success"
                         ></i>
 
-                        <p>Invoice Successfully Created</p>
-                        <p> Kindy copy the invoice link below to share</p>
+                        <p>Link de pago creado correctamente</p>
 
                         <div
                             onClick={handleLinkCopy}
@@ -197,7 +213,7 @@ function CreatePayment() {
                         </div>
 
                         <small style={{ fontSize: "80%" }} className="small">
-                            kinldy click on the green box to copy
+                        <p> Clic en el link para copiar</p>
                         </small>
                     </div>
                 )}
