@@ -59,7 +59,7 @@ function PaymentHistory() {
         () => [
             {
                 Header: 'Invoice/Deposit ID',
-                accessor: 'deposit_id',
+                accessor: '_id',
             },
             {
                 Header: 'Type',
@@ -168,17 +168,66 @@ function PaymentHistory() {
                     </div>
                     <div className="modal fade" id="largeModal" tabIndex="-1">
                         <div className="modal-dialog modal-xl">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Modal title</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Payment Details</h5>
+                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body">
-                                    <div>{selectedDeposit}</div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    {/* <button type="button" class="btn btn-primary">Save changes</button> */}
+                                <div className="modal-body">
+                                    {selectedDeposit && (
+                                        <div className="col-12 mb-5 p-3">
+                                            <div className="row">
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment ID</strong>
+                                                    <div>{selectedDeposit._id}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Type</strong>
+                                                    <div>{selectedDeposit.type}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Title</strong>
+                                                    <div>{selectedDeposit.title}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Network</strong>
+                                                    <div>{selectedDeposit.network}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Coin</strong>
+                                                    <div>{selectedDeposit.coin}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Address</strong>
+                                                    <div>{selectedDeposit.address}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Amount</strong>
+                                                    <div>{selectedDeposit.amount + selectedDeposit.coin} </div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Status</strong>
+                                                    <div>{selectedDeposit.status}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Consolidation Status</strong>
+                                                    <div>{selectedDeposit.consolidation_status}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Date Created</strong>
+                                                    <div>{new Date(selectedDeposit.createdAt).toLocaleString()}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Consolidation Status</strong>
+                                                    <div>{new Date(selectedDeposit.updatedAt).toLocaleString()}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Description</strong>
+                                                    <div>{selectedDeposit.description}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
