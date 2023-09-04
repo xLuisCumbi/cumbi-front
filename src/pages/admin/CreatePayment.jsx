@@ -124,7 +124,7 @@ function CreatePayment() {
                                     />
                                 </div>
                                 <div className="col-md-6 mt-3">
-                                    <label className="form-label">Monto en USD <span> | (TRM: <b>${(paymentFormData.trm * 0.98).toLocaleString()} )</b></span> | <p>Ud recibirá: <b>${amountBankFiat.toLocaleString()}</b> COP en su cuenta de banco</p>
+                                    <label className="form-label">Monto en USD <span> | (TRM: <b>${(paymentFormData.trm * 0.985).toLocaleString()} )</b></span> | <p>Ud recibirá: <b>${amountBankFiat.toLocaleString()}</b> COP en su cuenta de banco</p>
                                     </label>
                                     <input
                                         type="number"
