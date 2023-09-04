@@ -6,13 +6,14 @@ import PageLoading from "../../components/PageLoading";
 import "../..//assets/vendor/bootstrap/js/bootstrap.bundle.js";
 
 // Import react-table and its required components
-import { useTable } from 'react-table';
+import { useTable, usePagination } from 'react-table';
 
 function PaymentHistory() {
     const reqRef = useRef(false);
     const [loadingStatus, setLoadingStatus] = useState(true);
     const [deposits, setDeposits] = useState([]);
     const [selectedDeposit, setSelectedDeposit] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         if (reqRef.current) return;
@@ -38,6 +39,7 @@ function PaymentHistory() {
     const handleShowPaymentDetails = (i) => {
         const d = deposits[i];
         setSelectedDeposit(d);
+        setIsModalOpen(true);
         new bootstrap.Modal(document.getElementById('largeModal')).show();
     };
 
@@ -59,7 +61,7 @@ function PaymentHistory() {
         () => [
             {
                 Header: 'Invoice/Deposit ID',
-                accessor: 'deposit_id',
+                accessor: '_id',
             },
             {
                 Header: 'Type',
@@ -113,15 +115,23 @@ function PaymentHistory() {
         []
     );
 
-    const tableInstance = useTable({ columns, data: deposits });
+    const tableInstance = useTable(
+        { columns, data: deposits },
+        usePagination);
 
     // Access the table instance properties
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        rows,
+        page, // Cambia 'rows' a 'page'
         prepareRow,
+        previousPage,
+        nextPage,
+        canPreviousPage,
+        canNextPage,
+        pageCount,
+        state: { pageIndex }, // Agrega esta línea para obtener el índice de la página actual
     } = tableInstance;
 
     if (loadingStatus) {
@@ -151,7 +161,7 @@ function PaymentHistory() {
                                 ))}
                             </thead>
                             <tbody {...getTableBodyProps()}>
-                                {rows.map((row) => {
+                                {page.map((row) => {
                                     prepareRow(row);
                                     return (
                                         <tr {...row.getRowProps()}>
@@ -164,21 +174,92 @@ function PaymentHistory() {
                                     );
                                 })}
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colSpan={columns.length}>
+                                        <div className="pagination d-flex justify-content-between align-items-center">
+                                            <div className="pagination-navigation">
+                                                <button onClick={() => previousPage()} disabled={!canPreviousPage} className="btn btn-light btn-sm">
+                                                    Previous
+                                                </button>
+                                                <button onClick={() => nextPage()} disabled={!canNextPage} className="btn btn-light btn-sm">
+                                                    Next
+                                                </button>
+                                            </div>
+                                            <div className="pagination-info">
+                                                Page {pageIndex + 1} of {pageCount}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
-                    <div className="modal fade" id="largeModal" tabIndex="-1">
+                    <div className="modal fade" id="largeModal" tabIndex="-1" style={{ display: isModalOpen ? 'block' : 'none' }}>
                         <div className="modal-dialog modal-xl">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Modal title</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Payment Details</h5>
+                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body">
-                                    <div>{selectedDeposit}</div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    {/* <button type="button" class="btn btn-primary">Save changes</button> */}
+                                <div className="modal-body">
+                                    {selectedDeposit ? ( // Verifica si selectedDeposit no es null
+
+                                        <div className="col-12 mb-5 p-3">
+                                            <div className="row">
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment ID</strong>
+                                                    <div>{selectedDeposit._id}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Type</strong>
+                                                    <div>{selectedDeposit.type}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Title</strong>
+                                                    <div>{selectedDeposit.title}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Network</strong>
+                                                    <div>{selectedDeposit.network}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Coin</strong>
+                                                    <div>{selectedDeposit.coin}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Address</strong>
+                                                    <div>{selectedDeposit.address}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Amount</strong>
+                                                    <div>{selectedDeposit.amount + selectedDeposit.coin} </div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Status</strong>
+                                                    <div>{selectedDeposit.status}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Consolidation Status</strong>
+                                                    <div>{selectedDeposit.consolidation_status}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Date Created</strong>
+                                                    <div>{new Date(selectedDeposit.createdAt).toLocaleString()}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Consolidation Status</strong>
+                                                    <div>{new Date(selectedDeposit.updatedAt).toLocaleString()}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Description</strong>
+                                                    <div>{selectedDeposit.description}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <p>No payment selected.</p>
+                                    )}
                                 </div>
                             </div>
                         </div>

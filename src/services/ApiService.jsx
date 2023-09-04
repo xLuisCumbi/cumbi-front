@@ -151,6 +151,24 @@ const ApiService = {
           }
         );
     });
+  },
+
+  updateMnemonic(endpoint, data = {}) {
+    return new Promise((resolve, reject) => {
+      ;
+      axios
+        .post(config.settingsUrl + endpoint, data, {
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
   }
 
 };

@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import PageTitle from "../../components/PageTitle";
 import Alert from "../../components/Alert";
-import ApiService from '../../services/ApiService';
+import ApiService from "../../services/ApiService";
 import PageLoading from "../../components/PageLoading";
 import "../../assets/vendor/bootstrap/js/bootstrap.bundle.js";
 
 // Import react-table and its required components
-import { useTable } from 'react-table';
+import { useTable } from "react-table";
 
 function ListUser() {
     const reqRef = useRef(false);
@@ -29,9 +29,9 @@ function ListUser() {
                 }
             })
             .catch((err) => {
-                console.log('err', err);
-                console.log('stack', err.stack);
-                Alert('failed', 'Error in fetching users', 3);
+                console.log("err", err);
+                console.log("stack", err.stack);
+                Alert("failed", "Error in fetching users", 3);
                 setLoadingStatus(false);
             });
     }
@@ -56,8 +56,8 @@ function ListUser() {
     const columns = React.useMemo(
         () => [
             {
-                Header: 'Username',
-                accessor: 'username',
+                Header: "Username",
+                accessor: "username",
             },
             {
                 Header: 'Business',
@@ -68,17 +68,17 @@ function ListUser() {
                 accessor: 'email',
             },
             {
-                Header: 'Role',
-                accessor: 'role',
+                Header: "Role",
+                accessor: "role",
             },
             {
-                Header: 'Action',
+                Header: "Action",
                 Cell: ({ row }) => (
                     <>
                         <a className="btn" onClick={() => navigate('/admin/create-user')}>
                             <i className="bi bi-pencil"></i>
                         </a>
-                        <a className="btn" onClick={() => navigate('/admin/create-user')}>
+                        <a className="btn" onClick={() => navigate("/admin/create-user")}>
                             <i className="bi bi-person-dash"></i>
                         </a>
                         <a className="btn" style={{ color: "red" }} onClick={() => deleteUser(row.original._id)}>
@@ -94,13 +94,8 @@ function ListUser() {
     const tableInstance = useTable({ columns, data: users });
 
     // Access the table instance properties
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        rows,
-        prepareRow,
-    } = tableInstance;
+    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+        tableInstance;
 
     if (loadingStatus) {
         return <PageLoading />;
@@ -126,43 +121,41 @@ function ListUser() {
                                             </th>
                                         ))}
                                     </tr>
-                                ))}
-                            </thead>
-                            <tbody {...getTableBodyProps()}>
-                                {rows.map((row) => {
-                                    prepareRow(row);
-                                    return (
-                                        <tr {...row.getRowProps()}>
-                                            {row.cells.map((cell) => (
-                                                <td {...cell.getCellProps()} scope="row">
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            ))}
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="modal fade" id="largeModal" tabIndex="-1">
-                        <div className="modal-dialog modal-xl">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title">Modal title</h5>
-                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div className="modal-body">
-                                    <div></div>
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    {/* <button type="button" class="btn btn-primary">Save changes</button> */}
-                                </div>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="modal fade" id="largeModal" tabIndex="-1">
+                    <div className="modal-dialog modal-xl">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Modal title</h5>
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                            <div className="modal-body">
+                                <div></div>
+                            </div>
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    data-bs-dismiss="modal"
+                                >
+                                    Close
+                                </button>
+                                {/* <button type="button" class="btn btn-primary">Save changes</button> */}
                             </div>
                         </div>
                     </div>
-                </section>
-            </>
+                </div>
+            </section>
+        </>
     );
 }
 

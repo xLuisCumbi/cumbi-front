@@ -6,7 +6,7 @@ import ApiService from '../../services/ApiService';
 function CreateToken() {
 
     const [tokenFormData, setTokenFormData] = useState({
-        token_name: 'Woocommerce API Token',
+        token_name: 'API Token',
     });
 
     const handleFormSubmit = e => {
