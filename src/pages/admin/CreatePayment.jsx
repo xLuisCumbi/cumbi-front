@@ -5,21 +5,34 @@ import ApiService from "../../services/ApiService";
 
 function CreatePayment() {
     // Get the user data from local storage
-    const user = JSON.parse(localStorage.getItem('user'));
-
+    const userLocal = JSON.parse(localStorage.getItem('user'));
+    const [user, setUser] = useState({
+        payment_fee: 0
+    })
+    const [business, setBusiness] = useState({
+        payment_fee: 0
+    })
     const [paymentFormData, setPaymentFormData] = useState({
         title: "Título",
         amount: 0,
         network: "TRON",
         coin: "USDT",
         description: "Descripción corta de la cuenta de cobro",
-        user: user.id, // use the user's ID from local storage
+        user: userLocal.id, // use the user's ID from local storage
         trm: 0,
+        trm_house: 0,
+        amount_fiat: 0,
+        coin_fiat: "COP",
     });
     const [paymentCreated, setPaymentCreated] = useState({
         value: false,
         link: "",
     });
+    const [setting, setSetting] = useState({
+        trm: 0,
+        perc_buy_house: 0,
+        perc_cumbi: 0
+    })
 
     const [amountBankFiat, setAmountBankFiat] = useState(0);
 
@@ -35,7 +48,7 @@ function CreatePayment() {
         }
 
         // Calcular el valor de amountBankFiat
-        const calculatedAmountBankFiat = paymentFormData.trm * 0.97 * paymentFormData.amount - (paymentFormData.trm * 0.97 * paymentFormData.amount * 0.03);
+        const calculatedAmountBankFiat = setting.trm * 0.97 * paymentFormData.amount - (setting.trm * 0.97 * paymentFormData.amount * 0.03);
         setAmountBankFiat(calculatedAmountBankFiat);
 
         Alert("success", "loading", 30);
@@ -46,7 +59,7 @@ function CreatePayment() {
                         value: true,
                         link: response.invoiceObj.invoice_url,
                     });
-                    Alert("success", "", 0);
+                    Alert("success", "Invoice created", 3);
                 }
             },
             (err) => {
@@ -61,7 +74,14 @@ function CreatePayment() {
     // Función para actualizar paymentFormData.amount y calcular amountBankFiat
     const handleAmountChange = (e) => {
         const newAmount = e.target.value;
-        const calculatedAmountBankFiat = paymentFormData.trm * 0.97 * newAmount - (paymentFormData.trm * 0.97 * newAmount * 0.03);
+        if (newAmount <= 0) {
+            Alert("failed", "El valor debe ser positivo", 2);
+            return;
+        }
+
+        // const calculatedAmountBankFiat = setting.trm * 0.97 * newAmount - (setting.trm * 0.97 * newAmount * 0.03);
+        const perc_cumbi_fiat = (100 - setting.perc_cumbi) / 100;
+        const calculatedAmountBankFiat = newAmount * paymentFormData.trm_house * perc_cumbi_fiat;
 
         setAmountBankFiat(calculatedAmountBankFiat);
 
@@ -76,23 +96,63 @@ function CreatePayment() {
         Alert("success", "Link copied successfully", 2);
     };
 
-
-    useEffect(() => {
-        ApiService.get("/trm").then(
+    function getSettingCumbi() {
+        ApiService.getSetting("").then(
             (response) => {
-                if (response.status === "success")
+                if (response.status === "success") {
+                    setSetting(response.setting)
                     setPaymentFormData({
                         ...paymentFormData,
-                        trm: response.value,
+                        trm: response.setting.trm,
+                        trm_house: response.setting.trm * (100 - response.setting.perc_buy_house) / 100,
                     })
+                }
             },
             (err) => {
-                // console.log('paymentFormData in response', paymentFormData);
                 console.log('err', err);
                 console.log('err.stack', err.stack);
-                // Alert("failed", "Error in creating invoice", 3);
             }
         )
+    }
+
+    function getBusiness() {
+        // ApiService.getBusiness().then(
+        //     (response) => {
+        //         if (response.status === "success") {
+        //             setUser(response.user)
+        //             if (response.user.role !== "person")
+        //                 getBusiness()
+        //         }
+
+        //     },
+        //     (err) => {
+        //         console.log('err', err);
+        //         console.log('err.stack', err.stack);
+        //     }
+        // )
+    }
+
+    function getCurrentUser() {
+        ApiService.get(userLocal.id).then(
+            (response) => {
+                if (response.status === "success") {
+                    setUser(response.user)
+                    if (response.user.role !== "person")
+                        getBusiness()
+                }
+
+            },
+            (err) => {
+                console.log('err', err);
+                console.log('err.stack', err.stack);
+            }
+        )
+    }
+
+    useEffect(() => {
+        getSettingCumbi()
+        getCurrentUser()
+        console.log(userLocal)
     }, []);
 
     return (
@@ -109,7 +169,29 @@ function CreatePayment() {
                         >
                             <div className="row">
                                 <div className="col-md-6 mt-3">
-                                    <label className="form-label">Título</label><hr></hr>
+                                    <label className="form-label">
+                                        Monto en USD
+                                    </label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        placeholder={paymentFormData.amount}
+                                        value={paymentFormData.amount} // Usar el valor actual de amount
+                                        onChange={handleAmountChange} // Usar la nueva función de cambio
+                                        required
+                                        min={0}
+                                    />
+                                </div>
+                                <div className="col-md-6 mt-3">
+                                    <label>
+                                        <p>
+                                            TRM: <b>${(paymentFormData.trm_house).toLocaleString()}</b><br />
+                                            Ud recibirá: <b>${amountBankFiat.toLocaleString()}</b> COP en su cuenta de banco
+                                        </p>
+                                    </label>
+                                </div>
+                                <div className="col-md-6 mt-3">
+                                    <label className="form-label">Título</label>
                                     <input
                                         type="text"
                                         className="form-control"
@@ -120,18 +202,6 @@ function CreatePayment() {
                                                 title: e.target.value,
                                             })
                                         }
-                                        required
-                                    />
-                                </div>
-                                <div className="col-md-6 mt-3">
-                                    <label className="form-label">Monto en USD <span> | (TRM: <b>${(paymentFormData.trm * 0.985).toLocaleString()} )</b></span> | <p>Ud recibirá: <b>${amountBankFiat.toLocaleString()}</b> COP en su cuenta de banco</p>
-                                    </label>
-                                    <input
-                                        type="number"
-                                        className="form-control"
-                                        placeholder={paymentFormData.amount}
-                                        value={paymentFormData.amount} // Usar el valor actual de amount
-                                        onChange={handleAmountChange} // Usar la nueva función de cambio
                                         required
                                     />
                                 </div>
@@ -195,7 +265,7 @@ function CreatePayment() {
                                 </div>
                             </div>
                         </form>
-                    </div>
+                    </div >
                 ) : (
                     <div className="col-md-8 m-auto mb-3 mt-5 text-center ">
                         <i
@@ -213,11 +283,12 @@ function CreatePayment() {
                         </div>
 
                         <small style={{ fontSize: "80%" }} className="small">
-                        <p> Clic en el link para copiar</p>
+                            <p> Clic en el link para copiar</p>
                         </small>
                     </div>
-                )}
-            </div>
+                )
+                }
+            </div >
         </>
     );
 }

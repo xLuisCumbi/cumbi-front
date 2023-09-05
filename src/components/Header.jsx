@@ -28,7 +28,10 @@ export default function Header() {
 
         <nav className="header-nav ms-auto px-5">
           <ul className="d-flex align-items-center">
-            <li>{user.username.substring(0, 10).toUpperCase()}</li>
+            <li>
+              {user.username.substring(0, 10).toUpperCase()} 
+              <span > ({user.role})</span>
+            </li>
             <li className="nav-item d-block">
               <i onClick={handleSidebarToggle} className="bi bi-list toggle-sidebar-btn"></i>
             </li>

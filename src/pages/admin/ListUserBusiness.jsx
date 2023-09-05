@@ -19,7 +19,6 @@ function ListUserBusiness() {
         reqRef.current = true;
 
         const user = JSON.parse(localStorage.getItem('user'));
-        console.log(user)
         ApiService.post('/business', user)
             .then((response) => {
                 if (response.status === "success") {
