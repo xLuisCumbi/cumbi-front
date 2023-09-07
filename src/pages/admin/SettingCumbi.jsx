@@ -6,6 +6,7 @@ import ApiService from "../../services/ApiService";
 function SettingCumbi() {
     const [setting, setSetting] = useState({
         trm: 0,
+        date_trm: 0,
         perc_buy_house: 0,
         perc_cumbi: 0,
     });
@@ -38,6 +39,41 @@ function SettingCumbi() {
         )
     }
 
+    function timestamp2date(timestamp) {
+        if (!timestamp)
+            return
+        timestamp = parseInt(timestamp, 10);
+        const fecha = new Date(timestamp * 1000);
+
+        // Obtiene los componentes de fecha (día, mes, año, hora, minutos, segundos)
+        const dia = fecha.getDate();
+        const mes = fecha.getMonth() + 1; // Los meses se indexan desde 0
+        const anno = fecha.getFullYear();
+        const hora = fecha.getHours();
+        const minutos = fecha.getMinutes();
+        const segundos = fecha.getSeconds();
+
+        // Formatea la fecha en un formato legible por humanos
+        const fechaLegible = `${anno}/${mes}/${dia} ${hora}:${minutos}:${segundos}`;
+        return fechaLegible;
+    }
+
+    const getTRM = (e) => {
+        e.preventDefault();
+
+        ApiService.getSetting("/trm").then(
+            (response) => {
+                if (response.status === "success")
+                    setSetting({ ...setting, trm: response.trm, date_trm: response.date })
+                console.log(timestamp2date(response.date))
+            },
+            (err) => {
+                console.log('err', err);
+                console.log('err.stack', err.stack);
+            }
+        )
+    }
+
 
     useEffect(() => {
         getSettingCumbi()
@@ -54,7 +90,7 @@ function SettingCumbi() {
                     onSubmit={handleFormSubmit}
                 >
                     <div className="row">
-                        <div className="col-md-6 mt-3">
+                        <div className="col-md-3 mt-3">
                             <label className="form-label">TRM [COP]</label>
                             <input
                                 type="number"
@@ -63,6 +99,12 @@ function SettingCumbi() {
                                 readOnly
                                 required
                             />
+                        </div>
+                        <div className="col-md-3 mt-3">
+                            <label className="form-label">Last update: {timestamp2date(setting.date_trm)}</label>
+                            <button className="btn btn-primary text-white" onClick={getTRM}>
+                                Update TRM
+                            </button>
                         </div>
 
                         <div className="col-md-6 mt-3">
