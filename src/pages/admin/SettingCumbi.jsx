@@ -65,7 +65,6 @@ function SettingCumbi() {
             (response) => {
                 if (response.status === "success")
                     setSetting({ ...setting, trm: response.trm, date_trm: response.date })
-                console.log(timestamp2date(response.date))
             },
             (err) => {
                 console.log('err', err);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PageTitle from "../../components/PageTitle";
 import Alert from "../../components/Alert";
 import ApiService from "../../services/ApiService";
@@ -6,11 +6,17 @@ import ApiService from "../../services/ApiService";
 function CreatePayment() {
     // Get the user data from local storage
     const userLocal = JSON.parse(localStorage.getItem('user'));
+
     const [user, setUser] = useState({
         payment_fee: 0
     })
     const [business, setBusiness] = useState({
         payment_fee: 0
+    })
+    const [setting, setSetting] = useState({
+        trm: 0,
+        perc_buy_house: 0,
+        perc_cumbi: 0
     })
     const [paymentFormData, setPaymentFormData] = useState({
         title: "Título",
@@ -23,19 +29,13 @@ function CreatePayment() {
         trm_house: 0,
         amount_fiat: 0,
         coin_fiat: "COP",
+        payment_fee: 0,
     });
     const [paymentCreated, setPaymentCreated] = useState({
         value: false,
         link: "",
     });
-    const [setting, setSetting] = useState({
-        trm: 0,
-        perc_buy_house: 0,
-        perc_cumbi: 0
-    })
-
-    const [amountBankFiat, setAmountBankFiat] = useState(0);
-
+    const percUser = useMemo(() => getPercUser(), [user, business, setting]);
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
@@ -46,10 +46,6 @@ function CreatePayment() {
                 return;
             }
         }
-
-        // Calcular el valor de amountBankFiat
-        const calculatedAmountBankFiat = setting.trm * 0.97 * paymentFormData.amount - (setting.trm * 0.97 * paymentFormData.amount * 0.03);
-        setAmountBankFiat(calculatedAmountBankFiat);
 
         Alert("success", "loading", 30);
         ApiService.post("/create-invoice", { ...paymentFormData }).then(
@@ -79,15 +75,15 @@ function CreatePayment() {
             return;
         }
 
-        // const calculatedAmountBankFiat = setting.trm * 0.97 * newAmount - (setting.trm * 0.97 * newAmount * 0.03);
-        const perc_cumbi_fiat = (100 - setting.perc_cumbi) / 100;
-        const calculatedAmountBankFiat = newAmount * paymentFormData.trm_house * perc_cumbi_fiat;
-
-        setAmountBankFiat(calculatedAmountBankFiat);
+        // Calcular el valor de amountBankFiat
+        const amountHouseFiat = paymentFormData.trm_house * newAmount;
+        const calculatedAmountBankFiat = amountHouseFiat * value2Perc(percUser);
 
         setPaymentFormData({
             ...paymentFormData,
             amount: newAmount,
+            amount_fiat: calculatedAmountBankFiat,
+            payment_fee: percUser,
         });
     };
 
@@ -104,7 +100,7 @@ function CreatePayment() {
                     setPaymentFormData({
                         ...paymentFormData,
                         trm: response.setting.trm,
-                        trm_house: response.setting.trm * (100 - response.setting.perc_buy_house) / 100,
+                        trm_house: response.setting.trm * value2Perc(response.setting.perc_buy_house),
                     })
                 }
             },
@@ -115,30 +111,12 @@ function CreatePayment() {
         )
     }
 
-    function getBusiness() {
-        // ApiService.getBusiness().then(
-        //     (response) => {
-        //         if (response.status === "success") {
-        //             setUser(response.user)
-        //             if (response.user.role !== "person")
-        //                 getBusiness()
-        //         }
+    function getBusiness(id) {
 
-        //     },
-        //     (err) => {
-        //         console.log('err', err);
-        //         console.log('err.stack', err.stack);
-        //     }
-        // )
-    }
-
-    function getCurrentUser() {
-        ApiService.get(userLocal.id).then(
+        ApiService.getBusiness(`/${id}`).then(
             (response) => {
                 if (response.status === "success") {
-                    setUser(response.user)
-                    if (response.user.role !== "person")
-                        getBusiness()
+                    setBusiness(response.business)
                 }
 
             },
@@ -149,10 +127,42 @@ function CreatePayment() {
         )
     }
 
+    function getCurrentUser() {
+        ApiService.get(userLocal.id).then(
+            (response) => {
+                if (response.status === "success") {
+                    setUser(response.user)
+                    if (response.user.role !== "person" && response.user.business)
+                        getBusiness(response.user.business)
+                }
+
+            },
+            (err) => {
+                console.log('err', err);
+                console.log('err.stack', err.stack);
+            }
+        )
+    }
+
+    function getPercUser() {
+        let payment_fee = 0
+        if (user.payment_fee && user.payment_fee > 0) {
+            payment_fee = user.payment_fee
+        } else if (business.payment_fee && business.payment_fee > 0) {
+            payment_fee = business.payment_fee
+        } else {
+            payment_fee = setting.perc_cumbi
+        }
+        return payment_fee
+    }
+
+    function value2Perc(value) {
+        return (100 - value) / 100
+    }
+
     useEffect(() => {
         getSettingCumbi()
         getCurrentUser()
-        console.log(userLocal)
     }, []);
 
     return (
@@ -186,7 +196,7 @@ function CreatePayment() {
                                     <label>
                                         <p>
                                             TRM: <b>${(paymentFormData.trm_house).toLocaleString()}</b><br />
-                                            Ud recibirá: <b>${amountBankFiat.toLocaleString()}</b> COP en su cuenta de banco
+                                            Ud recibirá: <b>${paymentFormData.amount_fiat.toLocaleString()}</b> COP en su cuenta de banco
                                         </p>
                                     </label>
                                 </div>
