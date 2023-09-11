@@ -30,16 +30,16 @@ function CreatePayment() {
         amount_fiat: 0,
         coin_fiat: "COP",
         payment_fee: 0,
+        type_payment_fee: "cumbi"
     });
     const [paymentCreated, setPaymentCreated] = useState({
         value: false,
         link: "",
     });
-    const percUser = useMemo(() => getPercUser(), [user, business, setting]);
+    const [percUser, typePercUser] = useMemo(() => getPercUser(), [user, business, setting]);
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
-
         for (let i in paymentFormData) {
             if (paymentFormData[i] === "") {
                 Alert("failed", `input ${i} is required`, 3);
@@ -84,6 +84,7 @@ function CreatePayment() {
             amount: newAmount,
             amount_fiat: calculatedAmountBankFiat,
             payment_fee: percUser,
+            type_payment_fee: typePercUser
         });
     };
 
@@ -145,15 +146,18 @@ function CreatePayment() {
     }
 
     function getPercUser() {
-        let payment_fee = 0
+        let payment_fee = 0, type_payment_fee = ""
         if (user.payment_fee && user.payment_fee > 0) {
             payment_fee = user.payment_fee
+            type_payment_fee = "person"
         } else if (business.payment_fee && business.payment_fee > 0) {
             payment_fee = business.payment_fee
+            type_payment_fee = "business"
         } else {
             payment_fee = setting.perc_cumbi
+            type_payment_fee = "cumbi"
         }
-        return payment_fee
+        return [payment_fee, type_payment_fee]
     }
 
     function value2Perc(value) {

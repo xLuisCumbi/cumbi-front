@@ -9,52 +9,11 @@ import "../..//assets/vendor/bootstrap/js/bootstrap.bundle.js";
 import { useTable, usePagination } from 'react-table';
 
 function PaymentHistory() {
-    const reqRef = useRef(false);
+    // const reqRef = useRef(false);
     const [loadingStatus, setLoadingStatus] = useState(true);
     const [deposits, setDeposits] = useState([]);
     const [selectedDeposit, setSelectedDeposit] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    useEffect(() => {
-        if (reqRef.current) return;
-        reqRef.current = true;
-
-        const user = JSON.parse(localStorage.getItem('user'));
-
-        ApiService.post('/fetch-deposits', { user }) // Pass the user
-            .then((response) => {
-                if (response.status === "success") {
-                    setDeposits(response.deposits || []);
-                    setLoadingStatus(false);
-                }
-            })
-            .catch((err) => {
-                console.log('err', err);
-                console.log('stack', err.stack);
-                Alert('failed', 'Error in fetching deposits', 3);
-                setLoadingStatus(false); // Set loading status to false even in case of an error
-            });
-    }, []);
-
-    const handleShowPaymentDetails = (i) => {
-        const d = deposits[i];
-        setSelectedDeposit(d);
-        setIsModalOpen(true);
-        new bootstrap.Modal(document.getElementById('largeModal')).show();
-    };
-
-    const handlePaymentConsolidation = (deposit_id) => {
-        Alert('success', 'loading', 30);
-        ApiService.post('/consolidate-payment', { deposit_id })
-            .then((response) => {
-                if (response.status === "success") {
-                    Alert('success', 'Success: payment set for consolidation within a minute', 3);
-                }
-            })
-            .catch((err) => {
-                Alert('failed', 'Error in sending request', 3);
-            });
-    };
 
     // Use react-table to define the columns and data for the table
     const columns = React.useMemo(
@@ -84,17 +43,6 @@ function PaymentHistory() {
                 accessor: 'status',
             },
             {
-                Header: 'Action',
-                Cell: ({ row }) => (
-                    <button
-                        className="btn btn-primary text-white btn-sm w-100"
-                        onClick={() => handleShowPaymentDetails(row.index)}
-                    >
-                        View More
-                    </button>
-                ),
-            },
-            {
                 Header: 'Consolidation',
                 Cell: ({ row }) => (
                     <>
@@ -111,13 +59,91 @@ function PaymentHistory() {
                     </>
                 ),
             },
+            {
+                Header: 'Date',
+                Cell: ({ row }) => string2date(row.original.createdAt),
+            },
+            {
+                Header: 'Action',
+                Cell: ({ row }) => (
+                    <button
+                        className="btn btn-primary text-white btn-sm w-100"
+                        onClick={() => handleShowPaymentDetails(row.index)}
+                    >
+                        View More
+                    </button>
+                ),
+            },
         ],
-        []
+        [deposits]
     );
 
     const tableInstance = useTable(
         { columns, data: deposits },
         usePagination);
+
+    useEffect(() => {
+        // if (reqRef.current) return;
+        // reqRef.current = true;
+        getDeposits()
+
+    }, []);
+
+
+    const handleShowPaymentDetails = (i) => {
+        const d = deposits[i];
+        setSelectedDeposit(d);
+        setIsModalOpen(true);
+        new bootstrap.Modal(document.getElementById('largeModal')).show();
+    };
+
+    const handlePaymentConsolidation = (deposit_id) => {
+        Alert('success', 'loading', 30);
+        ApiService.post('/consolidate-payment', { deposit_id })
+            .then((response) => {
+                if (response.status === "success") {
+                    Alert('success', 'Success: payment set for consolidation within a minute', 3);
+                }
+            })
+            .catch((err) => {
+                Alert('failed', 'Error in sending request', 3);
+            });
+    };
+
+    function string2date(date) {
+        const fecha = new Date(date);
+
+        // Obtiene los componentes de fecha (día, mes, año, hora, minutos, segundos)
+        const dia = fecha.getDate();
+        const mes = fecha.getMonth() + 1; // Los meses se indexan desde 0
+        const anno = fecha.getFullYear();
+        const hora = fecha.getHours();
+        const minutos = fecha.getMinutes();
+        const segundos = fecha.getSeconds();
+
+        // Formatea la fecha en un formato legible por humanos
+        const fechaLegible = `${anno}/${mes}/${dia} ${hora}:${minutos}:${segundos}`;
+        return fechaLegible;
+    }
+
+    function getDeposits() {
+        const user = JSON.parse(localStorage.getItem('user'));
+        // setTest("success")
+        ApiService.post('/fetch-deposits', { user }) // Pass the user
+            .then((response) => {
+                if (response.status === "success") {
+                    setDeposits(response.deposits);
+                    setLoadingStatus(false);
+                    // setTest("success")
+                }
+            })
+            .catch((err) => {
+                console.log('err', err);
+                console.log('stack', err.stack);
+                Alert('failed', 'Error in fetching deposits', 3);
+                setLoadingStatus(false); // Set loading status to false even in case of an error
+            });
+    }
 
     // Access the table instance properties
     const {
@@ -133,10 +159,6 @@ function PaymentHistory() {
         pageCount,
         state: { pageIndex }, // Agrega esta línea para obtener el índice de la página actual
     } = tableInstance;
-
-    if (loadingStatus) {
-        return <PageLoading />;
-    }
 
     if (!deposits || !Array.isArray(deposits)) {
         return <div>No data available</div>; // Display a message if the data is not available or not an array
@@ -233,7 +255,7 @@ function PaymentHistory() {
                                                 </div>
                                                 <div className="col-12 col-sm-4 mt-3">
                                                     <strong>Payment Amount</strong>
-                                                    <div>{selectedDeposit.amount + selectedDeposit.coin} </div>
+                                                    <div>{selectedDeposit.amount.toLocaleString()} {selectedDeposit.coin} </div>
                                                 </div>
                                                 <div className="col-12 col-sm-4 mt-3">
                                                     <strong>Payment Status</strong>
@@ -245,15 +267,27 @@ function PaymentHistory() {
                                                 </div>
                                                 <div className="col-12 col-sm-4 mt-3">
                                                     <strong>Date Created</strong>
-                                                    <div>{new Date(selectedDeposit.createdAt).toLocaleString()}</div>
-                                                </div>
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <strong>Consolidation Status</strong>
-                                                    <div>{new Date(selectedDeposit.updatedAt).toLocaleString()}</div>
+                                                    <div>{string2date(selectedDeposit.createdAt)}</div>
                                                 </div>
                                                 <div className="col-12 col-sm-4 mt-3">
                                                     <strong>Payment Description</strong>
                                                     <div>{selectedDeposit.description}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>TRM</strong>
+                                                    <div>{selectedDeposit?.trm_house?.toLocaleString()} {selectedDeposit.coin_fiat}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Fiat</strong>
+                                                    <div>{selectedDeposit?.amount_fiat?.toLocaleString()} {selectedDeposit.coin_fiat}</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Payment Fee</strong>
+                                                    <div>{selectedDeposit.payment_fee} %</div>
+                                                </div>
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <strong>Type Payment Fee</strong>
+                                                    <div>{selectedDeposit.type_payment_fee}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -266,6 +300,7 @@ function PaymentHistory() {
                     </div>
                 </section>
             </>
+
     );
 }
 
