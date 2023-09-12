@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import PageTitle from "../../components/PageTitle";
 import Alert from "../../components/Alert";
-import ApiService from "../../services/ApiService";
+import ApiService from '../../services/ApiService';
 import PageLoading from "../../components/PageLoading";
 import "../../assets/vendor/bootstrap/js/bootstrap.bundle.js";
 
 // Import react-table and its required components
-import { useTable } from "react-table";
+import { useTable } from 'react-table';
 
-function ListUser() {
+function ListUserBusiness() {
     const reqRef = useRef(false);
     const [loadingStatus, setLoadingStatus] = useState(true);
     const [users, setUsers] = useState([]);
@@ -17,11 +17,9 @@ function ListUser() {
     useEffect(() => {
         if (reqRef.current) return;
         reqRef.current = true;
-        getUsers()
-    });
 
-    const getUsers = () => {
-        ApiService.get('')
+        const user = JSON.parse(localStorage.getItem('user'));
+        ApiService.post('/business', user)
             .then((response) => {
                 if (response.status === "success") {
                     setUsers(response.users || []);
@@ -29,59 +27,49 @@ function ListUser() {
                 }
             })
             .catch((err) => {
-                console.log("err", err);
-                console.log("stack", err.stack);
-                Alert("failed", "Error in fetching users", 3);
-                setLoadingStatus(false);
-            });
-    }
-
-    const deleteUser = (id) => {
-        return;
-        ApiService.delete(id)
-            .then((response) => {
-                if (response.status === "success") {
-                    Alert('success', 'User Deleted', 3);
-                    getUsers()
-                }
-            })
-            .catch((err) => {
                 console.log('err', err);
                 console.log('stack', err.stack);
                 Alert('failed', 'Error in fetching users', 3);
+                setLoadingStatus(false);
             });
-    }
+
+    });
+
+
+
 
     // Use react-table to define the columns and data for the table
     const columns = React.useMemo(
         () => [
             {
-                Header: "Username",
-                accessor: "username",
-            },
-            {
-                Header: 'Business',
-                accessor: 'business',
+                Header: 'Username',
+                accessor: 'username',
             },
             {
                 Header: 'Email',
                 accessor: 'email',
             },
             {
-                Header: "Role",
-                accessor: "role",
+                Header: 'Role',
+                accessor: 'role',
             },
             {
-                Header: "Action",
+                Header: 'Action',
                 Cell: ({ row }) => (
                     <>
+                        {/* <button
+                            className="btn btn-primary text-white btn-sm"
+                            onClick={() => handleShowPaymentDetails(row.index)}
+                        >
+                            <i className="bi bi-person"></i>
+                        </button> */}
                         <a className="btn" onClick={() => navigate('/admin/create-user')}>
                             <i className="bi bi-pencil"></i>
                         </a>
-                        <a className="btn" onClick={() => navigate("/admin/create-user")}>
+                        <a className="btn" onClick={() => navigate('/admin/create-user')}>
                             <i className="bi bi-person-dash"></i>
                         </a>
-                        <a className="btn" style={{ color: "red" }} onClick={() => deleteUser(row.original._id)}>
+                        <a className="btn" style={{ color: "red" }} onClick={() => navigate('/admin/create-user')}>
                             <i className="bi bi-trash3"></i>
                         </a>
                     </>
@@ -94,8 +82,13 @@ function ListUser() {
     const tableInstance = useTable({ columns, data: users });
 
     // Access the table instance properties
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-        tableInstance;
+    const {
+        getTableProps,
+        getTableBodyProps,
+        headerGroups,
+        rows,
+        prepareRow,
+    } = tableInstance;
 
     if (loadingStatus) {
         return <PageLoading />;
@@ -137,7 +130,6 @@ function ListUser() {
                                     );
                                 })}
                             </tbody>
-
                         </table>
                     </div>
                     <div className="modal fade" id="largeModal" tabIndex="-1">
@@ -145,24 +137,13 @@ function ListUser() {
                             <div className="modal-content">
                                 <div className="modal-header">
                                     <h5 className="modal-title">Modal title</h5>
-                                    <button
-                                        type="button"
-                                        className="btn-close"
-                                        data-bs-dismiss="modal"
-                                        aria-label="Close"
-                                    ></button>
+                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div className="modal-body">
                                     <div></div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button
-                                        type="button"
-                                        className="btn btn-secondary"
-                                        data-bs-dismiss="modal"
-                                    >
-                                        Close
-                                    </button>
+                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                     {/* <button type="button" class="btn btn-primary">Save changes</button> */}
                                 </div>
                             </div>
@@ -173,4 +154,4 @@ function ListUser() {
     );
 }
 
-export default ListUser;
+export default ListUserBusiness;

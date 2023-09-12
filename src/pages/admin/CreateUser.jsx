@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import PageTitle from '../../components/PageTitle';
 import Alert from '../../components/Alert';
 import ApiService from '../../services/ApiService';
-import ListUser from './ListUser';
+import ListUserBusiness from './ListUserBusiness';
 
 function CreateUser() {
   const [roleCur, setRoleCur] = useState('')
@@ -13,8 +13,12 @@ function CreateUser() {
     email: '',
     password: '',
     role: 'person',
+    payment_fee: 0,
   });
-  // const [searchParams] = useSearchParams();
+  const [seed, setSeed] = useState(1);
+
+
+  const [person, setPerson] = useState({})
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -22,6 +26,9 @@ function CreateUser() {
     for (let key in userData) {
       if (key === 'business' && userData.role === 'person') {
         continue; // Omitir validación del campo "business" para roles "person".
+      }
+      if (key === 'payment_fee' && userData.role !== 'person') {
+        continue; // Omitir validación del campo "payment_fee" para roles diferentes de "person".
       }
 
       if (userData[key] === '' && key !== 'business') {
@@ -33,13 +40,20 @@ function CreateUser() {
     Alert('success', 'loading', 30);
     ApiService.post('/signup', { ...userData }).then(
       (response) => {
-        if (response.status === 'signUp_success') Alert('success', 'User Created', 3);
+        if (response.status === 'signUp_success') {
+          Alert('success', 'User Created', 3);
+          reset()
+        }
       },
       (err) => {
         Alert('failed', 'Error in creating user', 3);
       }
     );
   };
+
+  const reset = () => {
+    setSeed(Math.random());
+  }
 
   useEffect(() => {
 
@@ -49,16 +63,24 @@ function CreateUser() {
     if (user.role === 'admin')
       setUserData({
         ...userData,
-        business: user.business,
+        business: {
+          _id: user.business,
+          name: ''
+        },
       })
     ApiService.getBusiness('').then(
       (response) => {
         if (response.status === 'success') {
           setBusinessData(response.businesses)
+          try {
+            setPerson(response.businesses.filter(business => business.name === "Person")[0])
+          } catch (e) {
+            setPerson("00000000")
+          }
         }
       },
       (err) => {
-        Alert('failed', 'Error in creating business', 3);
+        Alert('failed', 'Error fetching business', 3);
       }
     );
 
@@ -92,7 +114,7 @@ function CreateUser() {
             <div className="col-md-6 mt-3">
               <label className="form-label">Email</label>
               <input
-                type="text"
+                type="email"
                 className="form-control"
                 value={userData.email}
                 onChange={(e) =>
@@ -125,17 +147,29 @@ function CreateUser() {
                 type="text"
                 className="form-control"
                 value={userData.role}
-                onChange={(e) =>
-                  setUserData({
-                    ...userData,
-                    role: e.target.value,
-                  })
+                onChange={(e) => {
+                  if (e.target.value === "person") {
+                    setUserData({
+                      ...userData,
+                      role: e.target.value,
+                      business: {
+                        _id: person._id,
+                        name: person.name
+                      }
+                    })
+                  }
+                  else
+                    setUserData({
+                      ...userData,
+                      role: e.target.value,
+                    })
+                }
                 }
                 required
               >
-                <option value="person">Person</option>
-                <option value="business">Business</option>
-                <option value="admin">Admin</option>
+                {roleCur === 'superadmin' && <option value="person">Person</option>}
+                <option value="business">Business Person</option>
+                <option value="admin">Business Admin</option>
               </select>
             </div>
             {/* solo el superadmin puede crear usuarios para empresas en específico */}
@@ -145,11 +179,14 @@ function CreateUser() {
                 <select
                   type="text"
                   className="form-control"
-                  value={userData.business}
+                  value={userData.business._id}
                   onChange={(e) =>
                     setUserData({
                       ...userData,
-                      business: e.target.value,
+                      business: {
+                        _id: e.target.value,
+                        name: e.target.options[e.target.selectedIndex].text
+                      }
                     })
                   }
                   required
@@ -158,6 +195,23 @@ function CreateUser() {
                     <option value={business._id} key={business._id}>{business.name}</option>)
                   }
                 </select>
+              </div>
+            }
+            {userData.role === "person" &&
+              <div className="col-md-6 mt-3">
+                <label className="form-label">Payment Fee [%]</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={userData.payment_fee}
+                  onChange={(e) =>
+                    setUserData({
+                      ...userData,
+                      payment_fee: e.target.value,
+                    })
+                  }
+                  required
+                />
               </div>
             }
             <div className="col-md-12 mt-4 text-center">
@@ -169,7 +223,7 @@ function CreateUser() {
           </div>
         </form>
       </div >
-      <ListUser />
+      <ListUserBusiness key={seed} />
     </div >
   );
 }

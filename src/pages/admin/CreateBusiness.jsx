@@ -8,10 +8,8 @@ function CreateBusiness() {
   const [businessData, setBusinessData] = useState({
     id_tax: '',
     name: '',
-    web: '',
-    country: '',
     email: '',
-    payment_fee: 0.03,
+    payment_fee: 0,
   });
 
   const handleFormSubmit = (e) => {
@@ -130,7 +128,7 @@ function CreateBusiness() {
               />
             </div>
             <div className="col-md-6 mt-3">
-              <label className="form-label">Payment Fee</label>
+              <label className="form-label">Payment Fee [%]</label>
               <input
                 type="number"
                 className="form-control"
