@@ -114,7 +114,7 @@ function SettingCumbi() {
                                 value={setting.perc_buy_house}
 
                                 onChange={(e) => {
-                                    if (e.target.value <= 0 || e.target.value >= 100) {
+                                    if (e.target.value < 0 || e.target.value >= 100) {
                                         Alert("failed", "Comisión Casa inválida", 1)
                                         return
                                     }
@@ -137,7 +137,7 @@ function SettingCumbi() {
                                 value={setting.perc_cumbi}
 
                                 onChange={(e) => {
-                                    if (e.target.value <= 0 || e.target.value >= 100) {
+                                    if (e.target.value < 0 || e.target.value >= 100) {
                                         Alert("failed", "Comisión Cumbi inválida", 1)
                                         return
                                     }

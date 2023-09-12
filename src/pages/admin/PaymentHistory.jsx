@@ -6,7 +6,7 @@ import PageLoading from "../../components/PageLoading";
 import "../..//assets/vendor/bootstrap/js/bootstrap.bundle.js";
 
 // Import react-table and its required components
-import { useTable, usePagination } from 'react-table';
+import { useTable, useFilters, useGlobalFilter, usePagination } from 'react-table';
 
 function PaymentHistory() {
     // const reqRef = useRef(false);
@@ -16,34 +16,43 @@ function PaymentHistory() {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Use react-table to define the columns and data for the table
+    // Define las columnas de la tabla
     const columns = React.useMemo(
         () => [
             {
                 Header: 'Invoice/Deposit ID',
                 accessor: '_id',
+                Filter: DefaultColumnFilter, // Componente de filtro predeterminado
             },
             {
                 Header: 'Type',
                 accessor: 'type',
+                Filter: DefaultColumnFilter,
             },
             {
                 Header: 'Amount',
                 accessor: 'amount',
+                Filter: DefaultColumnFilter,
             },
             {
                 Header: 'Network',
                 accessor: 'network',
+                Filter: DefaultColumnFilter,
             },
             {
                 Header: 'Coin',
                 accessor: 'coin',
+                Filter: DefaultColumnFilter,
             },
             {
                 Header: 'Status',
                 accessor: 'status',
+                Filter: DefaultColumnFilter,
             },
             {
                 Header: 'Consolidation',
+                accessor: 'consolidation_status',
+                Filter: DefaultColumnFilter,
                 Cell: ({ row }) => (
                     <>
                         {row.original.consolidation_status !== 'success' && row.original.status === 'success' ? (
@@ -61,26 +70,40 @@ function PaymentHistory() {
             },
             {
                 Header: 'Date',
-                Cell: ({ row }) => string2date(row.original.createdAt),
+                accessor: 'createdAt',
+                Filter: DateColumnFilter, // Renderiza el filtro solo si 'canFilter' está habilitado
+                Cell: ({ row }) => timestampToDate(row.original.createdAt), // Convierte el timestamp a una fecha legible
             },
             {
                 Header: 'Action',
-                Cell: ({ row }) => (
-                    <button
-                        className="btn btn-primary text-white btn-sm w-100"
-                        onClick={() => handleShowPaymentDetails(row.index)}
-                    >
-                        View More
-                    </button>
-                ),
+                accessor: 'action', // Asegúrate de que esta columna sea accesible
             },
         ],
-        [deposits]
+        [] // No es necesario pasar "deposits" aquí
     );
 
-    const tableInstance = useTable(
-        { columns, data: deposits },
-        usePagination);
+    const {
+        getTableProps,
+        getTableBodyProps,
+        headerGroups,
+        page,
+        prepareRow,
+        state,
+        previousPage,
+        nextPage,
+        canPreviousPage,
+        canNextPage,
+        pageCount,
+        setGlobalFilter,
+    } = useTable(
+        {
+            columns,
+            data: deposits,
+        },
+        useFilters,
+        useGlobalFilter,
+        usePagination
+    );
 
     useEffect(() => {
         // if (reqRef.current) return;
@@ -145,20 +168,39 @@ function PaymentHistory() {
             });
     }
 
-    // Access the table instance properties
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        page, // Cambia 'rows' a 'page'
-        prepareRow,
-        previousPage,
-        nextPage,
-        canPreviousPage,
-        canNextPage,
-        pageCount,
-        state: { pageIndex }, // Agrega esta línea para obtener el índice de la página actual
-    } = tableInstance;
+    // Componente de filtro predeterminado
+    function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
+        return (
+            <input
+                type="text"
+                value={filterValue || ''}
+                onChange={(e) => {
+                    setFilter(e.target.value || undefined);
+                }}
+                className="form-control"
+                placeholder="Filter..."
+            />
+        );
+    }
+
+    // Componente de filtro personalizado para columnas de fecha
+    function DateColumnFilter({ column: { filterValue, setFilter } }) {
+        return (
+            <input
+                type="date"
+                value={filterValue || ''}
+                onChange={(e) => {
+                    setFilter(e.target.value || undefined);
+                }}
+                placeholder="Filter..."
+            />
+        );
+    }
+    
+    function timestampToDate(timestamp) {
+        const date = new Date(timestamp);
+        return date.toLocaleString(); // Puedes personalizar el formato según tus necesidades
+    }
 
     if (!deposits || !Array.isArray(deposits)) {
         return <div>No data available</div>; // Display a message if the data is not available or not an array
@@ -170,6 +212,13 @@ function PaymentHistory() {
                 <PageTitle title="Payment History" />
                 <section id="payment_history" className="card bg-white p-4">
                     <div className="col-md-12">
+                        {/* Barra de búsqueda global */}
+                        <input
+                            type="text"
+                            value={state.globalFilter || ''}
+                            onChange={(e) => setGlobalFilter(e.target.value)}
+                            placeholder="Search..."
+                        />
                         <table style={{ fontSize: '90%' }} {...getTableProps()} className="table datatable">
                             <thead>
                                 {headerGroups.map((headerGroup) => (
@@ -209,7 +258,7 @@ function PaymentHistory() {
                                                 </button>
                                             </div>
                                             <div className="pagination-info">
-                                                Page {pageIndex + 1} of {pageCount}
+                                                Page {state.pageIndex + 1} of {pageCount}
                                             </div>
                                         </div>
                                     </td>
