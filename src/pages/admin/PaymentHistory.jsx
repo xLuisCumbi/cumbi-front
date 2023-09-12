@@ -76,7 +76,14 @@ function PaymentHistory() {
             },
             {
                 Header: 'Action',
-                accessor: 'action', // Asegúrate de que esta columna sea accesible
+                Cell: ({ row }) => (
+                    <button
+                        className="btn btn-primary text-white btn-sm w-100"
+                        onClick={() => handleShowPaymentDetails(row.index)}
+                    >
+                        View More
+                    </button>
+                ),
             },
         ],
         [] // No es necesario pasar "deposits" aquí
@@ -109,15 +116,28 @@ function PaymentHistory() {
         // if (reqRef.current) return;
         // reqRef.current = true;
         getDeposits()
-
+        setIsModalOpen(false);
+        setSelectedDeposit(null);
     }, []);
 
-
-    const handleShowPaymentDetails = (i) => {
-        const d = deposits[i];
-        setSelectedDeposit(d);
-        setIsModalOpen(true);
-        new bootstrap.Modal(document.getElementById('largeModal')).show();
+    const handleShowPaymentDetails = async (i) => {
+        console.log('deposits get', deposits);
+        try {
+            // Esperar a que getDeposits se complete antes de continuar
+            //const d = await getDeposits()[i];
+            await getDeposits();
+            const d = deposits[i];
+            console.log('i', i);
+            console.log('d', d);
+            console.log('deposits', deposits);
+            if (d) {
+                setSelectedDeposit(d);
+                setIsModalOpen(true);
+                new bootstrap.Modal(document.getElementById('largeModal')).show();
+            }
+        } catch (error) {
+            console.error('Error al obtener los depósitos', error);
+        }
     };
 
     const handlePaymentConsolidation = (deposit_id) => {
@@ -149,13 +169,17 @@ function PaymentHistory() {
         return fechaLegible;
     }
 
-    function getDeposits() {
+    async function getDeposits() {
+        setSelectedDeposit(null); // Establece selectedDeposit en null al iniciar la carga de datos.
+
         const user = JSON.parse(localStorage.getItem('user'));
         // setTest("success")
         ApiService.post('/fetch-deposits', { user }) // Pass the user
             .then((response) => {
                 if (response.status === "success") {
                     setDeposits(response.deposits);
+                    console.log('response', response);
+
                     setLoadingStatus(false);
                     // setTest("success")
                 }
@@ -196,7 +220,7 @@ function PaymentHistory() {
             />
         );
     }
-    
+
     function timestampToDate(timestamp) {
         const date = new Date(timestamp);
         return date.toLocaleString(); // Puedes personalizar el formato según tus necesidades
@@ -271,7 +295,7 @@ function PaymentHistory() {
                             <div className="modal-content">
                                 <div className="modal-header">
                                     <h5 className="modal-title">Payment Details</h5>
-                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => setIsModalOpen(false)}></button>
                                 </div>
                                 <div className="modal-body">
                                     {selectedDeposit ? ( // Verifica si selectedDeposit no es null
