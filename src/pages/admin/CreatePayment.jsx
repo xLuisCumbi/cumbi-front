@@ -35,7 +35,10 @@ function CreatePayment() {
         }
 
         // Calcular el valor de amountBankFiat
-        const calculatedAmountBankFiat = paymentFormData.trm * 0.97 * paymentFormData.amount - (paymentFormData.trm * 0.97 * paymentFormData.amount * 0.03);
+        // const calculatedAmountBankFiat = paymentFormData.trm * 0.97 * paymentFormData.amount - (paymentFormData.trm * 0.97 * paymentFormData.amount * 0.03);
+        const calculatedAmountBankFiat = paymentFormData.amount * paymentFormData.trm * (1 - 0.03);
+        console.log('paymentFormData.amount', paymentFormData.amount);
+        console.log('paymentFormData.trm', paymentFormData.trm);
         setAmountBankFiat(calculatedAmountBankFiat);
 
         Alert("success", "loading", 30);
@@ -61,7 +64,7 @@ function CreatePayment() {
     // Función para actualizar paymentFormData.amount y calcular amountBankFiat
     const handleAmountChange = (e) => {
         const newAmount = e.target.value;
-        const calculatedAmountBankFiat = paymentFormData.trm * 0.97 * newAmount - (paymentFormData.trm * 0.97 * newAmount * 0.03);
+        const calculatedAmountBankFiat = ((paymentFormData.trm * 0.985) * newAmount) * (1 - 0.03);
 
         setAmountBankFiat(calculatedAmountBankFiat);
 
@@ -124,7 +127,7 @@ function CreatePayment() {
                                     />
                                 </div>
                                 <div className="col-md-6 mt-3">
-                                    <label className="form-label">Monto en USD <span> | (TRM: <b>${(paymentFormData.trm * 0.985).toLocaleString()} )</b></span> | <p>Ud recibirá: <b>${amountBankFiat.toLocaleString()}</b> COP en su cuenta de banco</p>
+                                    <label className="form-label">Monto en USD <span> | (TRM: <b>${(paymentFormData.trm * 0.985).toLocaleString()} )</b></span> | <p>Recibirás: <b>${amountBankFiat.toLocaleString()}</b> COP en tu cuenta de banco</p>
                                     </label>
                                     <input
                                         type="number"
