@@ -6,24 +6,21 @@ import PageLoading from "../../components/PageLoading";
 import "../../assets/vendor/bootstrap/js/bootstrap.bundle.js";
 
 // Import react-table and its required components
-import { useTable } from 'react-table';
+import { usePagination, useTable } from 'react-table';
 
-function ListBusiness() {
-    const reqRef = useRef(false);
+function ListBusiness(props) {
     const [loadingStatus, setLoadingStatus] = useState(true);
-    const [users, setUsers] = useState([]);
-    const [selectedDeposit, setSelectedDeposit] = useState(null);
+    const [businesses, setBusinesses] = useState([]);
+
+    const editBusiness = (business) => {
+        props.editBusiness(business)
+    }
 
     useEffect(() => {
-        if (reqRef.current) return;
-        reqRef.current = true;
-
-        const user = JSON.parse(localStorage.getItem('user'));
-
-        ApiService.post('/business', user)
+        ApiService.getBusiness('')
             .then((response) => {
                 if (response.status === "success") {
-                    setUsers(response.users || []);
+                    setBusinesses(response.businesses);
                     setLoadingStatus(false);
                 }
             })
@@ -34,7 +31,7 @@ function ListBusiness() {
                 setLoadingStatus(false);
             });
 
-    });
+    }, []);
 
 
 
@@ -43,35 +40,23 @@ function ListBusiness() {
     const columns = React.useMemo(
         () => [
             {
-                Header: 'Username',
-                accessor: 'username',
+                Header: 'ID Tax',
+                accessor: 'id_tax',
+            },
+            {
+                Header: 'Name',
+                accessor: 'name',
             },
             {
                 Header: 'Email',
                 accessor: 'email',
             },
             {
-                Header: 'Role',
-                accessor: 'role',
-            },
-            {
                 Header: 'Action',
                 Cell: ({ row }) => (
                     <>
-                        {/* <button
-                            className="btn btn-primary text-white btn-sm"
-                            onClick={() => handleShowPaymentDetails(row.index)}
-                        >
-                            <i className="bi bi-person"></i>
-                        </button> */}
-                        <a className="btn" onClick={() => navigate('/admin/create-user')}>
+                        <a className="btn" onClick={() => editBusiness(row.original)}>
                             <i className="bi bi-pencil"></i>
-                        </a>
-                        <a className="btn" onClick={() => navigate('/admin/create-user')}>
-                            <i className="bi bi-person-dash"></i>
-                        </a>
-                        <a className="btn" style={{ color: "red" }} onClick={() => navigate('/admin/create-user')}>
-                            <i className="bi bi-trash3"></i>
                         </a>
                     </>
                 ),
@@ -80,29 +65,35 @@ function ListBusiness() {
         []
     );
 
-    const tableInstance = useTable({ columns, data: users });
+    const tableInstance = useTable({ columns, data: businesses }, usePagination);
 
     // Access the table instance properties
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        rows,
+        page, // Cambia 'rows' a 'page'
         prepareRow,
+        previousPage,
+        nextPage,
+        canPreviousPage,
+        canNextPage,
+        pageCount,
+        state: { pageIndex }, // Agrega esta línea para obtener el índice de la página actual
     } = tableInstance;
 
     if (loadingStatus) {
         return <PageLoading />;
     }
 
-    if (!users || !Array.isArray(users)) {
+    if (!businesses || !Array.isArray(businesses)) {
         return <div>No data available</div>; // Display a message if the data is not available or not an array
     }
 
     return (
         loadingStatus ? <PageLoading /> :
             <>
-                <PageTitle title="List Users" />
+                <PageTitle title="List Businesses" />
                 <section id="list_user" className="card bg-white p-4">
                     <div className="col-md-12">
                         <table style={{ fontSize: '90%' }} {...getTableProps()} className="table datatable">
@@ -118,7 +109,7 @@ function ListBusiness() {
                                 ))}
                             </thead>
                             <tbody {...getTableBodyProps()}>
-                                {rows.map((row) => {
+                                {page.map((row) => {
                                     prepareRow(row);
                                     return (
                                         <tr {...row.getRowProps()}>
@@ -131,6 +122,25 @@ function ListBusiness() {
                                     );
                                 })}
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colSpan={columns.length}>
+                                        <div className="pagination d-flex justify-content-between align-items-center">
+                                            <div className="pagination-navigation">
+                                                <button onClick={() => previousPage()} disabled={!canPreviousPage} className="btn btn-light btn-sm">
+                                                    Previous
+                                                </button>
+                                                <button onClick={() => nextPage()} disabled={!canNextPage} className="btn btn-light btn-sm">
+                                                    Next
+                                                </button>
+                                            </div>
+                                            <div className="pagination-info">
+                                                Page {pageIndex + 1} of {pageCount}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                     <div className="modal fade" id="largeModal" tabIndex="-1">

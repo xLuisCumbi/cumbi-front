@@ -20,12 +20,8 @@ function CreateUser() {
   const [seed, setSeed] = useState(1);
 
 
-  const [person, setPerson] = useState({})
-
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    console.log(userData)
-    console.log(isEditing)
 
     for (let key in userData) {
       if (key === 'business' && userData.role === 'person') {
@@ -42,7 +38,6 @@ function CreateUser() {
     }
 
     Alert('success', 'loading', 30);
-    console.log(userData)
     if (isEditing)
       ApiService.put('/' + userData._id, { ...userData }).then(
         (response) => {
@@ -57,18 +52,18 @@ function CreateUser() {
           Alert('failed', 'Error updating user', 3);
         }
       );
-    // else
-    //   ApiService.post('/signup', { ...userData }).then(
-    //     (response) => {
-    //       if (response.status === 'signUp_success') {
-    //         Alert('success', 'User Created', 3);
-    //         reset()
-    //       }
-    //     },
-    //     (err) => {
-    //       Alert('failed', 'Error in creating user', 3);
-    //     }
-    //   );
+    else
+      ApiService.post('/signup', { ...userData }).then(
+        (response) => {
+          if (response.status === 'signUp_success') {
+            Alert('success', 'User Created', 3);
+            reset()
+          }
+        },
+        (err) => {
+          Alert('failed', 'Error in creating user', 3);
+        }
+      );
   };
 
   const reset = () => {
@@ -186,21 +181,10 @@ function CreateUser() {
                 className="form-control"
                 value={userData.role}
                 onChange={(e) => {
-                  if (e.target.value === "person") {
-                    setUserData({
-                      ...userData,
-                      role: e.target.value,
-                      business: {
-                        _id: person._id,
-                        name: person.name
-                      }
-                    })
-                  }
-                  else
-                    setUserData({
-                      ...userData,
-                      role: e.target.value,
-                    })
+                  setUserData({
+                    ...userData,
+                    role: e.target.value,
+                  })
                 }
                 }
                 required

@@ -83,10 +83,7 @@ function PaymentHistory() {
         usePagination);
 
     useEffect(() => {
-        // if (reqRef.current) return;
-        // reqRef.current = true;
         getDeposits()
-
     }, []);
 
 

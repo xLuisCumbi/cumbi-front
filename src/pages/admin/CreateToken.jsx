@@ -2,6 +2,7 @@ import { useState } from "react";
 import PageTitle from "../../components/PageTitle";
 import Alert from "../../components/Alert";
 import ApiService from '../../services/ApiService';
+import ApiTokens from "./ApiTokens";
 
 function CreateToken() {
 
@@ -23,7 +24,7 @@ function CreateToken() {
         Alert('success', 'loading', 30);
         // Include user data in your API call
         ApiService.post('/create-token', { ...tokenFormData, user: user.id })
-        .then((response) => {
+            .then((response) => {
                 if (response.status === "success") {
                     Alert('success', 'token successfully created', 3);
                     setTokenFormData({ ...tokenFormData, token_name: '' });
@@ -59,6 +60,7 @@ function CreateToken() {
                     </div>
                 </form>
             </div>
+            <ApiTokens></ApiTokens>
         </div>
 
     );

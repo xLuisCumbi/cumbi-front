@@ -57,19 +57,19 @@ function Sidebar() {
 
         {(userRole === 'admin' || userRole === 'superadmin') && (
           <>
-          <li className="nav-item">
-            <a className={route == 'create-token' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/create-token')}>
+            <li className="nav-item">
+              <a className={route == 'create-token' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/create-token')}>
                 <i className="bi bi-key"></i>
-                <span>Create API Tokens</span>
-            </a>
-        </li>
+                <span>API Tokens</span>
+              </a>
+            </li>
 
-        <li className="nav-item">
+            {/* <li className="nav-item">
             <a className={route == 'tokens' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/tokens')}>
                 <i className="bi bi-key"></i>
                 <span>API Tokens</span>
             </a>
-        </li>
+        </li> */}
             <li className="nav-item">
               <a className={route == 'create-user' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/create-user')}>
                 <i className="bi bi-person"></i>
@@ -108,7 +108,7 @@ function Sidebar() {
             </li>
             <li className="nav-item">
               <a className={route == 'mnemonic' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/mnemonic')}>
-              <i className="bi bi-puzzle"></i>
+                <i className="bi bi-puzzle"></i>
                 <span>Mnemonic</span>
               </a>
             </li>
