@@ -145,6 +145,10 @@ function CreatePayment() {
         )
     }
 
+    /**
+     *
+     * @returns This function gets the percentage fee that the user/business has
+     */
     function getPercUser() {
         let payment_fee = 0, type_payment_fee = ""
         if (user.payment_fee && user.payment_fee > 0) {
@@ -200,7 +204,9 @@ function CreatePayment() {
                                     <label>
                                         <p>
                                             TRM: <b>${(paymentFormData.trm_house).toLocaleString()}</b><br />
-                                            Ud recibirá: <b>${paymentFormData.amount_fiat.toLocaleString()}</b> COP en su cuenta de banco
+                                            Recibirá: <b>${paymentFormData.amount_fiat.toLocaleString()}</b> COP en su cuenta de banco.
+                                            Comisión a cobrar: <b>${(paymentFormData.amount * 0.03 * paymentFormData.trm_house).toLocaleString()}</b> COP (3%).
+
                                         </p>
                                     </label>
                                 </div>
