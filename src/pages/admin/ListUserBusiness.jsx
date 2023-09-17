@@ -8,11 +8,33 @@ import "../../assets/vendor/bootstrap/js/bootstrap.bundle.js";
 // Import react-table and its required components
 import { useTable } from 'react-table';
 
-function ListUserBusiness() {
+function ListUserBusiness(props) {
     const reqRef = useRef(false);
     const [loadingStatus, setLoadingStatus] = useState(true);
     const [users, setUsers] = useState([]);
-    const [selectedDeposit, setSelectedDeposit] = useState(null);
+
+    const editUser = (user) => {
+        props.editUser(user)
+    }
+
+    const blockUser = (_id, status) => {
+        let newStatus = "active"
+        if (!status || status === "active")
+            newStatus = "blocked"
+
+        ApiService.put('/block/' + _id, { status: newStatus }).then(
+            (response) => {
+                if (response.status === 'success') {
+                    Alert('success', 'User status updated', 3);
+                }
+            },
+            (err) => {
+                console.log('err', err);
+                console.log('stack', err.stack);
+                Alert('failed', 'Error updating user', 3);
+            }
+        );
+    }
 
     useEffect(() => {
         if (reqRef.current) return;
@@ -56,23 +78,24 @@ function ListUserBusiness() {
             {
                 Header: 'Action',
                 Cell: ({ row }) => (
+                    row.original.role !== "superadmin" &&
                     <>
-                        {/* <button
-                            className="btn btn-primary text-white btn-sm"
-                            onClick={() => handleShowPaymentDetails(row.index)}
-                        >
-                            <i className="bi bi-person"></i>
-                        </button> */}
-                        <a className="btn" onClick={() => navigate('/admin/create-user')}>
+                        <a className="btn" onClick={() => editUser(row.original)}>
                             <i className="bi bi-pencil"></i>
                         </a>
-                        <a className="btn" onClick={() => navigate('/admin/create-user')}>
-                            <i className="bi bi-person-dash"></i>
+                        <a className="btn" onClick={() => blockUser(row.original._id, row.original.status)}>
+                            {(!row.original.status || row.original.status === "active") &&
+                                <i className="bi bi-person-fill-slash"></i>
+                            }
+                            {row.original.status && row.original.status === "blocked" &&
+                                <i className="bi bi-person-fill-check"></i>
+                            }
                         </a>
-                        <a className="btn" style={{ color: "red" }} onClick={() => navigate('/admin/create-user')}>
+                        {/* <a className="btn" style={{ color: "red" }} onClick={() => navigate('/admin/create-user')}>
                             <i className="bi bi-trash3"></i>
-                        </a>
+                        </a> */}
                     </>
+
                 ),
             },
         ],

@@ -88,12 +88,12 @@ function Sidebar() {
 
         {userRole === 'superadmin' && (
           <>
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <a className={route == 'list_user' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/list-user')}>
                 <i className="bi bi-people"></i>
                 <span>List Users</span>
               </a>
-            </li>
+            </li> */}
             <li className="nav-item">
               <a className={route == 'setting_cumbi' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/setting-cumbi')}>
                 <i className="bi bi-gear"></i>

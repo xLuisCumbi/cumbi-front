@@ -155,6 +155,7 @@ const ApiService = {
    * @returns {Promise<Object>} - The response data.
    */
   put(endpoint, data = {}) {
+    console.log(data)
     return new Promise((resolve, reject) => {
       axios
         .put(`${this.baseURL}${endpoint}`, data, {

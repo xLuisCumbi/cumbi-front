@@ -99,10 +99,10 @@ const router = createBrowserRouter([
         path: 'create-token',
         element: <CreateToken />,
       },
-      {
-        path: 'list-user',
-        element: <ListUser />,
-      },
+      // {
+      //   path: 'list-user',
+      //   element: <ListUser />,
+      // },
     ],
   },
   {

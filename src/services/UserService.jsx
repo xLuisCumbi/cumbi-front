@@ -9,6 +9,7 @@ function Login(email, password) {
     ApiService.postWithCredentials('/login', { email, password }, additionalHeaders).then(
       (response) => {
         if (response.status === 'success') {
+          console.log(response)
           localStorage.setItem('user', JSON.stringify(response.user));
           localStorage.setItem('userRole', response.user.role); // Save the user's role
 
