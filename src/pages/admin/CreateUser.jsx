@@ -15,10 +15,10 @@ function CreateUser() {
     role: 'person',
     payment_fee: 0,
   });
+  const [isEditing, setIsEditing] = useState(false)
+  const [textButton, setTextButton] = useState("Create User")
   const [seed, setSeed] = useState(1);
 
-
-  const [person, setPerson] = useState({})
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -38,21 +38,46 @@ function CreateUser() {
     }
 
     Alert('success', 'loading', 30);
-    ApiService.post('/signup', { ...userData }).then(
-      (response) => {
-        if (response.status === 'signUp_success') {
-          Alert('success', 'User Created', 3);
-          reset()
+    if (isEditing)
+      ApiService.put('/' + userData._id, { ...userData }).then(
+        (response) => {
+          if (response.status === 'success') {
+            Alert('success', 'User Updated', 3);
+            reset()
+          }
+        },
+        (err) => {
+          console.log('err', err);
+          console.log('stack', err.stack);
+          Alert('failed', 'Error updating user', 3);
         }
-      },
-      (err) => {
-        Alert('failed', 'Error in creating user', 3);
-      }
-    );
+      );
+    else
+      ApiService.post('/signup', { ...userData }).then(
+        (response) => {
+          if (response.status === 'signUp_success') {
+            Alert('success', 'User Created', 3);
+            reset()
+          }
+        },
+        (err) => {
+          Alert('failed', 'Error in creating user', 3);
+        }
+      );
   };
 
   const reset = () => {
     setSeed(Math.random());
+    setTextButton("Create User")
+    setIsEditing(false)
+    setUserData({
+      username: '',
+      business: '',
+      email: '',
+      password: '',
+      role: 'person',
+      payment_fee: 0,
+    })
   }
 
   useEffect(() => {
@@ -63,20 +88,12 @@ function CreateUser() {
     if (user.role === 'admin')
       setUserData({
         ...userData,
-        business: {
-          _id: user.business,
-          name: ''
-        },
+        business: user.business,
       })
     ApiService.getBusiness('').then(
       (response) => {
         if (response.status === 'success') {
           setBusinessData(response.businesses)
-          try {
-            setPerson(response.businesses.filter(business => business.name === "Person")[0])
-          } catch (e) {
-            setPerson("00000000")
-          }
         }
       },
       (err) => {
@@ -85,6 +102,22 @@ function CreateUser() {
     );
 
   }, []);
+
+
+  const editUser = (user) => {
+    setUserData({
+      ...userData,
+      _id: user._id,
+      username: user.username,
+      business: user.business,
+      email: user.email,
+      role: user.role,
+      payment_fee: user.payment_fee ? user.payment_fee : 0,
+      token: user.token,
+    })
+    setIsEditing(true)
+    setTextButton("Update User")
+  }
 
   return (
     <div>
@@ -148,21 +181,10 @@ function CreateUser() {
                 className="form-control"
                 value={userData.role}
                 onChange={(e) => {
-                  if (e.target.value === "person") {
-                    setUserData({
-                      ...userData,
-                      role: e.target.value,
-                      business: {
-                        _id: person._id,
-                        name: person.name
-                      }
-                    })
-                  }
-                  else
-                    setUserData({
-                      ...userData,
-                      role: e.target.value,
-                    })
+                  setUserData({
+                    ...userData,
+                    role: e.target.value,
+                  })
                 }
                 }
                 required
@@ -179,14 +201,11 @@ function CreateUser() {
                 <select
                   type="text"
                   className="form-control"
-                  value={userData.business._id}
+                  value={userData.business}
                   onChange={(e) =>
                     setUserData({
                       ...userData,
-                      business: {
-                        _id: e.target.value,
-                        name: e.target.options[e.target.selectedIndex].text
-                      }
+                      business: e.target.value,
                     })
                   }
                   required
@@ -216,14 +235,16 @@ function CreateUser() {
             }
             <div className="col-md-12 mt-4 text-center">
               <button className="btn btn-primary text-white">
-                {' '}
-                Create User{' '}
+                {textButton}
               </button>
+              {isEditing && <button type="button" className="btn btn-primary text-white" onClick={reset}>
+                New User
+              </button>}
             </div>
           </div>
         </form>
       </div >
-      <ListUserBusiness key={seed} />
+      <ListUserBusiness key={seed} editUser={editUser} />
     </div >
   );
 }

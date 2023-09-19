@@ -53,11 +53,52 @@ const ApiService = {
     });
   },
 
+  /**
+ * Sends a PUT request to the specified endpoint.
+ * @param {string} endpoint - The API endpoint.
+ * @param {Object} data - The payload for the PUT request.
+ * @returns {Promise<Object>} - The response data.
+ */
+  put(endpoint, data = {}) {
+    return new Promise((resolve, reject) => {
+      axios
+        .put(`${this.baseURL}${endpoint}`, data, {
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
+  delete(endpoint) {
+    return new Promise((resolve, reject) => {
+      axios
+        .delete(`${this.baseURL}${endpoint}`, {
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
+
   getBusiness(endpoint) {
     return new Promise((resolve, reject) => {
       axios
         .get(config.businessUrl + endpoint, {
-        
+
           headers: {
             Authorization: `Bearer ${authToken()}`,
           },
@@ -75,6 +116,23 @@ const ApiService = {
     return new Promise((resolve, reject) => {
       axios
         .post(config.businessUrl + endpoint, data, {
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
+  putBusiness(endpoint, data = {}) {
+    return new Promise((resolve, reject) => {
+      axios
+        .put(config.businessUrl + endpoint, data, {
           headers: {
             Authorization: `Bearer ${authToken()}`,
           },
@@ -138,46 +196,6 @@ const ApiService = {
             Authorization: `Bearer ${authToken()}`,
           },
           withCredentials: true,
-        })
-        .then(
-          (response) => resolve(response.data),
-          (err) => {
-            reject(err);
-          }
-        );
-    });
-  },
-
-  /**
-   * Sends a PUT request to the specified endpoint.
-   * @param {string} endpoint - The API endpoint.
-   * @param {Object} data - The payload for the PUT request.
-   * @returns {Promise<Object>} - The response data.
-   */
-  put(endpoint, data = {}) {
-    return new Promise((resolve, reject) => {
-      axios
-        .put(`${this.baseURL}${endpoint}`, data, {
-          headers: {
-            Authorization: `Bearer ${authToken()}`,
-          },
-        })
-        .then(
-          (response) => resolve(response.data),
-          (err) => {
-            reject(err);
-          }
-        );
-    });
-  },
-
-  delete(endpoint) {
-    return new Promise((resolve, reject) => {
-      axios
-        .delete(`${this.baseURL}/${endpoint}`, {
-          headers: {
-            Authorization: `Bearer ${authToken()}`,
-          },
         })
         .then(
           (response) => resolve(response.data),

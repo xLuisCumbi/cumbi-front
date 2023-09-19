@@ -113,11 +113,7 @@ function PaymentHistory() {
     );
 
     useEffect(() => {
-        // if (reqRef.current) return;
-        // reqRef.current = true;
         getDeposits()
-        setIsModalOpen(false);
-        setSelectedDeposit(null);
     }, []);
 
     const handleShowPaymentDetails = async (i) => {

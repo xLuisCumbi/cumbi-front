@@ -8,41 +8,83 @@ function CreateBusiness() {
   const [businessData, setBusinessData] = useState({
     id_tax: '',
     name: '',
+    web: '',
+    country: '',
     email: '',
     payment_fee: 0,
   });
+  const [isEditing, setIsEditing] = useState(false)
+  const [textButton, setTextButton] = useState("Create Business")
+  const [seed, setSeed] = useState(1);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
-    for (let i in businessData) {
-      if (businessData[i] === '') {
-        Alert('failed', `input ${i} is required`, 3);
+    for (let key in businessData) {
+      if (key === 'country' || key === 'web')
+        continue
+      if (businessData[key] === '') {
+        Alert('failed', `input ${key} is required`, 3);
         return;
       }
     }
 
     Alert('success', 'loading', 30);
-    ApiService.postBusiness('/create', { ...businessData }).then(
-      (response) => {
-        if (response.status === 'success') Alert('success', 'Business Created', 3);
-      },
-      (err) => {
-        Alert('failed', 'Error in creating business', 3);
-      }
-    );
+    if (isEditing)
+      ApiService.putBusiness('/' + businessData._id, { ...businessData }).then(
+        (response) => {
+          if (response.status === 'success') {
+            Alert('success', 'Business Updated', 3);
+            reset()
+          }
+        },
+        (err) => {
+          Alert('failed', 'Error updating business', 3);
+        }
+      );
+    else
+      ApiService.postBusiness('/create', { ...businessData }).then(
+        (response) => {
+          if (response.status === 'success') {
+            Alert('success', 'Business Created', 3);
+            reset()
+          }
+        },
+        (err) => {
+          Alert('failed', 'Error in creating business', 3);
+        }
+      );
   };
 
-  useEffect(() => {
 
-    // const user = JSON.parse(localStorage.getItem('user'));
-    // setRoleCur(user.role)
-    // if (user.role === 'admin')
-    //   setUserData({
-    //     ...userData,
-    //     business: user.business,
-    //   })
-  }, []);
+  const editBusiness = (business) => {
+    setBusinessData({
+      ...businessData,
+      _id: business._id,
+      id_tax: business.id_tax,
+      name: business.name,
+      email: business.email,
+      payment_fee: business.payment_fee ? business.payment_fee : 0,
+      country: business.country ? business.country : "",
+      web: business.web ? business.web : "",
+    })
+    setIsEditing(true)
+    setTextButton("Update Business")
+  }
+
+  const reset = () => {
+    setSeed(Math.random());
+    setTextButton("Create Business")
+    setIsEditing(false)
+    setBusinessData({
+      id_tax: '',
+      name: '',
+      email: '',
+      payment_fee: 0,
+      country: '',
+      web: '',
+    })
+  }
 
   return (
     <div>
@@ -145,14 +187,17 @@ function CreateBusiness() {
 
             <div className="col-md-12 mt-4 text-center">
               <button className="btn btn-primary text-white">
-                {' '}
-                Create Business{' '}
+                {textButton}
               </button>
+              {isEditing && <button type="button" className="btn btn-primary text-white" onClick={reset}>
+                New Business
+              </button>}
+
             </div>
           </div>
         </form>
       </div>
-      {/* <ListBusiness /> */}
+      <ListBusiness key={seed} editBusiness={editBusiness} />
     </div>
   );
 }

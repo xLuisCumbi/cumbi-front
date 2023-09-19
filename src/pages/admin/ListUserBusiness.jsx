@@ -6,13 +6,65 @@ import PageLoading from "../../components/PageLoading";
 import "../../assets/vendor/bootstrap/js/bootstrap.bundle.js";
 
 // Import react-table and its required components
-import { useTable } from 'react-table';
+import { useTable, usePagination } from 'react-table';
 
-function ListUserBusiness() {
+function ListUserBusiness(props) {
     const reqRef = useRef(false);
     const [loadingStatus, setLoadingStatus] = useState(true);
     const [users, setUsers] = useState([]);
-    const [selectedDeposit, setSelectedDeposit] = useState(null);
+
+    /**
+     * Calls a props function for edit the user
+     * @param {*} user 
+     */
+    const editUser = (user) => {
+        props.editUser(user)
+    }
+
+    /**
+     * Block or active an user 
+     * @param {*} _id ID from User
+     * @param {*} status Current status of user
+     */
+    const blockUser = (_id, status) => {
+        let newStatus = "active"
+        if (!status || status === "active")
+            newStatus = "blocked"
+
+        ApiService.put('/block/' + _id, { status: newStatus }).then(
+            (response) => {
+                if (response.status === 'success') {
+                    Alert('success', 'User status updated', 3);
+                }
+            },
+            (err) => {
+                console.log('err', err);
+                console.log('stack', err.stack);
+                Alert('failed', 'Error updating user', 3);
+            }
+        );
+    }
+
+    /**
+     * Delete an user from Database
+     * @param {*} _id 
+     */
+    const deleteUser = (_id) => {
+        if (confirm('Are you sure you want to delete the user? Click OK to confirm')) {
+            // ApiService.delete('/' + _id).then(
+            //     (response) => {
+            //         if (response.status === 'success') {
+            //             Alert('success', 'User deleted', 3);
+            //         }
+            //     },
+            //     (err) => {
+            //         console.log('err', err);
+            //         console.log('stack', err.stack);
+            //         Alert('failed', 'Error updating user', 3);
+            //     }
+            // );
+        }
+    }
 
     useEffect(() => {
         if (reqRef.current) return;
@@ -35,9 +87,6 @@ function ListUserBusiness() {
 
     });
 
-
-
-
     // Use react-table to define the columns and data for the table
     const columns = React.useMemo(
         () => [
@@ -56,38 +105,45 @@ function ListUserBusiness() {
             {
                 Header: 'Action',
                 Cell: ({ row }) => (
+                    row.original.role !== "superadmin" &&
                     <>
-                        {/* <button
-                            className="btn btn-primary text-white btn-sm"
-                            onClick={() => handleShowPaymentDetails(row.index)}
-                        >
-                            <i className="bi bi-person"></i>
-                        </button> */}
-                        <a className="btn" onClick={() => navigate('/admin/create-user')}>
+                        <a className="btn" onClick={() => editUser(row.original)}>
                             <i className="bi bi-pencil"></i>
                         </a>
-                        <a className="btn" onClick={() => navigate('/admin/create-user')}>
-                            <i className="bi bi-person-dash"></i>
+                        <a className="btn" onClick={() => blockUser(row.original._id, row.original.status)}>
+                            {(!row.original.status || row.original.status === "active") &&
+                                <i className="bi bi-person-fill-slash"></i>
+                            }
+                            {row.original.status && row.original.status === "blocked" &&
+                                <i className="bi bi-person-fill-check"></i>
+                            }
                         </a>
-                        <a className="btn" style={{ color: "red" }} onClick={() => navigate('/admin/create-user')}>
+                        {/* <a className="btn" style={{ color: "red" }} onClick={() => deleteUser(row.original._id)} >
                             <i className="bi bi-trash3"></i>
-                        </a>
+                        </a> */}
                     </>
+
                 ),
             },
         ],
         []
     );
 
-    const tableInstance = useTable({ columns, data: users });
+    const tableInstance = useTable({ columns, data: users }, usePagination);
 
     // Access the table instance properties
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        rows,
+        page, // Cambia 'rows' a 'page'
         prepareRow,
+        previousPage,
+        nextPage,
+        canPreviousPage,
+        canNextPage,
+        pageCount,
+        state: { pageIndex }, // Agrega esta línea para obtener el índice de la página actual
     } = tableInstance;
 
     if (loadingStatus) {
@@ -117,7 +173,7 @@ function ListUserBusiness() {
                                 ))}
                             </thead>
                             <tbody {...getTableBodyProps()}>
-                                {rows.map((row) => {
+                                {page.map((row) => {
                                     prepareRow(row);
                                     return (
                                         <tr {...row.getRowProps()}>
@@ -130,6 +186,25 @@ function ListUserBusiness() {
                                     );
                                 })}
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colSpan={columns.length}>
+                                        <div className="pagination d-flex justify-content-between align-items-center">
+                                            <div className="pagination-navigation">
+                                                <button onClick={() => previousPage()} disabled={!canPreviousPage} className="btn btn-light btn-sm">
+                                                    Previous
+                                                </button>
+                                                <button onClick={() => nextPage()} disabled={!canNextPage} className="btn btn-light btn-sm">
+                                                    Next
+                                                </button>
+                                            </div>
+                                            <div className="pagination-info">
+                                                Page {pageIndex + 1} of {pageCount}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                     <div className="modal fade" id="largeModal" tabIndex="-1">

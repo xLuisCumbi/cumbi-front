@@ -36,6 +36,26 @@ function ListUser() {
             });
     }
 
+    const editUser = (id) => {
+        props.editUser(id)
+    }
+
+    const blockUser = (id) => {
+        return;
+        ApiService.delete(id)
+            .then((response) => {
+                if (response.status === "success") {
+                    Alert('success', 'User Deleted', 3);
+                    getUsers()
+                }
+            })
+            .catch((err) => {
+                console.log('err', err);
+                console.log('stack', err.stack);
+                Alert('failed', 'Error in fetching users', 3);
+            });
+    }
+
     const deleteUser = (id) => {
         return;
         ApiService.delete(id)
@@ -75,10 +95,10 @@ function ListUser() {
                 Header: "Action",
                 Cell: ({ row }) => (
                     <>
-                        <a className="btn" onClick={() => navigate('/admin/create-user')}>
+                        <a className="btn" onClick={() => editUser(row.original._id)}>
                             <i className="bi bi-pencil"></i>
                         </a>
-                        <a className="btn" onClick={() => navigate("/admin/create-user")}>
+                        <a className="btn" onClick={() => blockUser(row.original._id)}>
                             <i className="bi bi-person-dash"></i>
                         </a>
                         <a className="btn" style={{ color: "red" }} onClick={() => deleteUser(row.original._id)}>

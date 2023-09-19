@@ -3,38 +3,19 @@ import PageTitle from "../../components/PageTitle";
 import Alert from "../../components/Alert";
 import ApiService from '../../services/ApiService';
 import PageLoading from "../../components/PageLoading";
-import { useTable } from 'react-table';
+import { useTable, usePagination } from 'react-table';
 
 function ApiTokens() {
     const reqRef = useRef(false);
     const [loadingStatus, setLoadingStatus] = useState(true);
     const [tokens, setTokens] = useState([]);
 
-    useEffect(() => {
-        if (reqRef.current) return;
-        reqRef.current = true;
-
-        ApiService.post('/fetch-tokens')
-            .then((response) => {
-                if (response.status === "success") {
-                    setTokens(response.tokens || []);
-                    setLoadingStatus(false);
-                }
-            })
-            .catch((err) => {
-                console.log('err', err);
-                console.log('stack', err.stack);
-                Alert('failed', 'Error in fetching token', 3);
-                setLoadingStatus(false); // Set loading status to false even in case of an error
-            });
-    }, []);
-
     const handleTokenDelete = (token_id) => {
         if (confirm('Are you sure you want to delete token? Click OK to confirm')) {
-            ApiService.post('/delete-token', { token_id })
+            ApiService.delete('/token/' + token_id)
                 .then((response) => {
                     if (response.status === "success") {
-                        setTokens(tokens.filter(t => t.id !== token_id));
+                        setTokens(tokens.filter(t => t._id !== token_id));
                         Alert('success', 'Token Successfully deleted', 3);
                     }
                 })
@@ -48,6 +29,29 @@ function ApiTokens() {
         navigator.clipboard.writeText(token);
         Alert('success', 'Token copied successfully', 2);
     };
+
+    const getTokens = () => {
+        ApiService.post('/fetch-tokens')
+            .then((response) => {
+                if (response.status === "success") {
+                    console.log(response.tokens)
+                    setTokens(response.tokens);
+                    setLoadingStatus(false);
+                }
+            })
+            .catch((err) => {
+                console.log('err', err);
+                console.log('stack', err.stack);
+                Alert('failed', 'Error in fetching token', 3);
+                setLoadingStatus(false); // Set loading status to false even in case of an error
+            });
+    }
+
+    useEffect(() => {
+        // if (reqRef.current) return;
+        // reqRef.current = true;
+        getTokens()
+    }, []);
 
     const columns = React.useMemo(
         () => [
@@ -73,7 +77,7 @@ function ApiTokens() {
                             Copy Token
                         </button>
                         <button
-                            onClick={() => handleTokenDelete(row.original.id)}
+                            onClick={() => handleTokenDelete(row.original._id)}
                             className="btn btn-danger btn-sm m-1 text-white"
                         >
                             Delete
@@ -85,15 +89,21 @@ function ApiTokens() {
         []
     );
 
-    const tableInstance = useTable({ columns, data: tokens });
+    const tableInstance = useTable({ columns, data: tokens }, usePagination);
 
     // Access the table instance properties
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        rows,
+        page, // Cambia 'rows' a 'page'
         prepareRow,
+        previousPage,
+        nextPage,
+        canPreviousPage,
+        canNextPage,
+        pageCount,
+        state: { pageIndex }, // Agrega esta línea para obtener el índice de la página actual
     } = tableInstance;
 
     return (
@@ -117,7 +127,7 @@ function ApiTokens() {
                                 ))}
                             </thead>
                             <tbody {...getTableBodyProps()}>
-                                {rows.map((row) => {
+                                {page.map((row) => {
                                     prepareRow(row);
                                     return (
                                         <tr {...row.getRowProps()}>
@@ -130,6 +140,25 @@ function ApiTokens() {
                                     );
                                 })}
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colSpan={columns.length}>
+                                        <div className="pagination d-flex justify-content-between align-items-center">
+                                            <div className="pagination-navigation">
+                                                <button onClick={() => previousPage()} disabled={!canPreviousPage} className="btn btn-light btn-sm">
+                                                    Previous
+                                                </button>
+                                                <button onClick={() => nextPage()} disabled={!canNextPage} className="btn btn-light btn-sm">
+                                                    Next
+                                                </button>
+                                            </div>
+                                            <div className="pagination-info">
+                                                Page {pageIndex + 1} of {pageCount}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
 
