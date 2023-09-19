@@ -8,7 +8,7 @@ export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPasword] = useState("");
 
-    const handleLoignSubmit = async (e) => {
+    const handleLoginSubmit = async (e) => {
         e.preventDefault();
 
         if (email == "") {
@@ -18,7 +18,7 @@ export default function LoginPage() {
         } else {
             Alert("success", "loading", 30);
 
-            const login = await UserService.Login(email, password);
+            const login = await UserService.Login(email.toLowerCase(), password);
             if (login.status === "success") {
                 Alert("success", "Login Successful", 3);
 
@@ -61,14 +61,14 @@ export default function LoginPage() {
                                             <form
                                                 className="row g-3 needs-validation"
                                                 noValidate
-                                                onSubmit={handleLoignSubmit}
+                                                onSubmit={handleLoginSubmit}
                                             >
                                                 <div className="col-12">
                                                     <label htmlFor="yourEmail" className="form-label">
                                                         Email
                                                     </label>
                                                     <input
-                                                        type="text"
+                                                        type="email"
                                                         className="form-control"
                                                         id="email"
                                                         value={email}
