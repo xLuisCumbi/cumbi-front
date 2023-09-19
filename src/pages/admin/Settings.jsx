@@ -87,21 +87,6 @@ function Settings() {
                             />
                         </div>
                         <div className="col-md-6 mt-3">
-                            <label className="form-label">Passphrase/Mnemonic</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={settingsFormData.passphrase}
-                                onChange={(e) =>
-                                    setSettingsFormData({
-                                        ...settingsFormData,
-                                        passphrase: e.target.value,
-                                    })
-                                }
-                                required
-                            />
-                        </div>
-                        <div className="col-md-6 mt-3">
                             <label className="form-label">Password</label>
                             <input
                                 type="text"
