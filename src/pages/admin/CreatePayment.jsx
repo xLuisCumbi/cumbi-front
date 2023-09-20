@@ -55,6 +55,7 @@ function CreatePayment() {
                         value: true,
                         link: response.invoiceObj.invoice_url,
                     });
+                    console.log('payment', paymentCreated.link);
                     Alert("success", "Invoice created", 3);
                 }
             },

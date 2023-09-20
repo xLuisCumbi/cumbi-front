@@ -4,6 +4,7 @@ import Alert from "../../components/Alert";
 import ApiService from '../../services/ApiService';
 import PageLoading from "../../components/PageLoading";
 import "../..//assets/vendor/bootstrap/js/bootstrap.bundle.js";
+import { config } from '../../config/default';
 
 // Import react-table and its required components
 import { useTable, usePagination } from 'react-table';
@@ -20,7 +21,7 @@ function PaymentHistory() {
         () => [
             {
                 Header: 'Invoice/Deposit ID',
-                accessor: '_id',
+                accessor: 'deposit_id',
             },
             {
                 Header: 'Type',
@@ -64,15 +65,38 @@ function PaymentHistory() {
                 Cell: ({ row }) => string2date(row.original.createdAt),
             },
             {
-                Header: 'Action',
+                Header: 'Actions', // Empty header for the icon button
+                accessor: 'action',
                 Cell: ({ row }) => (
-                    <button
-                        className="btn btn-primary text-white btn-sm w-100"
-                        onClick={() => handleShowPaymentDetails(row.index)}
-                    >
-                        View More
-                    </button>
+                    <div className="d-flex justify-content-between align-items-center">
+                        <a
+                            className="btn"
+                            onClick={() => handleShowPaymentDetails(row.index)}
+                            title="View Payment Details"
+                        >
+                            <i className="bi bi-info-circle"></i>
+                        </a>
+                        <a
+                            className="btn"
+                            href={`${config.paymentBaseUrl}/invoice/${row.original.deposit_id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Open Payment Page"
+                        >
+                            <i className="bi bi-link"></i>
+                        </a>
+                        <a
+                            className="btn"
+                            href={`https://tronscan.org/#/address/${row.original.address}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Open Transaction Page"
+                        >
+                            <i class="bi bi-database-lock"></i>
+                        </a>
+                    </div>
                 ),
+
             },
         ],
         [deposits]
@@ -154,7 +178,7 @@ function PaymentHistory() {
         canPreviousPage,
         canNextPage,
         pageCount,
-        state: { pageIndex }, // Agrega esta línea para obtener el índice de la página actual
+        state: { pageIndex },
     } = tableInstance;
 
     if (!deposits || !Array.isArray(deposits)) {
@@ -287,6 +311,27 @@ function PaymentHistory() {
                                                     <div>{selectedDeposit.type_payment_fee}</div>
                                                 </div>
                                             </div>
+                                            <div className="col-12 mt-3">
+                                                <strong> <a
+                                                    href={`${config.paymentBaseUrl}/invoice/${selectedDeposit.deposit_id}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    <i className="bi bi-info-circle"></i> Open The Payment Page
+                                                </a></strong>
+
+                                            </div>
+                                            <div className="col-12 mt-3">
+                                                <strong><a
+                                                    href={`https://tronscan.org/#/address/${selectedDeposit.address}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    <i class="bi bi-database-lock"></i> Open Transaction Page
+                                                </a>
+                                                </strong>
+                                            </div>
+
                                         </div>
                                     ) : (
                                         <p>No payment selected.</p>
