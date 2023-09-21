@@ -4,9 +4,10 @@ import Alert from "../../components/Alert";
 import ApiService from '../../services/ApiService';
 import PageLoading from "../../components/PageLoading";
 import "../..//assets/vendor/bootstrap/js/bootstrap.bundle.js";
+import { config } from '../../config/default';
 
 // Import react-table and its required components
-import { useTable, useFilters, useGlobalFilter, usePagination } from 'react-table';
+import { useTable, usePagination } from 'react-table';
 
 function PaymentHistory() {
     // const reqRef = useRef(false);
@@ -16,43 +17,34 @@ function PaymentHistory() {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Use react-table to define the columns and data for the table
-    // Define las columnas de la tabla
     const columns = React.useMemo(
         () => [
             {
                 Header: 'Invoice/Deposit ID',
-                accessor: '_id',
-                Filter: DefaultColumnFilter, // Componente de filtro predeterminado
+                accessor: 'deposit_id',
             },
             {
                 Header: 'Type',
                 accessor: 'type',
-                Filter: DefaultColumnFilter,
             },
             {
                 Header: 'Amount',
                 accessor: 'amount',
-                Filter: DefaultColumnFilter,
             },
             {
                 Header: 'Network',
                 accessor: 'network',
-                Filter: DefaultColumnFilter,
             },
             {
                 Header: 'Coin',
                 accessor: 'coin',
-                Filter: DefaultColumnFilter,
             },
             {
                 Header: 'Status',
                 accessor: 'status',
-                Filter: DefaultColumnFilter,
             },
             {
                 Header: 'Consolidation',
-                accessor: 'consolidation_status',
-                Filter: DefaultColumnFilter,
                 Cell: ({ row }) => (
                     <>
                         {row.original.consolidation_status !== 'success' && row.original.status === 'success' ? (
@@ -70,72 +62,60 @@ function PaymentHistory() {
             },
             {
                 Header: 'Date',
-                accessor: 'createdAt',
-                Filter: DateColumnFilter, // Renderiza el filtro solo si 'canFilter' está habilitado
-                Cell: ({ row }) => timestampToDate(row.original.createdAt), // Convierte el timestamp a una fecha legible
+                Cell: ({ row }) => string2date(row.original.createdAt),
             },
             {
-                Header: 'Action',
+                Header: 'Actions', // Empty header for the icon button
+                accessor: 'action',
                 Cell: ({ row }) => (
-                    <button
-                        className="btn btn-primary text-white btn-sm w-100"
-                        onClick={() => handleShowPaymentDetails(row.index)}
-                    >
-                        View More
-                    </button>
+                    <div className="d-flex justify-content-between align-items-center">
+                        <a
+                            className="btn"
+                            onClick={() => handleShowPaymentDetails(row.index)}
+                            title="View Payment Details"
+                        >
+                            <i className="bi bi-info-circle"></i>
+                        </a>
+                        <a
+                            className="btn"
+                            href={`${config.paymentBaseUrl}/invoice/${row.original.deposit_id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Open Payment Page"
+                        >
+                            <i className="bi bi-link"></i>
+                        </a>
+                        <a
+                            className="btn"
+                            href={`https://tronscan.org/#/address/${row.original.address}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Open Transaction Page"
+                        >
+                            <i class="bi bi-database-lock"></i>
+                        </a>
+                    </div>
                 ),
+
             },
         ],
-        [] // No es necesario pasar "deposits" aquí
+        [deposits]
     );
 
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        page,
-        prepareRow,
-        state,
-        previousPage,
-        nextPage,
-        canPreviousPage,
-        canNextPage,
-        pageCount,
-        setGlobalFilter,
-    } = useTable(
-        {
-            columns,
-            data: deposits,
-        },
-        useFilters,
-        useGlobalFilter,
-        usePagination
-    );
+    const tableInstance = useTable(
+        { columns, data: deposits },
+        usePagination);
 
     useEffect(() => {
         getDeposits()
-        setIsModalOpen(false);
-        setSelectedDeposit(null);
     }, []);
 
-    const handleShowPaymentDetails = async (i) => {
-        console.log('deposits get', deposits);
-        try {
-            // Esperar a que getDeposits se complete antes de continuar
-            //const d = await getDeposits()[i];
-            await getDeposits();
-            const d = deposits[i];
-            console.log('i', i);
-            console.log('d', d);
-            console.log('deposits', deposits);
-            if (d) {
-                setSelectedDeposit(d);
-                setIsModalOpen(true);
-                new bootstrap.Modal(document.getElementById('largeModal')).show();
-            }
-        } catch (error) {
-            console.error('Error al obtener los depósitos', error);
-        }
+
+    const handleShowPaymentDetails = (i) => {
+        const d = deposits[i];
+        setSelectedDeposit(d);
+        setIsModalOpen(true);
+        new bootstrap.Modal(document.getElementById('largeModal')).show();
     };
 
     const handlePaymentConsolidation = (deposit_id) => {
@@ -167,17 +147,13 @@ function PaymentHistory() {
         return fechaLegible;
     }
 
-    async function getDeposits() {
-        setSelectedDeposit(null); // Establece selectedDeposit en null al iniciar la carga de datos.
-
+    function getDeposits() {
         const user = JSON.parse(localStorage.getItem('user'));
         // setTest("success")
         ApiService.post('/fetch-deposits', { user }) // Pass the user
             .then((response) => {
                 if (response.status === "success") {
                     setDeposits(response.deposits);
-                    console.log('response', response);
-
                     setLoadingStatus(false);
                     // setTest("success")
                 }
@@ -190,39 +166,20 @@ function PaymentHistory() {
             });
     }
 
-    // Componente de filtro predeterminado
-    function DefaultColumnFilter({ column: { filterValue, setFilter } }) {
-        return (
-            <input
-                type="text"
-                value={filterValue || ''}
-                onChange={(e) => {
-                    setFilter(e.target.value || undefined);
-                }}
-                className="form-control"
-                placeholder="Filter..."
-            />
-        );
-    }
-
-    // Componente de filtro personalizado para columnas de fecha
-    function DateColumnFilter({ column: { filterValue, setFilter } }) {
-        return (
-            <input
-                type="date"
-                value={filterValue || ''}
-                onChange={(e) => {
-                    setFilter(e.target.value || undefined);
-                }}
-                placeholder="Filter..."
-            />
-        );
-    }
-
-    function timestampToDate(timestamp) {
-        const date = new Date(timestamp);
-        return date.toLocaleString(); // Puedes personalizar el formato según tus necesidades
-    }
+    // Access the table instance properties
+    const {
+        getTableProps,
+        getTableBodyProps,
+        headerGroups,
+        page, // Cambia 'rows' a 'page'
+        prepareRow,
+        previousPage,
+        nextPage,
+        canPreviousPage,
+        canNextPage,
+        pageCount,
+        state: { pageIndex },
+    } = tableInstance;
 
     if (!deposits || !Array.isArray(deposits)) {
         return <div>No data available</div>; // Display a message if the data is not available or not an array
@@ -234,13 +191,6 @@ function PaymentHistory() {
                 <PageTitle title="Payment History" />
                 <section id="payment_history" className="card bg-white p-4">
                     <div className="col-md-12">
-                        {/* Barra de búsqueda global */}
-                        <input
-                            type="text"
-                            value={state.globalFilter || ''}
-                            onChange={(e) => setGlobalFilter(e.target.value)}
-                            placeholder="Search..."
-                        />
                         <table style={{ fontSize: '90%' }} {...getTableProps()} className="table datatable">
                             <thead>
                                 {headerGroups.map((headerGroup) => (
@@ -280,7 +230,7 @@ function PaymentHistory() {
                                                 </button>
                                             </div>
                                             <div className="pagination-info">
-                                                Page {state.pageIndex + 1} of {pageCount}
+                                                Page {pageIndex + 1} of {pageCount}
                                             </div>
                                         </div>
                                     </td>
@@ -293,7 +243,7 @@ function PaymentHistory() {
                             <div className="modal-content">
                                 <div className="modal-header">
                                     <h5 className="modal-title">Payment Details</h5>
-                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => setIsModalOpen(false)}></button>
+                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div className="modal-body">
                                     {selectedDeposit ? ( // Verifica si selectedDeposit no es null
@@ -361,6 +311,27 @@ function PaymentHistory() {
                                                     <div>{selectedDeposit.type_payment_fee}</div>
                                                 </div>
                                             </div>
+                                            <div className="col-12 mt-3">
+                                                <strong> <a
+                                                    href={`${config.paymentBaseUrl}/invoice/${selectedDeposit.deposit_id}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    <i className="bi bi-info-circle"></i> Open The Payment Page
+                                                </a></strong>
+
+                                            </div>
+                                            <div className="col-12 mt-3">
+                                                <strong><a
+                                                    href={`https://tronscan.org/#/address/${selectedDeposit.address}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    <i class="bi bi-database-lock"></i> Open Transaction Page
+                                                </a>
+                                                </strong>
+                                            </div>
+
                                         </div>
                                     ) : (
                                         <p>No payment selected.</p>
