@@ -152,10 +152,10 @@ function CreatePayment() {
      */
     function getPercUser() {
         let payment_fee = 0, type_payment_fee = ""
-        if (user.payment_fee && user.payment_fee > 0) {
+        if (user && user.payment_fee && user.payment_fee > 0) {
             payment_fee = user.payment_fee
             type_payment_fee = "person"
-        } else if (business.payment_fee && business.payment_fee > 0) {
+        } else if (business && business.payment_fee && business.payment_fee > 0) {
             payment_fee = business.payment_fee
             type_payment_fee = "business"
         } else {
