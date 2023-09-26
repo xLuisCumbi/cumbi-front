@@ -20,6 +20,10 @@ function PaymentHistory() {
     const columns = React.useMemo(
         () => [
             {
+                Header: 'ID',
+                accessor: '_id',
+            },
+            {
                 Header: 'Invoice/Deposit ID',
                 accessor: 'deposit_id',
             },

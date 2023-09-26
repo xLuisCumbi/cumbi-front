@@ -205,9 +205,8 @@ function CreatePayment() {
                                     <label>
                                         <p>
                                             TRM: <b>${(paymentFormData.trm_house).toLocaleString()}</b><br />
-                                            Recibirá: <b>${paymentFormData.amount_fiat.toLocaleString()}</b> COP en su cuenta de banco.
-                                            Comisión a cobrar: <b>${(paymentFormData.amount * 0.03 * paymentFormData.trm_house).toLocaleString()}</b> COP (3%).
-
+                                            Recibirá: <b>${paymentFormData.amount_fiat.toLocaleString()}</b> COP en su cuenta de banco.<br />
+                                            Comisión a cobrar: <b>${(paymentFormData.trm_house * paymentFormData.amount - paymentFormData.amount_fiat).toLocaleString()}</b> COP ({paymentFormData.payment_fee}%).
                                         </p>
                                     </label>
                                 </div>
