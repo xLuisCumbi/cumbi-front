@@ -46,9 +46,14 @@ function CreatePayment() {
                 return;
             }
         }
+        if (paymentFormData.amount <= 0 || isNaN(paymentFormData.amount)
+            || typeof paymentFormData.amount !== 'number' || !Number.isFinite(paymentFormData.amount)) {
+            Alert("failed", "El monto debe ser un número valido", 2);
+            return;
+        }
 
         Alert("success", "loading", 30);
-        ApiService.post("/create-invoice", { ...paymentFormData }).then(
+        ApiService.postDeposit("/create-app", { ...paymentFormData }).then(
             (response) => {
                 if (response.status === "success") {
                     setPaymentCreated({
@@ -70,11 +75,11 @@ function CreatePayment() {
 
     // Función para actualizar paymentFormData.amount y calcular amountBankFiat
     const handleAmountChange = (e) => {
-        const newAmount = e.target.value;
-        if (newAmount <= 0) {
-            Alert("failed", "El valor debe ser positivo", 2);
-            return;
-        }
+        const newAmount = parseFloat(e.target.value);
+        // if (newAmount <= 0) {
+        //     Alert("failed", "El valor debe ser positivo", 2);
+        //     return;
+        // }
 
         // Calcular el valor de amountBankFiat
         const amountHouseFiat = paymentFormData.trm_house * newAmount;

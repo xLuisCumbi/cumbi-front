@@ -222,7 +222,25 @@ const ApiService = {
           }
         );
     });
-  }
+  },
+
+  postDeposit(endpoint, data = {}) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(config.depositsUrl + endpoint, data, {
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
 
 };
 

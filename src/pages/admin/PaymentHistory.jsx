@@ -82,7 +82,7 @@ function PaymentHistory() {
                         </a>
                         <a
                             className="btn"
-                            href={`${config.paymentBaseUrl}/invoice/${row.original.deposit_id}`}
+                            href={`${config.paymentBaseUrl}/invoice/${row.original._id}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             title="Open Payment Page"
@@ -96,7 +96,7 @@ function PaymentHistory() {
                             rel="noopener noreferrer"
                             title="Open Transaction Page"
                         >
-                            <i class="bi bi-database-lock"></i>
+                            <i className="bi bi-database-lock"></i>
                         </a>
                     </div>
                 ),
@@ -317,7 +317,7 @@ function PaymentHistory() {
                                             </div>
                                             <div className="col-12 mt-3">
                                                 <strong> <a
-                                                    href={`${config.paymentBaseUrl}/invoice/${selectedDeposit.deposit_id}`}
+                                                    href={`${config.paymentBaseUrl}/invoice/${selectedDeposit._id}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                 >
@@ -331,7 +331,7 @@ function PaymentHistory() {
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                 >
-                                                    <i class="bi bi-database-lock"></i> Open Transaction Page
+                                                    <i className="bi bi-database-lock"></i> Open Transaction Page
                                                 </a>
                                                 </strong>
                                             </div>
