@@ -9,7 +9,6 @@ function Login(email, password) {
     ApiService.postWithCredentials('/login', { email, password }, additionalHeaders).then(
       (response) => {
         if (response.status === 'success') {
-          console.log(response)
           localStorage.setItem('user', JSON.stringify(response.user));
           localStorage.setItem('userRole', response.user.role); // Save the user's role
 
@@ -18,7 +17,6 @@ function Login(email, password) {
       },
       (err) => {
         console.error("Error in login request:", err);
-        console.log('error stack in login request', err.stack);
         resolve({
           status: 'failed',
           message: 'request error: kindly try again',

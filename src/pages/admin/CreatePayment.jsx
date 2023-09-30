@@ -20,6 +20,7 @@ function CreatePayment() {
     })
     const [paymentFormData, setPaymentFormData] = useState({
         title: "Título",
+        type: "app-payment",
         amount: 0,
         network: "TRON",
         coin: "USDT",
@@ -46,8 +47,7 @@ function CreatePayment() {
                 return;
             }
         }
-        if (paymentFormData.amount <= 0 || isNaN(paymentFormData.amount)
-            || typeof paymentFormData.amount !== 'number' || !Number.isFinite(paymentFormData.amount)) {
+        if (paymentFormData.amount <= 0 || Number.isNaN(paymentFormData.amount)) {
             Alert("failed", "El monto debe ser un número valido", 2);
             return;
         }
