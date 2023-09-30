@@ -156,22 +156,23 @@ function CreatePayment() {
      * @returns This function gets the percentage fee that the user/business has
      */
     function getPercUser() {
-        let payment_fee = 0, type_payment_fee = ""
-        if (user.payment_fee && user.payment_fee > 0) {
-            payment_fee = user.payment_fee
-            type_payment_fee = "person"
-        } else if (business.payment_fee && business.payment_fee > 0) {
-            payment_fee = business.payment_fee
-            type_payment_fee = "business"
+        let payment_fee = 0, type_payment_fee = "";
+
+        if (user && !isNaN(user.payment_fee) && user.payment_fee > 0) {
+            payment_fee = user.payment_fee;
+            type_payment_fee = "person";
+        } else if (business && !isNaN(business.payment_fee) && business.payment_fee > 0) {
+            payment_fee = business.payment_fee;
+            type_payment_fee = "business";
         } else {
-            payment_fee = setting.perc_cumbi
-            type_payment_fee = "cumbi"
+            payment_fee = setting.perc_cumbi;
+            type_payment_fee = "cumbi";
         }
-        return [payment_fee, type_payment_fee]
+        return [payment_fee, type_payment_fee];
     }
 
     function value2Perc(value) {
-        return (100 - value) / 100
+        return (100 - value) / 100;
     }
 
     useEffect(() => {
