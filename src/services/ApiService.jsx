@@ -93,7 +93,7 @@ const ApiService = {
     });
   },
 
-
+  // Business
   getBusiness(endpoint) {
     return new Promise((resolve, reject) => {
       axios
@@ -146,6 +146,7 @@ const ApiService = {
     });
   },
 
+  // SETTING
   getSetting(endpoint) {
     return new Promise((resolve, reject) => {
       axios
@@ -241,6 +242,218 @@ const ApiService = {
     });
   },
 
+
+  // Bank Account
+  getBank(endpoint) {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(config.bankUrl + endpoint, {
+
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
+  postBank(endpoint, data = {}) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(config.bankUrl + endpoint, data, {
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
+  putBank(endpoint, data = {}) {
+    return new Promise((resolve, reject) => {
+      axios
+        .put(config.bankUrl + endpoint, data, {
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
+  // Bank Account
+  getBankAccount(endpoint) {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(config.bankAccountUrl + endpoint, {
+
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
+  postBankAccount(endpoint, data = {}) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(config.bankAccountUrl + endpoint, data, {
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
+  putBankAccount(endpoint, data = {}) {
+    return new Promise((resolve, reject) => {
+      axios
+        .put(config.bankAccountUrl + endpoint, data, {
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
+  // Country
+  getCountry(endpoint) {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(config.countryUrl + endpoint, {
+
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
+  postCountry(endpoint, data = {}) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(config.countryUrl + endpoint, data, {
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
+  putCountry(endpoint, data = {}) {
+    return new Promise((resolve, reject) => {
+      axios
+        .put(config.countryUrl + endpoint, data, {
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
+  // Coin
+  getCoin(endpoint) {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(config.coinUrl + endpoint, {
+
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
+  postCoin(endpoint, data = {}) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(config.coinUrl + endpoint, data, {
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
+
+  putCoin(endpoint, data = {}) {
+    return new Promise((resolve, reject) => {
+      axios
+        .put(config.coinUrl + endpoint, data, {
+          headers: {
+            Authorization: `Bearer ${authToken()}`,
+          },
+        })
+        .then(
+          (response) => resolve(response.data),
+          (err) => {
+            reject(err);
+          }
+        );
+    });
+  },
 
 };
 

@@ -58,27 +58,29 @@ function Sidebar() {
         {(userRole === 'admin' || userRole === 'superadmin') && (
           <>
             <li className="nav-item">
-              <a className={route == 'create-token' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/create-token')}>
+              <a className={route == 'create-token' ? 'nav-link' : 'nav-link collapsed'}
+                onClick={() => navigate('/admin/create-token')}>
                 <i className="bi bi-key"></i>
                 <span>API Tokens</span>
               </a>
             </li>
-
-            {/* <li className="nav-item">
-            <a className={route == 'tokens' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/tokens')}>
-                <i className="bi bi-key"></i>
-                <span>API Tokens</span>
-            </a>
-        </li> */}
             <li className="nav-item">
-              <a className={route == 'create-user' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/create-user')}>
+              <a className={route == 'create-user' ? 'nav-link' : 'nav-link collapsed'}
+                onClick={() => navigate('/admin/create-user')}>
                 <i className="bi bi-person"></i>
                 <span>Users</span>
               </a>
             </li>
-
             <li className="nav-item">
-              <a className={route == 'settings' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/settings')}>
+              <a className={route == 'create-bank-account' ? 'nav-link' : 'nav-link collapsed'}
+                onClick={() => navigate('/admin/create-bank-account')}>
+                <i className="bi bi-bank"></i>
+                <span>Bank Accounts</span>
+              </a>
+            </li>
+            <li className="nav-item">
+              <a className={route == 'settings' ? 'nav-link' : 'nav-link collapsed'}
+                onClick={() => navigate('/admin/settings')}>
                 <i className="bi bi-gear"></i>
                 <span>Settings</span>
               </a>
@@ -111,6 +113,26 @@ function Sidebar() {
                 <i className="bi bi-puzzle"></i>
                 <span>Mnemonic</span>
               </a>
+            </li>
+            <li className="nav-item dropdown">
+              <a className="nav-link dropdown-toggle" href="#" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i className="bi bi-database"></i>
+                <span>Create</span>
+              </a>
+              <ul className="dropdown-menu">
+                <li>
+                  <a className={route == 'create-bank' ? 'nav-link' : 'nav-link collapsed'}
+                    onClick={() => navigate('/admin/create-bank')}>Bank</a>
+                </li>
+                <li>
+                  <a className={route == 'create-coin' ? 'nav-link' : 'nav-link collapsed'}
+                    onClick={() => navigate('/admin/create-coin')}>Coin</a>
+                </li>
+                <li>
+                  <a className={route == 'create-country' ? 'nav-link' : 'nav-link collapsed'}
+                    onClick={() => navigate('/admin/create-country')}>Country</a>
+                </li>
+              </ul>
             </li>
           </>
         )}

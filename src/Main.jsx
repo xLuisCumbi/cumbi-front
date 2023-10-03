@@ -17,6 +17,10 @@ import './index.css';
 import AdminLayout from './pages/admin/adminLayout';
 import CreateUser from './pages/admin/CreateUser';
 import CreateBusiness from './pages/admin/CreateBusiness';
+import CreateCountry from './pages/admin/CreateCountry';
+import CreateCoin from './pages/admin/CreateCoin';
+import CreateBank from './pages/admin/CreateBank';
+import CreateBankAccount from './pages/admin/CreateBankAccount';
 import ListUser from './pages/admin/ListUser';
 
 // Lazy Loading to reduce chunk size for production
@@ -98,6 +102,22 @@ const router = createBrowserRouter([
       {
         path: 'create-token',
         element: <CreateToken />,
+      },
+      {
+        path: 'create-country',
+        element: <CreateCountry />,
+      },
+      {
+        path: 'create-coin',
+        element: <CreateCoin />,
+      },
+      {
+        path: 'create-bank',
+        element: <CreateBank />,
+      },
+      {
+        path: 'create-bank-account',
+        element: <CreateBankAccount />,
       },
       // {
       //   path: 'list-user',
