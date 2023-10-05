@@ -62,6 +62,10 @@ function ListBankAccount(props) {
             {
                 Header: 'Active',
                 accessor: 'active',
+                Cell: ({ row }) =>
+                    <div className="form-check form-switch">
+                        <input className="form-check-input" type="checkbox" defaultChecked={row.original.active} role="switch" disabled />
+                    </div>
             },
             {
                 Header: 'Action',

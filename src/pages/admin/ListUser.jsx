@@ -4,15 +4,12 @@ import Alert from "../../components/Alert";
 import ApiService from "../../services/ApiService";
 import PageLoading from "../../components/PageLoading";
 import "../../assets/vendor/bootstrap/js/bootstrap.bundle.js";
-
-// Import react-table and its required components
 import { useTable } from "react-table";
 
 function ListUser() {
     const reqRef = useRef(false);
     const [loadingStatus, setLoadingStatus] = useState(true);
     const [users, setUsers] = useState([]);
-    const [selectedDeposit, setSelectedDeposit] = useState(null);
 
     useEffect(() => {
         if (reqRef.current) return;
@@ -41,11 +38,10 @@ function ListUser() {
     }
 
     const blockUser = (id) => {
-        return;
-        ApiService.delete(id)
+        ApiService.put("/block/" + id)
             .then((response) => {
                 if (response.status === "success") {
-                    Alert('success', 'User Deleted', 3);
+                    Alert('success', 'User updated', 3);
                     getUsers()
                 }
             })

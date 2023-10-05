@@ -21,11 +21,22 @@ function CreateBankAccount() {
   const [seed, setSeed] = useState(1);
 
   useEffect(() => {
-    console.log(user)
     ApiService.getBank("").then(
       (response) => {
         if (response.status === 'success') {
           setBankList(response.banks)
+        }
+      },
+      (error) => {
+        Alert('failed', 'Error fetching', 3);
+        console.error(error)
+      }
+    );
+
+    ApiService.getBankAccount("/active").then(
+      (response) => {
+        if (response.status === 'success') {
+          console.log(response.bankAccount)
         }
       },
       (error) => {
@@ -40,8 +51,6 @@ function CreateBankAccount() {
     e.preventDefault();
 
     for (let key in bankAccount) {
-      // if (key === 'bankAccount' || key === 'web')
-      //   continue
       if (bankAccount[key] === '') {
         Alert('failed', `input ${key} is required`, 3);
         return;
@@ -201,8 +210,10 @@ function CreateBankAccount() {
                     })
                   } />
                 <label className="form-check-label" htmlFor="flexSwitchCheckDefault"></label>
+
               </div>
             </div>
+            <br></br><div className="form-text" id="basic-addon4">Solo se permite una cuenta activa</div>
 
             <div className="col-md-12 mt-4 text-center">
               <button className="btn btn-primary text-white">
