@@ -33,12 +33,20 @@ function CreateBank() {
     e.preventDefault();
 
     for (let key in bank) {
+      console.log('bank', bank);
+      console.log('key', key);
       // if (key === 'bank' || key === 'web')
       //   continue
       if (bank[key] === '') {
         Alert('failed', `input ${key} is required`, 3);
         return;
       }
+    }
+
+    // Validar que el usuario haya seleccionado un país válido
+    if (bank.country === '') {
+      Alert('failed', 'Please select a valid country', 3);
+      return;
     }
 
     Alert('success', 'loading', 30);
@@ -135,6 +143,7 @@ function CreateBank() {
                 }
                 required
               >
+                <option value="">Selecciona un país...</option> {/* Opción por defecto */}
                 {countryList.map(country =>
                   <option value={country._id} key={country._id}>{country.name}</option>)
                 }
