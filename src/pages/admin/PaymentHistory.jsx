@@ -22,10 +22,16 @@ function PaymentHistory() {
             {
                 Header: 'ID',
                 accessor: '_id',
+                Cell: ({ row }) => "..." + row.original._id.substr(row.original._id.length - 4),
             },
             {
                 Header: 'Invoice/Deposit ID',
                 accessor: 'deposit_id',
+                Cell: ({ row }) =>
+                    row.original.deposit_id.length > 4
+                        ? "..." + row.original.deposit_id.substr(row.original.deposit_id.length - 4)
+                        : row.original.deposit_id
+                ,
             },
             {
                 Header: 'Type',
@@ -34,6 +40,7 @@ function PaymentHistory() {
             {
                 Header: 'Amount',
                 accessor: 'amount',
+                Cell: ({ row }) => "$ " + row.original.amount.toLocaleString(),
             },
             {
                 Header: 'Network',
@@ -168,6 +175,10 @@ function PaymentHistory() {
                 Alert('failed', 'Error in fetching deposits', 3);
                 setLoadingStatus(false); // Set loading status to false even in case of an error
             });
+    }
+
+    function cancelTransaction(_id) {
+        console.log(_id)
     }
 
     // Access the table instance properties
@@ -334,6 +345,14 @@ function PaymentHistory() {
                                                     <i className="bi bi-database-lock"></i> Open Transaction Page
                                                 </a>
                                                 </strong>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-12 col-sm-4 mt-3">
+                                                    <button className="btn btn-primary text-white" type="button"
+                                                        onClick={() => cancelTransaction(selectedDeposit._id)}>
+                                                        Cancel Transaction
+                                                    </button>
+                                                </div>
                                             </div>
 
                                         </div>
