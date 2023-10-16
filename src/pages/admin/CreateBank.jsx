@@ -19,6 +19,10 @@ function CreateBank() {
       (response) => {
         if (response.status === 'success') {
           setCountryList(response.countries)
+          setData({
+            ...bank,
+            country: response.countries[0]._id
+          })
         }
       },
       (error) => {
@@ -82,11 +86,12 @@ function CreateBank() {
 
 
   const edit = (data) => {
+    console.log(data)
     setData({
       ...bank,
       _id: data._id,
       name: data.name,
-      country: data.country,
+      country: data.country._id,
     })
     setIsEditing(true)
     setTextButton("Update")
@@ -98,7 +103,7 @@ function CreateBank() {
     setIsEditing(false)
     setData({
       name: '',
-      country: '',
+      country: countryList[0]._id,
     })
   }
 

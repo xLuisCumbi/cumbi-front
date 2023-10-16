@@ -13,13 +13,32 @@ function CreateBusiness() {
     email: '',
     payment_fee: 0,
   });
+  const [countryList, setCountryList] = useState([])
   const [isEditing, setIsEditing] = useState(false)
   const [textButton, setTextButton] = useState("Create Business")
   const [seed, setSeed] = useState(1);
 
+  useEffect(() => {
+    ApiService.getCountry("").then(
+      (response) => {
+        if (response.status === 'success') {
+          setCountryList(response.countries)
+          setBusinessData({
+            ...businessData,
+            country: response.countries[0]._id
+          })
+        }
+      },
+      (error) => {
+        Alert('failed', 'Error fetching', 3);
+        console.error(error)
+      }
+    );
+
+  }, []);
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
-
     for (let key in businessData) {
       if (key === 'country' || key === 'web')
         continue
@@ -65,7 +84,7 @@ function CreateBusiness() {
       name: business.name,
       email: business.email,
       payment_fee: business.payment_fee ? business.payment_fee : 0,
-      country: business.country ? business.country : "",
+      country: business.country ? (business.country._id ? business.country._id : countryList[0]._id) : countryList[0]._id,
       web: business.web ? business.web : "",
     })
     setIsEditing(true)
@@ -81,7 +100,7 @@ function CreateBusiness() {
       name: '',
       email: '',
       payment_fee: 0,
-      country: '',
+      country: countryList[0]._id,
       web: '',
     })
   }
@@ -142,17 +161,23 @@ function CreateBusiness() {
             </div>
             <div className="col-md-6 mt-3">
               <label className="form-label">Country</label>
-              <input
+              <select
                 type="text"
                 className="form-control"
                 value={businessData.country}
-                onChange={(e) =>
+                onChange={(e) => {
                   setBusinessData({
                     ...businessData,
                     country: e.target.value,
                   })
                 }
-              />
+                }
+                required
+              >
+                {countryList.map(country =>
+                  <option value={country._id} key={country._id}>{country.name}</option>)
+                }
+              </select>
             </div>
             <div className="col-md-6 mt-3">
               <label className="form-label">Email</label>

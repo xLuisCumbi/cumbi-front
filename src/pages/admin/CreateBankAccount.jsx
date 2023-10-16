@@ -10,7 +10,7 @@ function CreateBankAccount() {
   const [bankAccount, setData] = useState({
     user: user.id,
     bank: '',
-    type: '',
+    type: 'ahorros',
     number: '',
     name: '',
     active: false,
@@ -25,6 +25,10 @@ function CreateBankAccount() {
       (response) => {
         if (response.status === 'success') {
           setBankList(response.banks)
+          setData({
+            ...bankAccount,
+            bank: response.banks[0]._id
+          })
         }
       },
       (error) => {
@@ -33,17 +37,17 @@ function CreateBankAccount() {
       }
     );
 
-    ApiService.getBankAccount("/active").then(
-      (response) => {
-        if (response.status === 'success') {
-          console.log(response.bankAccount)
-        }
-      },
-      (error) => {
-        Alert('failed', 'Error fetching', 3);
-        console.error(error)
-      }
-    );
+    // ApiService.getBankAccount("/active").then(
+    //   (response) => {
+    //     if (response.status === 'success') {
+    //       console.log(response.bankAccount)
+    //     }
+    //   },
+    //   (error) => {
+    //     Alert('failed', 'Error fetching', 3);
+    //     console.error(error)
+    //   }
+    // );
 
   }, []);
 
@@ -94,7 +98,7 @@ function CreateBankAccount() {
       ...bankAccount,
       _id: data._id,
       user: data.user,
-      bank: data.bank,
+      bank: data.bank._id,
       type: data.type,
       number: data.number,
       name: data.name,
@@ -110,8 +114,8 @@ function CreateBankAccount() {
     setIsEditing(false)
     setData({
       user: user.id,
-      bank: '',
-      type: '',
+      bank: bankList[0]._id,
+      type: 'ahorros',
       number: '',
       name: '',
       active: false,
@@ -164,7 +168,7 @@ function CreateBankAccount() {
                 }
                 required
               >
-                <option value="ahorros" >Ahorros</option>
+                <option value="ahorros">Ahorros</option>
                 <option value="corriente" >Corriente</option>
 
               </select>
