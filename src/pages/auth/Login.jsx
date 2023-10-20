@@ -53,9 +53,6 @@ export default function LoginPage() {
                                                 <h5 className="card-title text-center pb-0 fs-4">
                                                     Iniciar sesión
                                                 </h5>
-                                                <p className="text-center small">
-                                                    Email
-                                                </p>
                                             </div>
 
                                             <form
@@ -117,6 +114,9 @@ export default function LoginPage() {
                                                     </button>
                                                 </div>
                                             </form>
+                                            <div className="col-12 mb-4">
+                                                <a className="nav-link" onClick={() => navigate('/register')}>Register</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -22,6 +22,7 @@ import CreateCoin from './pages/admin/CreateCoin';
 import CreateBank from './pages/admin/CreateBank';
 import CreateBankAccount from './pages/admin/CreateBankAccount';
 import ListUser from './pages/admin/ListUser';
+import Register from './pages/auth/Register';
 
 // Lazy Loading to reduce chunk size for production
 const Loadable = (Component) => (props) =>
@@ -50,8 +51,13 @@ const ProtectedRoute = Loadable(lazy(() => import('./router/ProtectedRoute')));
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: '/' || '/login',
     element: <LoginPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/register',
+    element: <Register />,
     errorElement: <ErrorPage />,
   },
   {
