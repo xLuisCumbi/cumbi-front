@@ -36,12 +36,13 @@ const ApiService = {
    * @param {Object} data - The payload for the POST request.
    * @returns {Promise<Object>} - The response data.
    */
-  post(endpoint, data = {}) {
+  post(endpoint, data = {}, headers = {}) {
     return new Promise((resolve, reject) => {
       axios
         .post(`${this.baseURL}${endpoint}`, data, {
           headers: {
             Authorization: `Bearer ${authToken()}`,
+            ...headers,
           },
         })
         .then(
@@ -454,6 +455,41 @@ const ApiService = {
         );
     });
   },
+
+  // Método para registro público
+  publicSignUp(data = {}, headers = {}) {
+    return new Promise((resolve, reject) => {
+
+      console.log('data vals', data);
+      // Para depurar y ver el contenido del FormData
+      for (var pair of data.entries()) {
+        console.log(pair[0] + ', ' + pair[1]);
+      }
+
+      axios
+        .post(`${this.baseURL}/public-signup`, data, {
+          headers: {
+            ...headers, // Permite agregar otros encabezados personalizados
+          },
+        })
+        .then(
+          (response) => {
+            if (response && response.data) {
+              resolve(response.data);
+            } else {
+              reject(new Error("Response or response data is undefined"));
+            }
+          },
+          (err) => {
+            reject(err);
+          }
+        )
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
+
 
 };
 

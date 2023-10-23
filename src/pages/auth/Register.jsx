@@ -8,7 +8,6 @@ export default function Register() {
     const navigate = useNavigate();
     const [countryList, setCountryList] = useState([])
     const [userData, setUserData] = useState({
-        username: '',
         email: '',
         password: '',
         role: 'person',
@@ -26,7 +25,6 @@ export default function Register() {
         document: null,
     });
     const [userBusinessData, setUserBusinessData] = useState({
-        username: '',
         business: '',
         email: '',
         password: '',
@@ -95,28 +93,37 @@ export default function Register() {
     const handleSubmitPerson = async (e) => {
         e.preventDefault();
 
-
         for (let key in userData) {
             if (userData[key] === '' || userData[key] === null) {
                 Alert('failed', `input ${key} is required`, 3);
                 return;
             }
         }
-        console.log("person")
 
-        Alert("success", "loading", 30);
+        // Crear un objeto FormData
+        const formData = new FormData();
 
-        ApiService.post('/signup', { ...userData }).then(
-            (response) => {
+        console.log('userData.document', userData.document);
+        // Añadir el archivo al objeto FormData
+        formData.append('document', userData.document);
+
+        // Añadir los datos JSON al objeto FormData
+        formData.append('email', userData.email);
+        formData.append('password', userData.password);
+        formData.append('role', 'person');
+        formData.append('payment_fee', 0);
+
+        // Enviar la solicitud
+        ApiService.publicSignUp(formData)
+            .then((response) => {
                 if (response.status === 'signUp_success') {
                     Alert('success', 'User Registered', 3);
                 }
-            },
-            (err) => {
-                console.error(err)
+            })
+            .catch((err) => {
+                console.log('err signup user', err);
                 Alert('failed', 'Error in creating user', 3);
-            }
-        );
+            });
     };
 
     const handleSubmitBusiness = async (e) => {
@@ -187,21 +194,6 @@ export default function Register() {
                                                         noValidate
                                                         onSubmit={handleSubmitPerson}
                                                     >
-                                                        <div className="col-12">
-                                                            <label className="form-label">Username</label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                value={userData.username}
-                                                                onChange={(e) =>
-                                                                    setUserData({
-                                                                        ...userData,
-                                                                        username: e.target.value,
-                                                                    })
-                                                                }
-                                                                required
-                                                            />
-                                                        </div>
                                                         <div className="col-12">
                                                             <label className="form-label">Email</label>
                                                             <input
@@ -353,21 +345,6 @@ export default function Register() {
                                                                 required
                                                             />
                                                         </div> */}
-                                                        <div className="col-12">
-                                                            <label className="form-label">Username Admin</label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                value={userBusinessData.username}
-                                                                onChange={(e) =>
-                                                                    setUserBusinessData({
-                                                                        ...userBusinessData,
-                                                                        username: e.target.value,
-                                                                    })
-                                                                }
-                                                                required
-                                                            />
-                                                        </div>
                                                         <div className="col-12">
                                                             <label className="form-label">Email Admin</label>
                                                             <input
