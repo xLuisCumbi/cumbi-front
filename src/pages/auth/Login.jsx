@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 export default function LoginPage() {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
-    const [password, setPasword] = useState("");
+    const [password, setPassword] = useState("");
 
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
@@ -29,6 +29,7 @@ export default function LoginPage() {
         }
     };
 
+
     return (
         <>
             <main>
@@ -42,8 +43,7 @@ export default function LoginPage() {
                                             href="/"
                                             className="logo d-flex align-items-center w-auto text-decoration-none"
                                         >
-                                            <img src="/images/Cumbi_Purple_horizontal.svg" height="120" alt="" />
-                                            <span className="d-none d-lg-block">Cumbi Dashboard</span>
+                                            <img src="/images/Cumbi_Purple_horizontal.svg" height="200" width="200" alt="" />
                                         </a>
                                     </div>
 
@@ -83,7 +83,7 @@ export default function LoginPage() {
                                                         className="form-control"
                                                         id="password"
                                                         value={password}
-                                                        onChange={(e) => setPasword(e.target.value)}
+                                                        onChange={(e) => setPassword(e.target.value)}
                                                         required
                                                     />
                                                 </div>

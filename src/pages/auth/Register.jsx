@@ -162,7 +162,6 @@ export default function Register() {
                                             className="logo d-flex align-items-center w-auto text-decoration-none"
                                         >
                                             <img src="/images/Cumbi_Purple_horizontal.svg" height="120" alt="" />
-                                            <span className="d-none d-lg-block">Cumbi Dashboard</span>
                                         </a>
                                     </div>
 

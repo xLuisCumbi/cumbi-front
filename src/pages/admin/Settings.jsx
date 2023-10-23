@@ -11,9 +11,6 @@ function Settings() {
         password: "",
     });
 
-    useEffect(() => {
-        // Aquí puedes cargar la imagen del documento si es necesario
-    }, []);
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
@@ -88,14 +85,6 @@ function Settings() {
                                 }
                                 required
                             />
-                        </div>
-                        <div className="col-md-6 mt-3">
-                            <label className="form-label">Document</label>
-                            {user.document ? (
-                                <img src={user.document} alt="Document" width="100" />
-                            ) : (
-                                "No document available"
-                            )}
                         </div>
                         <div className="col-md-12 mt-4 text-center">
                             <button className="btn btn-primary text-white">

@@ -13,16 +13,27 @@ function ListUserBusiness(props) {
     const [loadingStatus, setLoadingStatus] = useState(true);
     const [users, setUsers] = useState([]);
 
+    // Nuevo estado para manejar la URL de la imagen y la visibilidad de la modal
+    const [modalImage, setModalImage] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+
+    // Nueva función para manejar la apertura de la modal
+    const openModalWithImage = (imageUrl) => {
+        console.log('imageUrl', imageUrl);
+        setModalImage(imageUrl);
+        setShowModal(true);
+    };
+
     /**
      * Calls a props function for edit the user
-     * @param {*} user 
+     * @param {*} user
      */
     const editUser = (user) => {
         props.editUser(user)
     }
 
     /**
-     * Block or active an user 
+     * Block or active an user
      * @param {*} _id ID from User
      * @param {*} status Current status of user
      */
@@ -47,7 +58,7 @@ function ListUserBusiness(props) {
 
     /**
      * Delete an user from Database
-     * @param {*} _id 
+     * @param {*} _id
      */
     const deleteUser = (_id) => {
         if (confirm('Are you sure you want to delete the user? Click OK to confirm')) {
@@ -118,9 +129,9 @@ function ListUserBusiness(props) {
                                 <i className="bi bi-person-fill-check"></i>
                             }
                         </a>
-                        {/* <a className="btn" style={{ color: "red" }} onClick={() => deleteUser(row.original._id)} >
-                            <i className="bi bi-trash3"></i>
-                        </a> */}
+                        <a className="btn" onClick={() => openModalWithImage(row.original.document)}>
+                            <i class="bi bi-person-vcard"></i>
+                        </a>
                     </>
 
                 ),
@@ -207,19 +218,18 @@ function ListUserBusiness(props) {
                             </tfoot>
                         </table>
                     </div>
-                    <div className="modal fade" id="largeModal" tabIndex="-1">
-                        <div className="modal-dialog modal-xl">
+                    <div className={`modal fade ${showModal ? 'd-block show' : 'd-none'}`} tabIndex="-1" style={{ backgroundColor: `${showModal ? 'rgba(0,0,0,0.5)' : 'transparent'}` }}>
+                        <div className="modal-dialog">
                             <div className="modal-content">
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Modal title</h5>
-                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <h5 className="modal-title">Document</h5>
+                                    <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
                                 </div>
                                 <div className="modal-body">
-                                    <div></div>
+                                    <img src={modalImage} alt="Document" className="img-fluid" />
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    {/* <button type="button" class="btn btn-primary">Save changes</button> */}
+                                    <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Close</button>
                                 </div>
                             </div>
                         </div>

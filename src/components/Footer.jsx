@@ -6,7 +6,7 @@ function Footer() {
                 &copy; Copyright <strong><span>Cumbi</span></strong>. All Rights Reserved
             </div>
             <div className="credits">
-                Designed And Developed By <a href="cumbi.co">Cumbi</a>
+                Designed And Developed By <a href="https://cumbi.co">Cumbi</a>
             </div>
         </footer>
     );

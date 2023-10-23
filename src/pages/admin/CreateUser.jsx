@@ -114,6 +114,7 @@ function CreateUser() {
       role: user.role,
       payment_fee: user.payment_fee ? user.payment_fee : 0,
       token: user.token,
+      document: user.document,
     })
     setIsEditing(true)
     setTextButton("Update User")
