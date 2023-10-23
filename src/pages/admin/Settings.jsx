@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PageTitle from "../../components/PageTitle";
 import Alert from "../../components/Alert";
 import ApiService from "../../services/ApiService";
@@ -8,39 +8,34 @@ function Settings() {
     const [settingsFormData, setSettingsFormData] = useState({
         username: user.username,
         email: user.email,
-        passphrase: "****************",
-        password: "****************",
+        password: "",
     });
+
+    useEffect(() => {
+        // Aquí puedes cargar la imagen del documento si es necesario
+    }, []);
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
 
+        // Solo incluir campos que han sido modificados
         const data = {};
-
-        for (let i in settingsFormData) {
-            if (
-                settingsFormData[i] !== "****************" &&
-                settingsFormData[i] != ""
-            ) {
-                data[i] = settingsFormData[i];
-            }
+        if (settingsFormData.username !== user.username) {
+            data.username = settingsFormData.username;
+        }
+        if (settingsFormData.password !== "") {
+            data.password = settingsFormData.password;
         }
 
         Alert("success", "loading", 30);
-        ApiService.post("/update", { ...data }).then(
+        ApiService.post("/update-profile", data).then(
             (response) => {
                 if (response.status === "success") {
-                    Alert("success", "Admin Settings Successfully Updated", 3);
-                    const up_user = {
-                        ...user,
-                        email: settingsFormData.email,
-                        username: settingsFormData.username,
-                    };
-                    localStorage.setItem("user", JSON.stringify(up_user));
+                    Alert("success", "Profile successfully Updated", 3);
                 }
             },
             (err) => {
-                Alert("failed", "Error in creating invoice", 3);
+                Alert("failed", "Error updating profile", 3);
             }
         );
     };
@@ -57,7 +52,7 @@ function Settings() {
                 >
                     <div className="row">
                         <div className="col-md-6 mt-3">
-                            <label className="form-label">Username</label>
+                            <label className="form-label">Full Name</label>
                             <input
                                 type="text"
                                 className="form-control"
@@ -68,7 +63,6 @@ function Settings() {
                                         username: e.target.value,
                                     })
                                 }
-                                required
                             />
                         </div>
                         <div className="col-md-6 mt-3">
@@ -77,19 +71,13 @@ function Settings() {
                                 type="email"
                                 className="form-control"
                                 value={settingsFormData.email}
-                                onChange={(e) =>
-                                    setSettingsFormData({
-                                        ...settingsFormData,
-                                        email: e.target.value,
-                                    })
-                                }
-                                required
+                                readOnly
                             />
                         </div>
                         <div className="col-md-6 mt-3">
                             <label className="form-label">Password</label>
                             <input
-                                type="text"
+                                type="password"
                                 className="form-control"
                                 value={settingsFormData.password}
                                 onChange={(e) =>
@@ -101,11 +89,17 @@ function Settings() {
                                 required
                             />
                         </div>
-
+                        <div className="col-md-6 mt-3">
+                            <label className="form-label">Document</label>
+                            {user.document ? (
+                                <img src={user.document} alt="Document" width="100" />
+                            ) : (
+                                "No document available"
+                            )}
+                        </div>
                         <div className="col-md-12 mt-4 text-center">
                             <button className="btn btn-primary text-white">
-                                {" "}
-                                Update Admin Data{" "}
+                                Update Profile
                             </button>
                         </div>
                     </div>

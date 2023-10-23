@@ -64,7 +64,14 @@ function Sidebar() {
             </a>
           </li>
         )}
-
+        
+        <li className="nav-item">
+              <a className={route == 'settings' ? 'nav-link' : 'nav-link collapsed'}
+                onClick={() => navigate('/admin/settings')}>
+                <i className="bi bi-gear"></i>
+                <span>Settings</span>
+              </a>
+            </li>
         {(userRole === 'admin' || userRole === 'superadmin') && (
           <>
             <li className="nav-item">
@@ -79,13 +86,6 @@ function Sidebar() {
                 onClick={() => navigate('/admin/create-user')}>
                 <i className="bi bi-person"></i>
                 <span>Users</span>
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className={route == 'settings' ? 'nav-link' : 'nav-link collapsed'}
-                onClick={() => navigate('/admin/settings')}>
-                <i className="bi bi-gear"></i>
-                <span>Settings</span>
               </a>
             </li>
           </>

@@ -39,10 +39,10 @@ export default function LoginPage() {
                                 <div className="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
                                     <div className="d-flex justify-content-center py-4">
                                         <a
-                                            href="index.html"
+                                            href="/"
                                             className="logo d-flex align-items-center w-auto text-decoration-none"
                                         >
-                                            <img src="/images/logo.png" alt="" />
+                                            <img src="/images/Cumbi_Purple_horizontal.svg" height="120" alt="" />
                                             <span className="d-none d-lg-block">Cumbi Dashboard</span>
                                         </a>
                                     </div>
@@ -115,7 +115,7 @@ export default function LoginPage() {
                                                 </div>
                                             </form>
                                             <div className="col-12 mb-4">
-                                                <a className="nav-link" onClick={() => navigate('/register')}>Register</a>
+                                                <a className="nav-link text-primary text-decoration-underline" onClick={() => navigate('/register')}>Register</a>
                                             </div>
                                         </div>
                                     </div>

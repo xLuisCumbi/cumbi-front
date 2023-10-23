@@ -170,11 +170,11 @@ h6 {
     0% {
         opacity: 0;
     }
-    
+
     100% {
         opacity: 1;
     }
-    
+
     0% {
         opacity: 0;
     }
@@ -365,7 +365,7 @@ h6 {
 }
 
 .logo img {
-    max-height: 26px;
+    max-height: 60px;
     margin-right: 6px;
 }
 
@@ -413,7 +413,7 @@ h6 {
         visibility: hidden;
         opacity: 0;
     }
-    
+
     .header .search-bar-show {
         top: 60px;
         visibility: visible;
@@ -630,7 +630,7 @@ h6 {
 }
 
 @media (min-width: 1200px) {
-    
+
     #main,
     #footer {
         margin-left: 300px;
@@ -644,12 +644,12 @@ h6 {
 }
 
 @media (min-width: 1200px) {
-    
+
     .toggle-sidebar #main,
     .toggle-sidebar #footer {
         margin-left: 0;
     }
-    
+
     .toggle-sidebar .sidebar {
         left: -300px;
     }
@@ -681,6 +681,10 @@ h6 {
     color: #899bbd;
     font-weight: 600;
     margin: 10px 0 5px 15px;
+}
+
+.nav-link {
+    cursor: pointer;
 }
 
 .sidebar-nav .nav-link {
@@ -1170,7 +1174,7 @@ h6 {
     0% {
         transform: rotate(0deg);
     }
-    
+
     100% {
         transform: rotate(360deg);
     }
