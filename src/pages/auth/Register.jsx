@@ -25,7 +25,7 @@ export default function Register() {
         email: '',
         payment_fee: 0,
         role: 'business',
-        document: null,
+        // document: null,
     });
 
     const [userBusinessData, setUserBusinessData] = useState({
@@ -34,7 +34,9 @@ export default function Register() {
         password: '',
         role: 'admin',
         payment_fee: 0,
-        document: null,
+        // document: null,
+        acceptedDataPolicy: false,
+        acceptedTermsConditions: false,
     });
 
     useEffect(() => {
@@ -96,19 +98,11 @@ export default function Register() {
 
     const handleSubmitPerson = async (e) => {
         e.preventDefault();
-        const termsCheckbox = document.getElementById('termsCheckbox');
-        const dataPolicyCheckbox = document.getElementById('dataPolicyCheckbox');
 
-        if (!termsCheckbox.checked || !dataPolicyCheckbox.checked) {
+        if (!userData.acceptedDataPolicy || !userData.acceptedTermsConditions) {
             Alert('failed', 'Debes aceptar los Términos y Condiciones y la Política de Tratamiento de Datos', 3);
             return;
         }
-        // Agrega los valores de los checkboxes a userData
-        setUserData({
-            ...userData,
-            acceptedDataPolicy: dataPolicyCheckbox.checked,
-            acceptedTermsConditions: termsCheckbox.checked,
-        });
 
         for (let key in userData) {
             if (userData[key] === '' || userData[key] === null) {
@@ -126,8 +120,8 @@ export default function Register() {
         // Añadir los datos JSON al objeto FormData
         formData.append('email', userData.email);
         formData.append('password', userData.password);
-        formData.append('role', 'person');
-        formData.append('payment_fee', 0);
+        formData.append('role', userData.role);
+        formData.append('payment_fee', userData.payment_fee);
         formData.append('acceptedDataPolicy', JSON.stringify(userData.acceptedDataPolicy));
         formData.append('acceptedTermsConditions', JSON.stringify(userData.acceptedTermsConditions));
 
@@ -136,7 +130,9 @@ export default function Register() {
             .then((response) => {
                 if (response.status === 'signUp_success') {
                     Alert('success', 'User Registered', 3);
-                    navigate('/')
+                    setTimeout(() => {
+                        navigate('/')
+                    }, 2000);
                 }
             })
             .catch((err) => {
@@ -148,24 +144,71 @@ export default function Register() {
     const handleSubmitBusiness = async (e) => {
         e.preventDefault();
         console.log("business")
-        return
-        if (email == "") {
-            Alert("failed", "Kinldy input email", 3);
-        } else if (password == "") {
-            Alert("failed", "Kinldy input password", 3);
-        } else {
-            Alert("success", "loading", 30);
 
-            const login = await UserService.Login(email.toLowerCase(), password);
-            if (login.status === "success") {
-                Alert("success", "Login Successful", 3);
+        if (!userBusinessData.acceptedDataPolicy || !userBusinessData.acceptedTermsConditions) {
+            Alert('failed', 'Debes aceptar los Términos y Condiciones y la Política de Tratamiento de Datos', 3);
+            return;
+        }
 
-                navigate("/admin");
-            } else {
-                Alert("failed", login.message, 5);
+        for (let key in businessData) {
+            if (businessData[key] === '' || businessData[key] === null) {
+                Alert('failed', `input ${key} is required`, 3);
+                return;
             }
         }
+        for (let key in userBusinessData) {
+            if (key === "business")
+                continue
+            if (userBusinessData[key] === '' || userBusinessData[key] === null) {
+                Alert('failed', `input ${key} is required`, 3);
+                return;
+            }
+        }
+
+        ApiService.postBusiness('/create', { ...businessData }).then(
+            (response) => {
+                if (response.status === 'success') {
+                    console.log(response.business._id)
+                    createUserWithBusiness(response.business._id)
+                }
+            },
+            (err) => {
+                Alert('failed', 'Error in creating business', 3);
+            }
+        );
     };
+
+    const createUserWithBusiness = (_id) => {
+        // Crear un objeto FormData
+        const formData = new FormData();
+
+        // Añadir el archivo al objeto FormData
+        // formData.append('document', userBusinessData.document);
+
+        // Añadir los datos JSON al objeto FormData
+        formData.append('business', _id);
+        formData.append('email', userBusinessData.email);
+        formData.append('password', userBusinessData.password);
+        formData.append('role', userBusinessData.role);
+        formData.append('payment_fee', userBusinessData.payment_fee);
+        formData.append('acceptedDataPolicy', JSON.stringify(userBusinessData.acceptedDataPolicy));
+        formData.append('acceptedTermsConditions', JSON.stringify(userBusinessData.acceptedTermsConditions));
+
+        // Enviar la solicitud
+        ApiService.publicSignUp(formData)
+            .then((response) => {
+                if (response.status === 'signUp_success') {
+                    Alert('success', 'Registro exitoso', 3);
+                    setTimeout(() => {
+                        navigate('/')
+                    }, 2000);
+                }
+            })
+            .catch((err) => {
+                console.error('err signup user business', err);
+                Alert('failed', 'Error in creating  user business', 3);
+            });
+    }
 
     return (
         <>
@@ -174,7 +217,7 @@ export default function Register() {
                     <section className="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
                         <div className="container">
                             <div className="row justify-content-center">
-                                <div className="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+                                <div className="col-lg-6 col-md-6 d-flex flex-column align-items-center justify-content-center">
                                     <div className="d-flex justify-content-center py-4">
                                         <a
                                             href="/admin//dashboard"
@@ -305,15 +348,10 @@ export default function Register() {
                                                     <form
                                                         className="row g-3 needs-validation"
                                                         noValidate
-                                                    // onSubmit={handleSubmitBusiness}
+                                                        onSubmit={handleSubmitBusiness}
                                                     >
-                                                        <p>
-                                                            <br></br>
-                                                            Si quieres registrar tu negocio, escríbenos para realizar la validación:
-                                                            <b><a target="_blank" href="https://wa.me/573044433331">Línea Cumbi</a></b>
-                                                        </p>
                                                         <div className="col-12">
-                                                            {/* <label className="form-label">ID Tax</label>
+                                                            <label className="form-label">ID Tax</label>
                                                             <input
                                                                 type="text"
                                                                 className="form-control"
@@ -325,10 +363,10 @@ export default function Register() {
                                                                     })
                                                                 }
                                                                 required
-                                                            /> */}
+                                                            />
                                                         </div>
                                                         <div className="col-12">
-                                                            {/* <label className="form-label">Name Business</label>
+                                                            <label className="form-label">Name Business</label>
                                                             <input
                                                                 type="text"
                                                                 className="form-control"
@@ -340,10 +378,10 @@ export default function Register() {
                                                                     })
                                                                 }
                                                                 required
-                                                            /> */}
+                                                            />
                                                         </div>
                                                         <div className="col-12">
-                                                            {/* <label className="form-label">Web</label>
+                                                            <label className="form-label">Web</label>
                                                             <input
                                                                 type="text"
                                                                 className="form-control"
@@ -354,10 +392,10 @@ export default function Register() {
                                                                         web: e.target.value,
                                                                     })
                                                                 }
-                                                            /> */}
+                                                            />
                                                         </div>
                                                         <div className="col-12">
-                                                            {/* <label className="form-label">Email Business</label>
+                                                            <label className="form-label">Email Business</label>
                                                             <input
                                                                 type="email"
                                                                 className="form-control"
@@ -369,10 +407,10 @@ export default function Register() {
                                                                     })
                                                                 }
                                                                 required
-                                                            /> */}
+                                                            />
                                                         </div>
                                                         <div className="col-12">
-                                                            {/* <label className="form-label">Country</label>
+                                                            <label className="form-label">Country</label>
                                                             <select
                                                                 type="text"
                                                                 className="form-control"
@@ -389,14 +427,14 @@ export default function Register() {
                                                                 {countryList.map(country =>
                                                                     <option value={country._id} key={country._id}>{country.name}</option>)
                                                                 }
-                                                            </select> */}
+                                                            </select>
                                                         </div>
+                                                        {/* <div className="col-12">
+                                                            <label className="form-label">Identification Document</label>
+                                                            <input type="file" accept=".pdf" onChange={handleFileBusiness} />
+                                                        </div> */}
                                                         <div className="col-12">
-                                                            {/* <label className="form-label">Identification Document</label>
-                                                            <input type="file" accept=".pdf" onChange={handleFileBusiness} /> */}
-                                                        </div>
-                                                        <div className="col-12">
-                                                            {/* <label className="form-label">Email Admin</label>
+                                                            <label className="form-label">Email Admin</label>
                                                             <input
                                                                 type="email"
                                                                 className="form-control"
@@ -408,10 +446,10 @@ export default function Register() {
                                                                     })
                                                                 }
                                                                 required
-                                                            /> */}
+                                                            />
                                                         </div>
                                                         <div className="col-12">
-                                                            {/* <label className="form-label">Password</label>
+                                                            <label className="form-label">Password Admin</label>
                                                             <input
                                                                 type="password"
                                                                 className="form-control"
@@ -423,17 +461,64 @@ export default function Register() {
                                                                     })
                                                                 }
                                                                 required
-                                                            /> */}
+                                                            />
+                                                        </div>
+                                                        {/* Términos y Condiciones */}
+                                                        <div className="col-12">
+                                                            <div className="form-check">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="form-check-input"
+                                                                    id="termsCheckbox"
+                                                                    required
+                                                                    checked={userBusinessData.acceptedTermsConditions} // Usa el valor del estado
+                                                                    onChange={(e) =>
+                                                                        setUserBusinessData({
+                                                                            ...userBusinessData,
+                                                                            acceptedTermsConditions: e.target.checked, // Actualiza el estado cuando cambia
+                                                                        })
+                                                                    }
+                                                                />
+                                                                <label className="form-check-label" htmlFor="termsCheckbox">
+                                                                    Acepto los <a href="https://cumbi.co/terminos-y-condiciones" target="_blank" rel="noopener noreferrer">Términos y Condiciones</a>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        {/* Política de Tratamiento de Datos */}
+                                                        <div className="col-12">
+                                                            <div className="form-check">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="form-check-input"
+                                                                    id="dataPolicyCheckbox"
+                                                                    required
+                                                                    checked={userBusinessData.acceptedDataPolicy} // Usa el valor del estado
+                                                                    onChange={(e) =>
+                                                                        setUserBusinessData({
+                                                                            ...userBusinessData,
+                                                                            acceptedDataPolicy: e.target.checked, // Actualiza el estado cuando cambia
+                                                                        })
+                                                                    }
+                                                                />
+                                                                <label className="form-check-label" htmlFor="dataPolicyCheckbox">
+                                                                    Acepto la <a href="https://cumbi.co/politica-de-tratamiento-de-datos" target="_blank" rel="noopener noreferrer">Política de Tratamiento de Datos</a>
+                                                                </label>
+                                                            </div>
                                                         </div>
                                                         <div className="col-12 mb-4">
-                                                            {/* <button
+                                                            <button
                                                                 className="btn btn-primary w-100"
                                                                 type="submit"
                                                             >
                                                                 Register
-                                                            </button> */}
+                                                            </button>
                                                         </div>
                                                     </form>
+                                                    <p>
+                                                        {/* <br></br>
+                                                        Si quieres registrar tu negocio, escríbenos para realizar la validación:
+                                                        <b><a target="_blank" href="https://wa.me/573044433331"> Línea Cumbi</a></b> */}
+                                                    </p>
                                                 </div>
                                             </div>
                                             <div className="col-12 mb-4">
