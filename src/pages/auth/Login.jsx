@@ -115,7 +115,7 @@ export default function LoginPage() {
                                                 </div>
                                             </form>
                                             <div className="col-12 mb-4">
-                                                <a className="nav-link text-primary text-decoration-underline" onClick={() => navigate('/register')}>Register</a>
+                                                <a className="nav-link text-primary text-decoration-underline" onClick={() => navigate('/register')}>Registrarme</a>
                                             </div>
                                         </div>
                                     </div>

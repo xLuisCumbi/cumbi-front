@@ -459,13 +459,6 @@ const ApiService = {
   // Método para registro público
   publicSignUp(data = {}, headers = {}) {
     return new Promise((resolve, reject) => {
-
-      console.log('data vals', data);
-      // Para depurar y ver el contenido del FormData
-      for (var pair of data.entries()) {
-        console.log(pair[0] + ', ' + pair[1]);
-      }
-
       axios
         .post(`${this.baseURL}/public-signup`, data, {
           headers: {

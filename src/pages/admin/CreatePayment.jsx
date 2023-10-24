@@ -344,8 +344,10 @@ function CreatePayment() {
                                     }
                                     {(!user.kyc || user.kyc !== "accepted") &&
                                         <label>
-                                            Su documento esta siendo revisado por el equipo de Cumbi<br></br>
-                                            Si todo es correcto, pronto podrá hacer transacciones
+                                            Estamos verificando su identidad, <br></br>
+                                            Tu seguridad es nuestra prioridad. <br></br>
+                                            Verificar tu identidad nos ayuda a mantener la comunidad y el ecosistema seguros.<br></br>
+                                            Pronto podrás Cumbear!
                                         </label>
                                     }
                                 </div>

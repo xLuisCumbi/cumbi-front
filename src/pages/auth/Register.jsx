@@ -92,6 +92,19 @@ export default function Register() {
 
     const handleSubmitPerson = async (e) => {
         e.preventDefault();
+        const termsCheckbox = document.getElementById('termsCheckbox');
+        const dataPolicyCheckbox = document.getElementById('dataPolicyCheckbox');
+
+        if (!termsCheckbox.checked || !dataPolicyCheckbox.checked) {
+            Alert('failed', 'Debes aceptar los Términos y Condiciones y la Política de Tratamiento de Datos', 3);
+            return;
+        }
+        // Agrega los valores de los checkboxes a userData
+        setUserData({
+            ...userData,
+            acceptedDataPolicy: dataPolicyCheckbox.checked,
+            acceptedTermsConditions: termsCheckbox.checked,
+        });
 
         for (let key in userData) {
             if (userData[key] === '' || userData[key] === null) {
@@ -111,6 +124,8 @@ export default function Register() {
         formData.append('password', userData.password);
         formData.append('role', 'person');
         formData.append('payment_fee', 0);
+        formData.append('acceptedDataPolicy', userData.acceptedDataPolicy);
+        formData.append('acceptedTermsConditions', userData.acceptedTermsConditions);
 
         // Enviar la solicitud
         ApiService.publicSignUp(formData)
@@ -177,11 +192,11 @@ export default function Register() {
                                             <ul className="nav nav-tabs" id="myTab" role="tablist">
                                                 <li className="nav-item" role="presentation">
                                                     <button className="nav-link active" id="person-tab" data-bs-toggle="tab" data-bs-target="#person-tab-pane" type="button"
-                                                        role="tab" aria-controls="person-tab-pane" aria-selected="true">Person</button>
+                                                        role="tab" aria-controls="person-tab-pane" aria-selected="true">Persona Natural</button>
                                                 </li>
                                                 <li className="nav-item" role="presentation">
                                                     <button className="nav-link" id="business-tab" data-bs-toggle="tab" data-bs-target="#business-tab-pane" type="button"
-                                                        role="tab" aria-controls="business-tab-pane" aria-selected="false">Business</button>
+                                                        role="tab" aria-controls="business-tab-pane" aria-selected="false">Negocio</button>
                                                 </li>
                                             </ul>
 
@@ -224,10 +239,38 @@ export default function Register() {
                                                             />
                                                         </div>
                                                         <div className="col-12">
-                                                            <label className="form-label">Identification Document</label>
+                                                            <label className="form-label">Sube tu ID / Pasaporte / Foreign ID</label>
                                                             <input type="file" accept=".pdf" onChange={handleFilePerson} />
                                                         </div>
 
+                                                        {/* Términos y Condiciones */}
+                                                        <div className="col-12">
+                                                            <div className="form-check">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="form-check-input"
+                                                                    id="termsCheckbox"
+                                                                    required
+                                                                />
+                                                                <label className="form-check-label" htmlFor="termsCheckbox">
+                                                                    Acepto los <a href="https://cumbi.co/terminos-y-condiciones" target="_blank" rel="noopener noreferrer">Términos y Condiciones</a>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        {/* Política de Tratamiento de Datos */}
+                                                        <div className="col-12">
+                                                            <div className="form-check">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="form-check-input"
+                                                                    id="dataPolicyCheckbox"
+                                                                    required
+                                                                />
+                                                                <label className="form-check-label" htmlFor="dataPolicyCheckbox">
+                                                                    Acepto la <a href="https://cumbi.co/politica-de-tratamiento-de-datos" target="_blank" rel="noopener noreferrer">Política de Tratamiento de Datos</a>
+                                                                </label>
+                                                            </div>
+                                                        </div>
                                                         <div className="col-12 mb-4">
                                                             <button
                                                                 className="btn btn-primary w-100"
@@ -376,7 +419,7 @@ export default function Register() {
                                                 </div>
                                             </div>
                                             <div className="col-12 mb-4">
-                                                <a className="nav-link text-primary text-decoration-underline" onClick={() => navigate('/')}>Go to Login</a>
+                                                <a className="nav-link text-primary text-decoration-underline" onClick={() => navigate('/')}>Ya tengo un usuario</a>
                                             </div>
                                         </div>
                                     </div>
