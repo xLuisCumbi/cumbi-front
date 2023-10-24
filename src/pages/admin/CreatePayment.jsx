@@ -37,7 +37,7 @@ function CreatePayment() {
         value: false,
         link: "",
     });
-    const [percUser, typePercUser] = useMemo(() => getPercUser(), [user, business, setting]);
+    const [userCommission, typePercUser] = useMemo(() => getCommissionUser(), [user, business, setting]);
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
@@ -75,22 +75,41 @@ function CreatePayment() {
 
     // Función para actualizar paymentFormData.amount y calcular amountBankFiat
     const handleAmountChange = (e) => {
-        const newAmount = parseFloat(e.target.value);
-        // if (newAmount <= 0) {
-        //     Alert("failed", "El valor debe ser positivo", 2);
-        //     return;
-        // }
+        const amountToConvert = parseFloat(e.target.value); // monto en USD
 
         // Calcular el valor de amountBankFiat
-        const amountHouseFiat = paymentFormData.trm_house * newAmount;
-        const calculatedAmountBankFiat = amountHouseFiat * value2Perc(percUser);
+        const amountConvertedToFiat = paymentFormData.trm_house * amountToConvert; // Monto en fiat convertido
+        console.log('amountConvertedToFiat', amountConvertedToFiat);
+
+        // Sacamos la comisión al monto a convertir
+        const amountWithCommission = amountConvertedToFiat * value2Perc(userCommission); // monto a pagar en el banco en fiat
+        console.log('amountWithComission', amountWithCommission);
+
+        // comision a cobrar:
+        const commissionCumbi = amountConvertedToFiat - amountWithCommission;
+        console.log('commisionCumbi', commissionCumbi);
+        // Calcular el IVA del 19% sobre la comisión Cumbi
+        const iva = 0.19 * commissionCumbi;
+        console.log('iva', iva)
+
+        // Calcular el GMF (4x1000)
+        const gmf = 0.004 * (amountConvertedToFiat - commissionCumbi - iva);
+        console.log('gmf', gmf);
+
+        // Calcular el monto que va a recibir el usuario en el banco después de deducir IVA, GMF y comisión
+        const amountToReceiveInBank = amountConvertedToFiat - (iva + gmf + commissionCumbi);
+        console.log('amountToReceiveInBank', amountToReceiveInBank);
 
         setPaymentFormData({
             ...paymentFormData,
-            amount: newAmount,
-            amount_fiat: calculatedAmountBankFiat,
-            payment_fee: percUser,
-            type_payment_fee: typePercUser
+            amount: parseFloat(amountToConvert.toFixed(2)),
+            amount_fiat: parseFloat(amountConvertedToFiat.toFixed(2)),
+            payment_fee: parseFloat(userCommission.toFixed(2)),
+            type_payment_fee: typePercUser,
+            commission_cumbi: parseFloat(commissionCumbi.toFixed(2)),
+            iva: parseFloat(iva.toFixed(2)),
+            gmf: parseFloat(gmf.toFixed(2)),
+            amount_to_receive_in_bank: parseFloat(amountToReceiveInBank.toFixed(2)),
         });
     };
 
@@ -155,7 +174,7 @@ function CreatePayment() {
      *
      * @returns This function gets the percentage fee that the user/business has
      */
-    function getPercUser() {
+    function getCommissionUser() {
         let payment_fee = 0, type_payment_fee = "";
 
         if (user && !isNaN(user.payment_fee) && user.payment_fee > 0) {
@@ -193,96 +212,130 @@ function CreatePayment() {
                             onSubmit={handleFormSubmit}
                         >
                             <div className="row">
-                                <div className="col-md-6 mt-3">
-                                    <label className="form-label">
-                                        Monto en USD
-                                    </label>
-                                    <input
-                                        type="number"
-                                        className="form-control"
-                                        placeholder={paymentFormData.amount}
-                                        value={paymentFormData.amount} // Usar el valor actual de amount
-                                        onChange={handleAmountChange} // Usar la nueva función de cambio
-                                        required
-                                        min={0}
-                                    />
+                                {/* Columna izquierda con los inputs */}
+                                <div className="col-md-8">
+                                    <div className="row">
+                                        <div className="col-md-12 mt-3">
+                                            <label className="form-label">Monto en USD</label>
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                placeholder={paymentFormData.amount}
+                                                value={paymentFormData.amount}
+                                                onChange={handleAmountChange}
+                                                required
+                                                min={0}
+                                            />
+                                        </div>
+                                        <div className="col-md-12 mt-3">
+                                            <label className="form-label">Título</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                placeholder={paymentFormData.title}
+                                                onChange={(e) =>
+                                                    setPaymentFormData({
+                                                        ...paymentFormData,
+                                                        title: e.target.value,
+                                                    })
+                                                }
+                                                required
+                                            />
+                                        </div>
+                                        <div className="col-md-6 mt-3">
+                                            <label className="form-label">Crypto Network</label>
+                                            <select
+                                                type="text"
+                                                className="form-control"
+                                                value={paymentFormData.network}
+                                                onChange={(e) =>
+                                                    setPaymentFormData({
+                                                        ...paymentFormData,
+                                                        network: e.target.value,
+                                                    })
+                                                }
+                                                required
+                                            >
+                                                <option>TRON</option>
+                                                {/* <option>ETHEREUM</option> */}
+                                            </select>
+                                        </div>
+                                        <div className="col-md-6 mt-3">
+                                            <label className="form-label">Crypto Coin</label>
+                                            <select
+                                                type="text"
+                                                className="form-control"
+                                                value={paymentFormData.coin}
+                                                onChange={(e) =>
+                                                    setPaymentFormData({
+                                                        ...paymentFormData,
+                                                        coin: e.target.value,
+                                                    })
+                                                }
+                                                required
+                                            >
+                                                <option>USDT</option>
+                                                <option>USDC</option>
+                                            </select>
+                                        </div>
+                                        <div className="col-md-12 mt-3">
+                                            <label className="form-label">Description</label>
+                                            <textarea
+                                                type="text"
+                                                className="form-control"
+                                                placeholder={paymentFormData.description}
+                                                onChange={(e) =>
+                                                    setPaymentFormData({
+                                                        ...paymentFormData,
+                                                        description: e.target.value,
+                                                    })
+                                                }
+                                                required
+                                            ></textarea>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="col-md-6 mt-3">
-                                    <label>
-                                        <p>
-                                            TRM: <b>${(paymentFormData.trm_house).toLocaleString()}</b><br />
-                                            Recibirá: <b>${paymentFormData.amount_fiat.toLocaleString()}</b> COP en su cuenta de banco.<br />
-                                            Comisión a cobrar: <b>${(paymentFormData.trm_house * paymentFormData.amount - paymentFormData.amount_fiat).toLocaleString()}</b> COP ({paymentFormData.payment_fee}%).
-                                        </p>
-                                    </label>
-                                </div>
-                                <div className="col-md-6 mt-3">
-                                    <label className="form-label">Título</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder={paymentFormData.title}
-                                        onChange={(e) =>
-                                            setPaymentFormData({
-                                                ...paymentFormData,
-                                                title: e.target.value,
-                                            })
-                                        }
-                                        required
-                                    />
-                                </div>
-                                <div className="col-md-6 mt-3">
-                                    <label className="form-label">Crypto Network</label>
-                                    <select
-                                        type="text"
-                                        className="form-control"
-                                        value={paymentFormData.network}
-                                        onChange={(e) =>
-                                            setPaymentFormData({
-                                                ...paymentFormData,
-                                                network: e.target.value,
-                                            })
-                                        }
-                                        required
-                                    >
-                                        <option>TRON</option>
-                                        {/* <option>ETHEREUM</option> */}
-                                    </select>
-                                </div>
-                                <div className="col-md-6 mt-3">
-                                    <label className="form-label">Crypto Coin</label>
-                                    <select
-                                        type="text"
-                                        className="form-control"
-                                        value={paymentFormData.coin}
-                                        onChange={(e) =>
-                                            setPaymentFormData({
-                                                ...paymentFormData,
-                                                coin: e.target.value,
-                                            })
-                                        }
-                                        required
-                                    >
-                                        <option>USDT</option>
-                                        <option>USDC</option>
-                                    </select>
-                                </div>
-                                <div className="col-md-12 mt-3">
-                                    <label className="form-label">Description</label>
-                                    <textarea
-                                        type="text"
-                                        className="form-control"
-                                        placeholder={paymentFormData.description}
-                                        onChange={(e) =>
-                                            setPaymentFormData({
-                                                ...paymentFormData,
-                                                description: e.target.value,
-                                            })
-                                        }
-                                        required
-                                    ></textarea>
-                                </div>
+                                {/* Columna derecha con la info box */}
+                                <div className="col-md-4 mt-3">
+                                    <table className="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th colSpan="2">Este es el detalle de tu transacción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th className="form-label">TRM:</th>
+                                                <td>${paymentFormData.trm_house.toLocaleString()} COP</td>
+                                            </tr>
+                                            <tr>
+                                                <th className="form-label">Monto en Fiat a Convertir:</th>
+                                                <td>${paymentFormData.amount_fiat?.toLocaleString()} COP</td>
+                                            </tr>
+                                            <tr>
+                                                <th className="form-label">Payment Fee del Usuario:</th>
+                                                <td>{paymentFormData.payment_fee}%</td>
+                                            </tr>
+                                            <tr>
+                                                <th className="form-label">Monto Menos Comisión:</th>
+                                                <td>${paymentFormData.commission_cumbi?.toLocaleString()} COP</td>
+                                            </tr>
+                                            <tr>
+                                                <th className="form-label">IVA:</th>
+                                                <td>${paymentFormData.iva?.toLocaleString()} COP</td>
+                                            </tr>
+                                            <tr>
+                                                <th className="form-label">GMF:</th>
+                                                <td>${paymentFormData.gmf?.toLocaleString()} COP</td>
+                                            </tr>
+                                            <tr>
+                                                <th className="form-label">Total a Pagar en el Banco:</th>
+                                                <td>${paymentFormData.amount_to_receive_in_bank?.toLocaleString()} COP</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
 
+                                </div>
                                 <div className="col-md-12 mt-4 text-center">
                                     <button className="btn btn-primary text-white">
                                         {" "}
@@ -291,7 +344,7 @@ function CreatePayment() {
                                 </div>
                             </div>
                         </form>
-                    </div >
+                    </div>
                 ) : (
                     <div className="col-md-8 m-auto mb-3 mt-5 text-center ">
                         <i
@@ -314,7 +367,7 @@ function CreatePayment() {
                     </div>
                 )
                 }
-            </div >
+            </div>
         </>
     );
 }
