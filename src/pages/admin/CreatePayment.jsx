@@ -310,7 +310,7 @@ function CreatePayment() {
                                                 <td>{paymentFormData.payment_fee}%</td>
                                             </tr>
                                             <tr>
-                                                <th className="form-label">Monto Menos Comisión:</th>
+                                                <th className="form-label">Nuestra Comisión:</th>
                                                 <td>${paymentFormData.commission_cumbi?.toLocaleString()} COP</td>
                                             </tr>
                                             <tr>
