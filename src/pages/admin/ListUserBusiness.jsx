@@ -9,6 +9,8 @@ import "../../assets/vendor/bootstrap/js/bootstrap.bundle.js";
 import { useTable, usePagination } from 'react-table';
 
 function ListUserBusiness(props) {
+    const user = JSON.parse(localStorage.getItem('user'));
+
     const reqRef = useRef(false);
     const [loadingStatus, setLoadingStatus] = useState(true);
     const [users, setUsers] = useState([]);
@@ -81,8 +83,7 @@ function ListUserBusiness(props) {
         if (reqRef.current) return;
         reqRef.current = true;
 
-        const user = JSON.parse(localStorage.getItem('user'));
-        ApiService.post('/business', user)
+        ApiService.get('business/' + user.id)
             .then((response) => {
                 if (response.status === "success") {
                     setUsers(response.users || []);
@@ -100,43 +101,60 @@ function ListUserBusiness(props) {
 
     // Use react-table to define the columns and data for the table
     const columns = React.useMemo(
-        () => [
-            {
-                Header: 'Username',
-                accessor: 'username',
-            },
-            {
-                Header: 'Email',
-                accessor: 'email',
-            },
-            {
-                Header: 'Role',
-                accessor: 'role',
-            },
-            {
-                Header: 'Action',
-                Cell: ({ row }) => (
-                    row.original.role !== "superadmin" &&
-                    <>
-                        <a className="btn" onClick={() => editUser(row.original)}>
-                            <i className="bi bi-pencil"></i>
-                        </a>
-                        <a className="btn" onClick={() => blockUser(row.original._id, row.original.status)}>
-                            {(!row.original.status || row.original.status === "active") &&
-                                <i className="bi bi-person-fill-slash"></i>
-                            }
-                            {row.original.status && row.original.status === "blocked" &&
-                                <i className="bi bi-person-fill-check"></i>
-                            }
-                        </a>
-                        <a className="btn" onClick={() => openModalWithImage(row.original.document)}>
-                            <i class="bi bi-person-vcard"></i>
-                        </a>
-                    </>
+        () => {
+            const commonColumns = [
+                {
+                    Header: 'Username',
+                    accessor: 'username',
+                },
+                {
+                    Header: 'Email',
+                    accessor: 'email',
+                },
+                {
+                    Header: 'Role',
+                    accessor: 'role',
+                },
+                {
+                    Header: 'Action',
+                    Cell: ({ row }) => (
+                        row.original.role !== "superadmin" &&
+                        <>
+                            <a className="btn" onClick={() => editUser(row.original)}>
+                                <i className="bi bi-pencil"></i>
+                            </a>
+                            <a className="btn" onClick={() => blockUser(row.original._id, row.original.status)}>
+                                {(!row.original.status || row.original.status === "active") &&
+                                    <i className="bi bi-person-fill-slash"></i>
+                                }
+                                {row.original.status && row.original.status === "blocked" &&
+                                    <i className="bi bi-person-fill-check"></i>
+                                }
+                            </a>
+                            <a className="btn" onClick={() => openModalWithImage(row.original.document)}>
+                                <i className="bi bi-person-vcard"></i>
+                            </a>
+                        </>
+                    ),
+                },
+            ]
+            if (user.role == 'superadmin') {
+                commonColumns.push(
+                    {
+                        Header: 'Business',
+                        accessor: 'business.name',
+                    },
+                    {
+                        Header: 'KYC',
+                        accessor: 'kyc',
+                    },
+                )
+            }
 
-                ),
-            },
-        ],
+            // Agrega más columnas según las condiciones necesarias
+
+            return commonColumns;
+        },
         []
     );
 

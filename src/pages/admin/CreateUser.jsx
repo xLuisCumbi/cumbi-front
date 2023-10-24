@@ -14,6 +14,7 @@ function CreateUser() {
     password: '',
     role: 'person',
     payment_fee: 0,
+    kyc: "pending"
   });
   const [isEditing, setIsEditing] = useState(false)
   const [textButton, setTextButton] = useState("Create User")
@@ -30,6 +31,8 @@ function CreateUser() {
       if (key === 'payment_fee' && userData.role !== 'person') {
         continue; // Omitir validación del campo "payment_fee" para roles diferentes de "person".
       }
+      if (key === 'password')
+        continue
 
       if (userData[key] === '' && key !== 'business') {
         Alert('failed', `input ${key} is required`, 3);
@@ -47,8 +50,8 @@ function CreateUser() {
           }
         },
         (err) => {
-          console.log('err', err);
-          console.log('stack', err.stack);
+          console.error('err', err);
+          console.error('stack', err.stack);
           Alert('failed', 'Error updating user', 3);
         }
       );
@@ -77,6 +80,7 @@ function CreateUser() {
       password: '',
       role: 'person',
       payment_fee: 0,
+      kyc: "pending"
     })
   }
 
@@ -88,7 +92,7 @@ function CreateUser() {
     if (user.role === 'admin')
       setUserData({
         ...userData,
-        business: user.business,
+        business: user.business._id,
       })
     ApiService.getBusiness('').then(
       (response) => {
@@ -109,12 +113,13 @@ function CreateUser() {
       ...userData,
       _id: user._id,
       username: user.username,
-      business: user.business,
+      business: user.business?._id,
       email: user.email,
       role: user.role,
       payment_fee: user.payment_fee ? user.payment_fee : 0,
       token: user.token,
       document: user.document,
+      kyc: user.kyc
     })
     setIsEditing(true)
     setTextButton("Update User")
@@ -191,8 +196,8 @@ function CreateUser() {
                 required
               >
                 {roleCur === 'superadmin' && <option value="person">Person</option>}
-                <option value="business">Business Person</option>
-                <option value="admin">Business Admin</option>
+                {(roleCur === 'superadmin' || roleCur === 'admin') && <option value="business">Business Person</option>}
+                {roleCur === 'superadmin' && <option value="admin">Business Admin</option>}
               </select>
             </div>
             {/* solo el superadmin puede crear usuarios para empresas en específico */}
@@ -233,6 +238,29 @@ function CreateUser() {
                   required
                 />
               </div>
+            }
+            {roleCur === 'superadmin' &&
+              <div className="col-md-6 mt-3">
+                <label className="form-label">KYC</label>
+                <select
+                  type="text"
+                  className="form-control"
+                  value={userData.kyc}
+                  onChange={(e) =>
+                    setUserData({
+                      ...userData,
+                      kyc: e.target.value,
+                    })
+                  }
+                  required
+                >
+                  <option value="pending" >Pending</option>
+                  <option value="accepted">Accepted</option>
+                  <option value="denied">Denied</option>
+
+                </select>
+              </div>
+
             }
             <div className="col-md-12 mt-4 text-center">
               <button className="btn btn-primary text-white">

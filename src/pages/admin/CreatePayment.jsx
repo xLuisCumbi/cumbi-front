@@ -60,14 +60,14 @@ function CreatePayment() {
                         value: true,
                         link: response.invoiceObj.invoice_url,
                     });
-                    console.log('payment', paymentCreated.link);
+                    // console.log('payment', paymentCreated.link);
                     Alert("success", "Invoice created", 3);
                 }
             },
             (err) => {
-                console.log('paymentFormData in response', paymentFormData);
-                console.log('err', err);
-                console.log('err.stack', err.stack);
+                // console.log('paymentFormData in response', paymentFormData);
+                console.error('err', err);
+                console.error('err.stack', err.stack);
                 Alert("failed", "Error in creating invoice", 3);
             }
         );
@@ -131,8 +131,8 @@ function CreatePayment() {
                 }
             },
             (err) => {
-                console.log('err', err);
-                console.log('err.stack', err.stack);
+                console.error('err', err);
+                console.error('err.stack', err.stack);
             }
         )
     }
@@ -147,8 +147,8 @@ function CreatePayment() {
 
             },
             (err) => {
-                console.log('err', err);
-                console.log('err.stack', err.stack);
+                console.error('err', err);
+                console.error('err.stack', err.stack);
             }
         )
     }
@@ -164,8 +164,8 @@ function CreatePayment() {
 
             },
             (err) => {
-                console.log('err', err);
-                console.log('err.stack', err.stack);
+                console.error('err', err);
+                console.error('err.stack', err.stack);
             }
         )
     }
@@ -337,10 +337,17 @@ function CreatePayment() {
 
                                 </div>
                                 <div className="col-md-12 mt-4 text-center">
-                                    <button className="btn btn-primary text-white">
-                                        {" "}
-                                        Create Invoice{" "}
-                                    </button>
+                                    {user.kyc && user.kyc === "accepted" &&
+                                        <button className="btn btn-primary text-white">
+                                            Create Invoice
+                                        </button>
+                                    }
+                                    {(!user.kyc || user.kyc !== "accepted") &&
+                                        <label>
+                                            Su documento esta siendo revisado por el equipo de Cumbi<br></br>
+                                            Si todo es correcto, pronto podrá hacer transacciones
+                                        </label>
+                                    }
                                 </div>
                             </div>
                         </form>

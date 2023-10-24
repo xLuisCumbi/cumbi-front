@@ -103,7 +103,6 @@ export default function Register() {
         // Crear un objeto FormData
         const formData = new FormData();
 
-        console.log('userData.document', userData.document);
         // Añadir el archivo al objeto FormData
         formData.append('document', userData.document);
 
@@ -118,10 +117,11 @@ export default function Register() {
             .then((response) => {
                 if (response.status === 'signUp_success') {
                     Alert('success', 'User Registered', 3);
+                    navigate('/')
                 }
             })
             .catch((err) => {
-                console.log('err signup user', err);
+                console.error('err signup user', err);
                 Alert('failed', 'Error in creating user', 3);
             });
     };
@@ -244,10 +244,15 @@ export default function Register() {
                                                     <form
                                                         className="row g-3 needs-validation"
                                                         noValidate
-                                                        onSubmit={handleSubmitBusiness}
+                                                    // onSubmit={handleSubmitBusiness}
                                                     >
+                                                        <p>
+                                                            <br></br>
+                                                            Si quieres registrar tu negocio, escríbenos para realizar la validación:
+                                                            <b><a target="_blank" href="https://wa.me/573044433331">Línea Cumbi</a></b>
+                                                        </p>
                                                         <div className="col-12">
-                                                            <label className="form-label">ID Tax</label>
+                                                            {/* <label className="form-label">ID Tax</label>
                                                             <input
                                                                 type="text"
                                                                 className="form-control"
@@ -259,10 +264,10 @@ export default function Register() {
                                                                     })
                                                                 }
                                                                 required
-                                                            />
+                                                            /> */}
                                                         </div>
                                                         <div className="col-12">
-                                                            <label className="form-label">Name Business</label>
+                                                            {/* <label className="form-label">Name Business</label>
                                                             <input
                                                                 type="text"
                                                                 className="form-control"
@@ -274,10 +279,10 @@ export default function Register() {
                                                                     })
                                                                 }
                                                                 required
-                                                            />
+                                                            /> */}
                                                         </div>
                                                         <div className="col-12">
-                                                            <label className="form-label">Web</label>
+                                                            {/* <label className="form-label">Web</label>
                                                             <input
                                                                 type="text"
                                                                 className="form-control"
@@ -288,10 +293,10 @@ export default function Register() {
                                                                         web: e.target.value,
                                                                     })
                                                                 }
-                                                            />
+                                                            /> */}
                                                         </div>
                                                         <div className="col-12">
-                                                            <label className="form-label">Email Business</label>
+                                                            {/* <label className="form-label">Email Business</label>
                                                             <input
                                                                 type="email"
                                                                 className="form-control"
@@ -303,10 +308,10 @@ export default function Register() {
                                                                     })
                                                                 }
                                                                 required
-                                                            />
+                                                            /> */}
                                                         </div>
                                                         <div className="col-12">
-                                                            <label className="form-label">Country</label>
+                                                            {/* <label className="form-label">Country</label>
                                                             <select
                                                                 type="text"
                                                                 className="form-control"
@@ -323,29 +328,14 @@ export default function Register() {
                                                                 {countryList.map(country =>
                                                                     <option value={country._id} key={country._id}>{country.name}</option>)
                                                                 }
-                                                            </select>
+                                                            </select> */}
                                                         </div>
                                                         <div className="col-12">
-                                                            <label className="form-label">Identification Document</label>
-                                                            <input type="file" accept=".pdf" onChange={handleFileBusiness} />
+                                                            {/* <label className="form-label">Identification Document</label>
+                                                            <input type="file" accept=".pdf" onChange={handleFileBusiness} /> */}
                                                         </div>
-                                                        {/* <div className="col-12">
-                                                            <label className="form-label">Password</label>
-                                                            <input
-                                                                type="password"
-                                                                className="form-control"
-                                                                value={businessData.password}
-                                                                onChange={(e) =>
-                                                                    setBusinessData({
-                                                                        ...businessData,
-                                                                        password: e.target.value,
-                                                                    })
-                                                                }
-                                                                required
-                                                            />
-                                                        </div> */}
                                                         <div className="col-12">
-                                                            <label className="form-label">Email Admin</label>
+                                                            {/* <label className="form-label">Email Admin</label>
                                                             <input
                                                                 type="email"
                                                                 className="form-control"
@@ -357,10 +347,10 @@ export default function Register() {
                                                                     })
                                                                 }
                                                                 required
-                                                            />
+                                                            /> */}
                                                         </div>
                                                         <div className="col-12">
-                                                            <label className="form-label">Password</label>
+                                                            {/* <label className="form-label">Password</label>
                                                             <input
                                                                 type="password"
                                                                 className="form-control"
@@ -372,15 +362,15 @@ export default function Register() {
                                                                     })
                                                                 }
                                                                 required
-                                                            />
+                                                            /> */}
                                                         </div>
                                                         <div className="col-12 mb-4">
-                                                            <button
+                                                            {/* <button
                                                                 className="btn btn-primary w-100"
                                                                 type="submit"
                                                             >
                                                                 Register
-                                                            </button>
+                                                            </button> */}
                                                         </div>
                                                     </form>
                                                 </div>
