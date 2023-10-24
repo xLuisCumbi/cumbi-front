@@ -13,7 +13,10 @@ export default function Register() {
         role: 'person',
         payment_fee: 0,
         document: null,
+        acceptedDataPolicy: false,
+        acceptedTermsConditions: false,
     });
+
     const [businessData, setBusinessData] = useState({
         id_tax: '',
         name: '',
@@ -24,6 +27,7 @@ export default function Register() {
         role: 'business',
         document: null,
     });
+
     const [userBusinessData, setUserBusinessData] = useState({
         business: '',
         email: '',
@@ -124,8 +128,8 @@ export default function Register() {
         formData.append('password', userData.password);
         formData.append('role', 'person');
         formData.append('payment_fee', 0);
-        formData.append('acceptedDataPolicy', userData.acceptedDataPolicy);
-        formData.append('acceptedTermsConditions', userData.acceptedTermsConditions);
+        formData.append('acceptedDataPolicy', JSON.stringify(userData.acceptedDataPolicy));
+        formData.append('acceptedTermsConditions', JSON.stringify(userData.acceptedTermsConditions));
 
         // Enviar la solicitud
         ApiService.publicSignUp(formData)
@@ -251,6 +255,13 @@ export default function Register() {
                                                                     className="form-check-input"
                                                                     id="termsCheckbox"
                                                                     required
+                                                                    checked={userData.acceptedTermsConditions} // Usa el valor del estado
+                                                                    onChange={(e) =>
+                                                                        setUserData({
+                                                                            ...userData,
+                                                                            acceptedTermsConditions: e.target.checked, // Actualiza el estado cuando cambia
+                                                                        })
+                                                                    }
                                                                 />
                                                                 <label className="form-check-label" htmlFor="termsCheckbox">
                                                                     Acepto los <a href="https://cumbi.co/terminos-y-condiciones" target="_blank" rel="noopener noreferrer">Términos y Condiciones</a>
@@ -265,6 +276,13 @@ export default function Register() {
                                                                     className="form-check-input"
                                                                     id="dataPolicyCheckbox"
                                                                     required
+                                                                    checked={userData.acceptedDataPolicy} // Usa el valor del estado
+                                                                    onChange={(e) =>
+                                                                        setUserData({
+                                                                            ...userData,
+                                                                            acceptedDataPolicy: e.target.checked, // Actualiza el estado cuando cambia
+                                                                        })
+                                                                    }
                                                                 />
                                                                 <label className="form-check-label" htmlFor="dataPolicyCheckbox">
                                                                     Acepto la <a href="https://cumbi.co/politica-de-tratamiento-de-datos" target="_blank" rel="noopener noreferrer">Política de Tratamiento de Datos</a>

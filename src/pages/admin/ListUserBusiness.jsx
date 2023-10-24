@@ -21,7 +21,6 @@ function ListUserBusiness(props) {
 
     // Nueva función para manejar la apertura de la modal
     const openModalWithImage = (imageUrl) => {
-        console.log('imageUrl', imageUrl);
         setModalImage(imageUrl);
         setShowModal(true);
     };

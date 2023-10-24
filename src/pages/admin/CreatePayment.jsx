@@ -60,12 +60,10 @@ function CreatePayment() {
                         value: true,
                         link: response.invoiceObj.invoice_url,
                     });
-                    // console.log('payment', paymentCreated.link);
                     Alert("success", "Invoice created", 3);
                 }
             },
             (err) => {
-                // console.log('paymentFormData in response', paymentFormData);
                 console.error('err', err);
                 console.error('err.stack', err.stack);
                 Alert("failed", "Error in creating invoice", 3);
@@ -79,26 +77,21 @@ function CreatePayment() {
 
         // Calcular el valor de amountBankFiat
         const amountConvertedToFiat = paymentFormData.trm_house * amountToConvert; // Monto en fiat convertido
-        console.log('amountConvertedToFiat', amountConvertedToFiat);
 
         // Sacamos la comisión al monto a convertir
         const amountWithCommission = amountConvertedToFiat * value2Perc(userCommission); // monto a pagar en el banco en fiat
-        console.log('amountWithComission', amountWithCommission);
 
         // comision a cobrar:
         const commissionCumbi = amountConvertedToFiat - amountWithCommission;
-        console.log('commisionCumbi', commissionCumbi);
+
         // Calcular el IVA del 19% sobre la comisión Cumbi
         const iva = 0.19 * commissionCumbi;
-        console.log('iva', iva)
 
         // Calcular el GMF (4x1000)
         const gmf = 0.004 * (amountConvertedToFiat - commissionCumbi - iva);
-        console.log('gmf', gmf);
 
         // Calcular el monto que va a recibir el usuario en el banco después de deducir IVA, GMF y comisión
         const amountToReceiveInBank = amountConvertedToFiat - (iva + gmf + commissionCumbi);
-        console.log('amountToReceiveInBank', amountToReceiveInBank);
 
         setPaymentFormData({
             ...paymentFormData,
