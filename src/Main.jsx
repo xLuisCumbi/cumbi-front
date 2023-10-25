@@ -94,10 +94,6 @@ const router = createBrowserRouter([
         element: <SettingCumbi />,
       },
       {
-        path: 'mnemonic',
-        element: <Mnemonic />,
-      },
-      {
         path: 'create-business',
         element: <CreateBusiness />,
       },
