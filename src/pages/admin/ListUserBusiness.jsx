@@ -4,6 +4,8 @@ import Alert from "../../components/Alert";
 import ApiService from '../../services/ApiService';
 import PageLoading from "../../components/PageLoading";
 import "../../assets/vendor/bootstrap/js/bootstrap.bundle.js";
+import { Document, Page, pdfjs } from "react-pdf";
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 // Import react-table and its required components
 import { useTable, usePagination } from 'react-table';
@@ -16,13 +18,13 @@ function ListUserBusiness(props) {
     const [users, setUsers] = useState([]);
 
     // Nuevo estado para manejar la URL de la imagen y la visibilidad de la modal
-    const [modalImage, setModalImage] = useState(null);
-    const [showModal, setShowModal] = useState(false);
+    const [showPdfModal, setShowPdfModal] = useState(false);
+    const [pdfUrl, setPdfUrl] = useState("");
 
     // Nueva función para manejar la apertura de la modal
-    const openModalWithImage = (imageUrl) => {
-        setModalImage(imageUrl);
-        setShowModal(true);
+    const openModalWithImage = (pdfUrl) => {
+        setPdfUrl(pdfUrl);
+        setShowPdfModal(true);
     };
 
     /**
@@ -235,18 +237,24 @@ function ListUserBusiness(props) {
                             </tfoot>
                         </table>
                     </div>
-                    <div className={`modal fade ${showModal ? 'd-block show' : 'd-none'}`} tabIndex="-1" style={{ backgroundColor: `${showModal ? 'rgba(0,0,0,0.5)' : 'transparent'}` }}>
-                        <div className="modal-dialog">
+                    <div className={`modal fade ${showPdfModal ? 'd-block show' : 'd-none'}`} tabIndex="-1">
+                        <div className="modal-dialog modal-lg">
                             <div className="modal-content">
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Document</h5>
-                                    <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+                                    <h5 className="modal-title">PDF Document</h5>
+                                    <button type="button" className="btn-close" onClick={() => setShowPdfModal(false)}></button>
                                 </div>
                                 <div className="modal-body">
-                                    <img src={modalImage} alt="Document" className="img-fluid" />
+                                    <p>{pdfUrl}</p>
+                                    <Document
+                                        file={pdfUrl} // URL del PDF que deseas mostrar
+                                        options={{ workerSrc: pdfjs.GlobalWorkerOptions.workerSrc }}
+                                    >
+                                        <Page pageNumber={1} /> {/* Puedes cambiar el número de página si es necesario */}
+                                    </Document>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Close</button>
+                                    <button type="button" className="btn btn-secondary" onClick={() => setShowPdfModal(false)}>Close</button>
                                 </div>
                             </div>
                         </div>
