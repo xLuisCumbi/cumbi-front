@@ -257,101 +257,132 @@ function PaymentHistory() {
                         <div className="modal-dialog modal-xl">
                             <div className="modal-content">
                                 <div className="modal-header">
-                                    <h5 className="modal-title">Payment Details</h5>
+                                    <h5 className="modal-title">Detalles</h5>
                                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div className="modal-body">
                                     {selectedDeposit ? ( // Verifica si selectedDeposit no es null
-
                                         <div className="col-12 mb-5 p-3">
                                             <div className="row">
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <strong>Payment ID</strong>
-                                                    <div>{selectedDeposit._id}</div>
+                                                <div className="col-12 col-sm-6 mt-6">
+                                                    <table className="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th colSpan="2" className="text-center">Información del pago</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <th className="form-label">ID:</th>
+                                                                <td>${selectedDeposit._id}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th className="form-label">Tipo:</th>
+                                                                <td>{selectedDeposit.type}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th className="form-label">Título:</th>
+                                                                <td>{selectedDeposit.title}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th className="form-label">Descripción:</th>
+                                                                <td>{selectedDeposit.description}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th className="form-label">Network:</th>
+                                                                <td>{selectedDeposit.network}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th className="form-label">Token:</th>
+                                                                <td>{selectedDeposit.coin}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th className="form-label">Dirección:</th>
+                                                                <td>{selectedDeposit.address}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th className="form-label">Estado:</th>
+                                                                <td>{selectedDeposit.status}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th className="form-label">Est. Consolidado:</th>
+                                                                <td>{selectedDeposit.consolidation_status}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th className="form-label">Tipo Tarifa:</th>
+                                                                <td>{selectedDeposit.type_payment_fee}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th className="form-label">Fecha:</th>
+                                                                <td>{string2date(selectedDeposit.createdAt)}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
                                                 </div>
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <strong>Payment Type</strong>
-                                                    <div>{selectedDeposit.type}</div>
-                                                </div>
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <strong>Payment Title</strong>
-                                                    <div>{selectedDeposit.title}</div>
-                                                </div>
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <strong>Payment Network</strong>
-                                                    <div>{selectedDeposit.network}</div>
-                                                </div>
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <strong>Payment Coin</strong>
-                                                    <div>{selectedDeposit.coin}</div>
-                                                </div>
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <strong>Payment Address</strong>
-                                                    <div>{selectedDeposit.address}</div>
-                                                </div>
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <strong>Payment Amount</strong>
-                                                    <div>{selectedDeposit.amount.toLocaleString()} {selectedDeposit.coin} </div>
-                                                </div>
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <strong>Payment Status</strong>
-                                                    <div>{selectedDeposit.status}</div>
-                                                </div>
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <strong>Consolidation Status</strong>
-                                                    <div>{selectedDeposit.consolidation_status}</div>
-                                                </div>
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <strong>Date Created</strong>
-                                                    <div>{string2date(selectedDeposit.createdAt)}</div>
-                                                </div>
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <strong>Payment Description</strong>
-                                                    <div>{selectedDeposit.description}</div>
-                                                </div>
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <strong>TRM</strong>
-                                                    <div>{selectedDeposit?.trm_house?.toLocaleString()} {selectedDeposit.coin_fiat}</div>
-                                                </div>
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <strong>Payment Fiat</strong>
-                                                    <div>{selectedDeposit?.amount_fiat?.toLocaleString()} {selectedDeposit.coin_fiat}</div>
-                                                </div>
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <strong>Payment Fee</strong>
-                                                    <div>{selectedDeposit.payment_fee} %</div>
-                                                </div>
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <strong>Type Payment Fee</strong>
-                                                    <div>{selectedDeposit.type_payment_fee}</div>
-                                                </div>
-                                            </div>
-                                            <div className="col-12 mt-3">
-                                                <strong> <a
-                                                    href={`${config.paymentBaseUrl}/invoice/${selectedDeposit._id}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    <i className="bi bi-info-circle"></i> Open The Payment Page
-                                                </a></strong>
+                                                <div className="col-12 col-sm-6 mt-6">
+                                                    <table className="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th colSpan="2" className="text-center">Detalle transacción</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <th className="form-label">TRM:</th>
+                                                                <td>${selectedDeposit.trm_house.toLocaleString()} COP</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th className="form-label">Monto en Fiat a Convertir:</th>
+                                                                <td>${selectedDeposit.amount_fiat?.toLocaleString()} COP</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th className="form-label">Payment Fee del Usuario:</th>
+                                                                <td>{selectedDeposit.payment_fee}%</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th className="form-label">Monto Menos Comisión:</th>
+                                                                <td>${selectedDeposit.commission_cumbi?.toLocaleString()} COP</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th className="form-label">IVA:</th>
+                                                                <td>${selectedDeposit.iva?.toLocaleString()} COP</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th className="form-label">GMF:</th>
+                                                                <td>${selectedDeposit.gmf?.toLocaleString()} COP</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th className="form-label">Total a Pagar en el Banco:</th>
+                                                                <td>${selectedDeposit.amount_to_receive_in_bank?.toLocaleString()} COP</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <div className="col-12">
+                                                        <strong> <a
+                                                            href={`${config.paymentBaseUrl}/invoice/${selectedDeposit._id}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            <i className="bi bi-info-circle"></i> Open The Payment Page
+                                                        </a></strong>
 
-                                            </div>
-                                            <div className="col-12 mt-3">
-                                                <strong><a
-                                                    href={`https://tronscan.org/#/address/${selectedDeposit.address}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    <i className="bi bi-database-lock"></i> Open Transaction Page
-                                                </a>
-                                                </strong>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col-12 col-sm-4 mt-3">
-                                                    <button className="btn btn-primary text-white" type="button"
-                                                        onClick={() => cancelTransaction(selectedDeposit._id)}>
-                                                        Cancel Transaction
-                                                    </button>
+                                                    </div>
+                                                    <div className="col-12 ">
+                                                        <strong><a
+                                                            href={`https://tronscan.org/#/address/${selectedDeposit.address}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            <i className="bi bi-database-lock"></i> Open Transaction Page
+                                                        </a>
+                                                        </strong>
+                                                    </div>
+                                                    <div className="col-12 col-sm-4 mt-3">
+                                                        <button className="btn btn-primary text-white" type="button"
+                                                            onClick={() => cancelTransaction(selectedDeposit._id)}>
+                                                            Cancel Transaction
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
 
