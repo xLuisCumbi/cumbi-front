@@ -348,9 +348,14 @@ export default function Register() {
                                                     <form
                                                         className="row g-3 needs-validation"
                                                         noValidate
-                                                        onSubmit={handleSubmitBusiness}
+                                                    // onSubmit={handleSubmitBusiness}
                                                     >
-                                                        <div className="col-12">
+                                                        <p>
+                                                            <br></br>
+                                                            Si quieres registrar tu negocio, escríbenos para realizar la validación:
+                                                            <b><a target="_blank" href="https://wa.me/573044433331">Línea Cumbi</a></b>
+                                                        </p>
+                                                        {/*<div className="col-12">
                                                             <label className="form-label">ID Tax</label>
                                                             <input
                                                                 type="text"
@@ -429,10 +434,10 @@ export default function Register() {
                                                                 }
                                                             </select>
                                                         </div>
-                                                        {/* <div className="col-12">
+                                                         <div className="col-12">
                                                             <label className="form-label">Identification Document</label>
                                                             <input type="file" accept=".pdf" onChange={handleFileBusiness} />
-                                                        </div> */}
+                                                        </div>
                                                         <div className="col-12">
                                                             <label className="form-label">Email Admin</label>
                                                             <input
@@ -463,7 +468,7 @@ export default function Register() {
                                                                 required
                                                             />
                                                         </div>
-                                                        {/* Términos y Condiciones */}
+                                                        Términos y Condiciones
                                                         <div className="col-12">
                                                             <div className="form-check">
                                                                 <input
@@ -484,7 +489,7 @@ export default function Register() {
                                                                 </label>
                                                             </div>
                                                         </div>
-                                                        {/* Política de Tratamiento de Datos */}
+                                                         Política de Tratamiento de Datos
                                                         <div className="col-12">
                                                             <div className="form-check">
                                                                 <input
@@ -512,7 +517,7 @@ export default function Register() {
                                                             >
                                                                 Register
                                                             </button>
-                                                        </div>
+                                                        </div> */}
                                                     </form>
                                                     <p>
                                                         {/* <br></br>
