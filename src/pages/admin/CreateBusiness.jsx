@@ -13,35 +13,33 @@ function CreateBusiness() {
     email: '',
     payment_fee: 0,
   });
-  const [countryList, setCountryList] = useState([])
-  const [isEditing, setIsEditing] = useState(false)
-  const [textButton, setTextButton] = useState("Create Business")
+  const [countryList, setCountryList] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [textButton, setTextButton] = useState('Create Business');
   const [seed, setSeed] = useState(1);
 
   useEffect(() => {
-    ApiService.getCountry("").then(
+    ApiService.getCountry('').then(
       (response) => {
         if (response.status === 'success') {
-          setCountryList(response.countries)
+          setCountryList(response.countries);
           setBusinessData({
             ...businessData,
-            country: response.countries[0]._id
-          })
+            country: response.countries[0]._id,
+          });
         }
       },
       (error) => {
         Alert('failed', 'Error fetching', 3);
-        console.error(error)
-      }
+        console.error(error);
+      },
     );
-
   }, []);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    for (let key in businessData) {
-      if (key === 'country' || key === 'web')
-        continue
+    for (const key in businessData) {
+      if (key === 'country' || key === 'web') continue;
       if (businessData[key] === '') {
         Alert('failed', `input ${key} is required`, 3);
         return;
@@ -49,32 +47,32 @@ function CreateBusiness() {
     }
 
     Alert('success', 'loading', 30);
-    if (isEditing)
-      ApiService.putBusiness('/' + businessData._id, { ...businessData }).then(
+    if (isEditing) {
+      ApiService.putBusiness(`/${businessData._id}`, { ...businessData }).then(
         (response) => {
           if (response.status === 'success') {
             Alert('success', 'Business Updated', 3);
-            reset()
+            reset();
           }
         },
         (err) => {
           Alert('failed', 'Error updating business', 3);
-        }
+        },
       );
-    else
+    } else {
       ApiService.postBusiness('/create', { ...businessData }).then(
         (response) => {
           if (response.status === 'success') {
             Alert('success', 'Business Created', 3);
-            reset()
+            reset();
           }
         },
         (err) => {
           Alert('failed', 'Error in creating business', 3);
-        }
+        },
       );
+    }
   };
-
 
   const editBusiness = (business) => {
     setBusinessData({
@@ -85,16 +83,16 @@ function CreateBusiness() {
       email: business.email,
       payment_fee: business.payment_fee ? business.payment_fee : 0,
       country: business.country ? (business.country._id ? business.country._id : countryList[0]._id) : countryList[0]._id,
-      web: business.web ? business.web : "",
-    })
-    setIsEditing(true)
-    setTextButton("Update Business")
-  }
+      web: business.web ? business.web : '',
+    });
+    setIsEditing(true);
+    setTextButton('Update Business');
+  };
 
   const reset = () => {
     setSeed(Math.random());
-    setTextButton("Create Business")
-    setIsEditing(false)
+    setTextButton('Create Business');
+    setIsEditing(false);
     setBusinessData({
       id_tax: '',
       name: '',
@@ -102,8 +100,8 @@ function CreateBusiness() {
       payment_fee: 0,
       country: countryList[0]._id,
       web: '',
-    })
-  }
+    });
+  };
 
   return (
     <div>
@@ -121,12 +119,10 @@ function CreateBusiness() {
                 type="text"
                 className="form-control"
                 value={businessData.id_tax}
-                onChange={(e) =>
-                  setBusinessData({
-                    ...businessData,
-                    id_tax: e.target.value,
-                  })
-                }
+                onChange={(e) => setBusinessData({
+                  ...businessData,
+                  id_tax: e.target.value,
+                })}
                 required
               />
             </div>
@@ -136,12 +132,10 @@ function CreateBusiness() {
                 type="text"
                 className="form-control"
                 value={businessData.name}
-                onChange={(e) =>
-                  setBusinessData({
-                    ...businessData,
-                    name: e.target.value,
-                  })
-                }
+                onChange={(e) => setBusinessData({
+                  ...businessData,
+                  name: e.target.value,
+                })}
                 required
               />
             </div>
@@ -151,12 +145,10 @@ function CreateBusiness() {
                 type="text"
                 className="form-control"
                 value={businessData.web}
-                onChange={(e) =>
-                  setBusinessData({
-                    ...businessData,
-                    web: e.target.value,
-                  })
-                }
+                onChange={(e) => setBusinessData({
+                  ...businessData,
+                  web: e.target.value,
+                })}
               />
             </div>
             <div className="col-md-6 mt-3">
@@ -169,14 +161,11 @@ function CreateBusiness() {
                   setBusinessData({
                     ...businessData,
                     country: e.target.value,
-                  })
-                }
-                }
+                  });
+                }}
                 required
               >
-                {countryList.map(country =>
-                  <option value={country._id} key={country._id}>{country.name}</option>)
-                }
+                {countryList.map((country) => <option value={country._id} key={country._id}>{country.name}</option>)}
               </select>
             </div>
             <div className="col-md-6 mt-3">
@@ -185,12 +174,10 @@ function CreateBusiness() {
                 type="email"
                 className="form-control"
                 value={businessData.email}
-                onChange={(e) =>
-                  setBusinessData({
-                    ...businessData,
-                    email: e.target.value,
-                  })
-                }
+                onChange={(e) => setBusinessData({
+                  ...businessData,
+                  email: e.target.value,
+                })}
                 required
               />
             </div>
@@ -200,12 +187,10 @@ function CreateBusiness() {
                 type="number"
                 className="form-control"
                 value={businessData.payment_fee}
-                onChange={(e) =>
-                  setBusinessData({
-                    ...businessData,
-                    payment_fee: e.target.value,
-                  })
-                }
+                onChange={(e) => setBusinessData({
+                  ...businessData,
+                  payment_fee: e.target.value,
+                })}
                 required
               />
             </div>
@@ -214,9 +199,11 @@ function CreateBusiness() {
               <button className="btn btn-primary text-white">
                 {textButton}
               </button>
-              {isEditing && <button type="button" className="btn btn-primary text-white" onClick={reset}>
+              {isEditing && (
+              <button type="button" className="btn btn-primary text-white" onClick={reset}>
                 New Business
-              </button>}
+              </button>
+              )}
 
             </div>
           </div>

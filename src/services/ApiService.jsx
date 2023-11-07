@@ -25,7 +25,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -49,7 +49,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -72,7 +72,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -89,7 +89,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -108,7 +108,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -125,7 +125,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -142,7 +142,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -160,7 +160,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -177,7 +177,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -203,14 +203,13 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
 
   updateMnemonic(endpoint, data = {}) {
     return new Promise((resolve, reject) => {
-      ;
       axios
         .post(config.settingsUrl + endpoint, data, {
           headers: {
@@ -221,7 +220,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -238,11 +237,10 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
-
 
   // Bank Account
   getBank(endpoint) {
@@ -258,7 +256,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -275,7 +273,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -292,7 +290,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -311,7 +309,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -328,7 +326,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -345,7 +343,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -364,7 +362,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -381,7 +379,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -398,7 +396,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -417,7 +415,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -434,7 +432,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -451,7 +449,7 @@ const ApiService = {
           (response) => resolve(response.data),
           (err) => {
             reject(err);
-          }
+          },
         );
     });
   },
@@ -470,19 +468,18 @@ const ApiService = {
             if (response && response.data) {
               resolve(response.data);
             } else {
-              reject(new Error("Response or response data is undefined"));
+              reject(new Error('Response or response data is undefined'));
             }
           },
           (err) => {
             reject(err);
-          }
+          },
         )
         .catch((err) => {
           reject(err);
         });
     });
-  }
-
+  },
 
 };
 

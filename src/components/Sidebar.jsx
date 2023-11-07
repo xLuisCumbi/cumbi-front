@@ -1,9 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import UserService from "../services/UserService";
 import { useEffect, useState } from 'react';
+import UserService from '../services/UserService';
 
 function Sidebar() {
-
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -11,7 +10,6 @@ function Sidebar() {
   const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
-
     let route = window.location.pathname.split('/');
     route = route[route.length - 1];
     setRoute(route);
@@ -19,14 +17,14 @@ function Sidebar() {
     // Get the current user role from UserService
     const role = UserService.getCurrentUserRole();
     setUserRole(role);
-  }, [location])
+  }, [location]);
 
   const handleLogout = () => {
     if (confirm('Are you sure you want to log out ? Click OK to confirm')) {
       UserService.logout();
       navigate('/');
     }
-  }
+  };
 
   return (
 
@@ -36,55 +34,63 @@ function Sidebar() {
 
         <li className="nav-item">
           <a className={route == '/' || route == 'dashboard' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/dashboard')}>
-            <i className="bi bi-grid"></i>
+            <i className="bi bi-grid" />
             <span>Dashboard</span>
           </a>
         </li>
 
         <li className="nav-item">
           <a className={route == 'create-payment' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/create-payment')}>
-            <i className="bi bi-receipt"></i>
+            <i className="bi bi-receipt" />
             <span>Create Payment</span>
           </a>
         </li>
 
         <li className="nav-item">
           <a className={route == 'payment-history' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/payment-history')}>
-            <i className="bi bi-cash"></i>
+            <i className="bi bi-cash" />
             <span>Payment History</span>
           </a>
         </li>
 
         {(userRole === 'admin' || userRole === 'superadmin' || userRole === 'person') && (
           <li className="nav-item">
-            <a className={route == 'create-bank-account' ? 'nav-link' : 'nav-link collapsed'}
-              onClick={() => navigate('/admin/create-bank-account')}>
-              <i className="bi bi-bank"></i>
+            <a
+              className={route == 'create-bank-account' ? 'nav-link' : 'nav-link collapsed'}
+              onClick={() => navigate('/admin/create-bank-account')}
+            >
+              <i className="bi bi-bank" />
               <span>Bank Accounts</span>
             </a>
           </li>
         )}
-        
+
         <li className="nav-item">
-              <a className={route == 'settings' ? 'nav-link' : 'nav-link collapsed'}
-                onClick={() => navigate('/admin/settings')}>
-                <i className="bi bi-gear"></i>
-                <span>Settings</span>
-              </a>
-            </li>
+          <a
+            className={route == 'settings' ? 'nav-link' : 'nav-link collapsed'}
+            onClick={() => navigate('/admin/settings')}
+          >
+            <i className="bi bi-gear" />
+            <span>Settings</span>
+          </a>
+        </li>
         {(userRole === 'admin' || userRole === 'superadmin') && (
           <>
             <li className="nav-item">
-              <a className={route == 'create-token' ? 'nav-link' : 'nav-link collapsed'}
-                onClick={() => navigate('/admin/create-token')}>
-                <i className="bi bi-key"></i>
+              <a
+                className={route == 'create-token' ? 'nav-link' : 'nav-link collapsed'}
+                onClick={() => navigate('/admin/create-token')}
+              >
+                <i className="bi bi-key" />
                 <span>API Tokens</span>
               </a>
             </li>
             <li className="nav-item">
-              <a className={route == 'create-user' ? 'nav-link' : 'nav-link collapsed'}
-                onClick={() => navigate('/admin/create-user')}>
-                <i className="bi bi-person"></i>
+              <a
+                className={route == 'create-user' ? 'nav-link' : 'nav-link collapsed'}
+                onClick={() => navigate('/admin/create-user')}
+              >
+                <i className="bi bi-person" />
                 <span>Users</span>
               </a>
             </li>
@@ -101,49 +107,60 @@ function Sidebar() {
             </li> */}
             <li className="nav-item">
               <a className={route == 'setting_cumbi' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/setting-cumbi')}>
-                <i className="bi bi-gear"></i>
+                <i className="bi bi-gear" />
                 <span>Settings Cumbi</span>
               </a>
             </li>
             <li className="nav-item">
               <a className={route == 'create-business' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/create-business')}>
-                <i className="bi bi-building-fill-gear"></i>
+                <i className="bi bi-building-fill-gear" />
                 <span>Create Business</span>
               </a>
             </li>
             <li className="nav-item">
               <a className={route == 'mnemonic' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/mnemonic')}>
-                <i className="bi bi-puzzle"></i>
+                <i className="bi bi-puzzle" />
                 <span>Mnemonic</span>
               </a>
             </li>
             <li className="nav-item dropdown">
               <a className="nav-link dropdown-toggle" href="#" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i className="bi bi-database"></i>
+                <i className="bi bi-database" />
                 <span>Create</span>
               </a>
               <ul className="dropdown-menu">
                 <li>
-                  <a className={route == 'create-bank' ? 'nav-link' : 'nav-link collapsed'}
-                    onClick={() => navigate('/admin/create-bank')}>Bank</a>
+                  <a
+                    className={route == 'create-bank' ? 'nav-link' : 'nav-link collapsed'}
+                    onClick={() => navigate('/admin/create-bank')}
+                  >
+                    Bank
+                  </a>
                 </li>
                 <li>
-                  <a className={route == 'create-coin' ? 'nav-link' : 'nav-link collapsed'}
-                    onClick={() => navigate('/admin/create-coin')}>Coin</a>
+                  <a
+                    className={route == 'create-coin' ? 'nav-link' : 'nav-link collapsed'}
+                    onClick={() => navigate('/admin/create-coin')}
+                  >
+                    Coin
+                  </a>
                 </li>
                 <li>
-                  <a className={route == 'create-country' ? 'nav-link' : 'nav-link collapsed'}
-                    onClick={() => navigate('/admin/create-country')}>Country</a>
+                  <a
+                    className={route == 'create-country' ? 'nav-link' : 'nav-link collapsed'}
+                    onClick={() => navigate('/admin/create-country')}
+                  >
+                    Country
+                  </a>
                 </li>
               </ul>
             </li>
           </>
         )}
 
-
         <li className="nav-item">
-          <a className='nav-link collapsed' onClick={() => handleLogout()}>
-            <i className="bi bi-box-arrow-left"></i>
+          <a className="nav-link collapsed" onClick={() => handleLogout()}>
+            <i className="bi bi-box-arrow-left" />
             <span>Logout</span>
           </a>
         </li>

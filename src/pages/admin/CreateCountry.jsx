@@ -9,8 +9,8 @@ function CreateCountry() {
     name: '',
     abbr: '',
   });
-  const [isEditing, setIsEditing] = useState(false)
-  const [textButton, setTextButton] = useState("Create")
+  const [isEditing, setIsEditing] = useState(false);
+  const [textButton, setTextButton] = useState('Create');
   const [seed, setSeed] = useState(1);
 
   const handleFormSubmit = (e) => {
@@ -26,34 +26,34 @@ function CreateCountry() {
     // }
 
     Alert('success', 'loading', 30);
-    if (isEditing)
-      ApiService.putCountry('/' + country._id, { ...country }).then(
+    if (isEditing) {
+      ApiService.putCountry(`/${country._id}`, { ...country }).then(
         (response) => {
           if (response.status === 'success') {
             Alert('success', 'Updated', 3);
-            reset()
+            reset();
           }
         },
         (error) => {
           Alert('failed', 'Error creating', 3);
-          console.error(error)
-        }
+          console.error(error);
+        },
       );
-    else
+    } else {
       ApiService.postCountry('/create', { ...country }).then(
         (response) => {
           if (response.status === 'success') {
             Alert('success', 'Created', 3);
-            reset()
+            reset();
           }
         },
         (error) => {
           Alert('failed', 'Error creating', 3);
-          console.error(error)
-        }
+          console.error(error);
+        },
       );
+    }
   };
-
 
   const edit = (data) => {
     setData({
@@ -61,20 +61,20 @@ function CreateCountry() {
       _id: data._id,
       name: data.name,
       abbr: data.abbr,
-    })
-    setIsEditing(true)
-    setTextButton("Update")
-  }
+    });
+    setIsEditing(true);
+    setTextButton('Update');
+  };
 
   const reset = () => {
     setSeed(Math.random());
-    setTextButton("Create")
-    setIsEditing(false)
+    setTextButton('Create');
+    setIsEditing(false);
     setData({
       name: '',
       abbr: '',
-    })
-  }
+    });
+  };
 
   return (
     <div>
@@ -92,12 +92,10 @@ function CreateCountry() {
                 type="text"
                 className="form-control"
                 value={country.name}
-                onChange={(e) =>
-                  setData({
-                    ...country,
-                    name: e.target.value,
-                  })
-                }
+                onChange={(e) => setData({
+                  ...country,
+                  name: e.target.value,
+                })}
                 required
               />
             </div>
@@ -107,12 +105,10 @@ function CreateCountry() {
                 type="text"
                 className="form-control"
                 value={country.abbr}
-                onChange={(e) =>
-                  setData({
-                    ...country,
-                    abbr: e.target.value,
-                  })
-                }
+                onChange={(e) => setData({
+                  ...country,
+                  abbr: e.target.value,
+                })}
                 required
               />
             </div>
@@ -121,9 +117,11 @@ function CreateCountry() {
               <button className="btn btn-primary text-white">
                 {textButton}
               </button>
-              {isEditing && <button type="button" className="btn btn-primary text-white" onClick={reset}>
+              {isEditing && (
+              <button type="button" className="btn btn-primary text-white" onClick={reset}>
                 New
-              </button>}
+              </button>
+              )}
 
             </div>
           </div>
