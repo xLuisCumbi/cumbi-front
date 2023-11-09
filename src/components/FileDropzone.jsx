@@ -4,6 +4,8 @@ import { useDropzone } from 'react-dropzone';
 
 const FileDropzone = ({ onDrop }) => {
     const [uploadedFile, setUploadedFile] = useState(null);
+
+    // Definimos la función que maneja los archivos aceptados
     const onDropAccepted = (acceptedFiles) => {
         // Llamamos a la función onDrop proporcionada por el padre para manejar el archivo
         onDrop(acceptedFiles);
@@ -17,11 +19,8 @@ const FileDropzone = ({ onDrop }) => {
         maxSize: 5 * 1024 * 1024, // 5 MB en bytes
     });
 
-    const activeStyle = {
-        borderColor: '#2196f3'
-    };
-
-    const defaultStyle = {
+    // Estilos base para la zona de dropzone
+    const baseStyle = useMemo(() => ({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -34,21 +33,34 @@ const FileDropzone = ({ onDrop }) => {
         color: '#bdbdbd',
         outline: 'none',
         transition: 'border .24s ease-in-out',
+    }), []);
+
+    // Estilos cuando arrastramos archivos sobre la zona
+    const activeStyle = {
+        borderColor: '#2196f3'
     };
 
-    // Aplicamos estilo diferente cuando hay un archivo encima de la zona
+    // Estilos cuando un archivo ha sido cargado
+    const acceptedFileStyle = {
+        borderColor: '#00e676',
+        backgroundColor: '#e8f5e9',
+        color: '#2e7d32',
+    };
+
+    // Combinamos estilos de manera condicional
     const style = useMemo(() => ({
-        ...defaultStyle,
+        ...baseStyle,
         ...(isDragActive ? activeStyle : {}),
-    }), [isDragActive]);
+        ...(uploadedFile ? acceptedFileStyle : {})
+    }), [isDragActive, uploadedFile, baseStyle]);
 
     return (
-        <div {...getRootProps()} style={style}>
+        <div {...getRootProps({ style })}>
             <input {...getInputProps()} />
             {
                 isDragActive ?
                     <p>Arrastra y suelta tu archivo aquí, o haz clic para seleccionar un archivo (solo PDF).</p> :
-                    <p>{uploadedFile ? `File: ${uploadedFile.name}` : 'Arrastra y suelta tu archivo aquí, o haz clic para seleccionar un archivo (solo PDF).'}</p>
+                    <p>{uploadedFile ? `Documento: ${uploadedFile.name}` : 'Arrastra y suelta tu archivo aquí, o haz clic para seleccionar un archivo (solo PDF).'}</p>
             }
         </div>
     );
