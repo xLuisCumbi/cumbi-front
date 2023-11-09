@@ -17,6 +17,7 @@ export default function Register() {
         document: null,
         acceptedDataPolicy: false,
         acceptedTermsConditions: false,
+        acceptedPrivacyPolicy: false,
     });
 
     const [businessData, setBusinessData] = useState({
@@ -39,6 +40,7 @@ export default function Register() {
         // document: null,
         acceptedDataPolicy: false,
         acceptedTermsConditions: false,
+        acceptedPrivacyPolicy: false,
     });
 
     useEffect(() => {
@@ -112,8 +114,8 @@ export default function Register() {
     const handleSubmitPerson = async (e) => {
         e.preventDefault();
 
-        if (!userData.acceptedDataPolicy || !userData.acceptedTermsConditions) {
-            Alert('failed', 'Debes aceptar los Términos y Condiciones y la Política de Tratamiento de Datos', 3);
+        if (!userData.acceptedDataPolicy || !userData.acceptedTermsConditions || !userData.acceptedPrivacyPolicy) {
+            Alert('failed', 'Debes aceptar los Términos y Condiciones, la Política de Tratamiento de Datos y el Aviso de Privacidad', 3);
             return;
         }
 
@@ -137,6 +139,7 @@ export default function Register() {
         formData.append('payment_fee', userData.payment_fee);
         formData.append('acceptedDataPolicy', JSON.stringify(userData.acceptedDataPolicy));
         formData.append('acceptedTermsConditions', JSON.stringify(userData.acceptedTermsConditions));
+        formData.append('acceptedPrivacyPolicy', JSON.stringify(userData.acceptedPrivacyPolicy));
 
         // Enviar la solicitud
         ApiService.publicSignUp(formData)
@@ -158,7 +161,7 @@ export default function Register() {
         e.preventDefault();
         console.log('business');
 
-        if (!userBusinessData.acceptedDataPolicy || !userBusinessData.acceptedTermsConditions) {
+        if (!userBusinessData.acceptedDataPolicy || !userBusinessData.acceptedTermsConditions || !userBusinessData.acceptedPrivacyPolicy) {
             Alert('failed', 'Debes aceptar los Términos y Condiciones y la Política de Tratamiento de Datos', 3);
             return;
         }
@@ -205,6 +208,7 @@ export default function Register() {
         formData.append('payment_fee', userBusinessData.payment_fee);
         formData.append('acceptedDataPolicy', JSON.stringify(userBusinessData.acceptedDataPolicy));
         formData.append('acceptedTermsConditions', JSON.stringify(userBusinessData.acceptedTermsConditions));
+        formData.append('acceptedPrivacyPolicy', JSON.stringify(userBusinessData.acceptedPrivacyPolicy));
 
         // Enviar la solicitud
         ApiService.publicSignUp(formData)
@@ -339,6 +343,8 @@ export default function Register() {
                                                                 Acepto los
                                                                 {' '}
                                                                 <a href="https://cumbi.co/terminos-y-condiciones" target="_blank" rel="noopener noreferrer">Términos y Condiciones</a>
+                                                                {' '}
+                                                                y confirmo que los he leído y entendido.
                                                             </label>
                                                         </div>
                                                     </div>
@@ -360,6 +366,31 @@ export default function Register() {
                                                                 Acepto la
                                                                 {' '}
                                                                 <a href="https://cumbi.co/politica-de-tratamiento-de-datos" target="_blank" rel="noopener noreferrer">Política de Tratamiento de Datos</a>
+                                                                {' '}
+                                                                y confirmo que los he leído y entendido.
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    {/* Aviso de Privacidad */}
+                                                    <div className="col-12">
+                                                        <div className="form-check">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="form-check-input"
+                                                                id="dataPolicyCheckbox"
+                                                                required
+                                                                checked={userData.acceptedPrivacyPolicy} // Usa el valor del estado
+                                                                onChange={(e) => setUserData({
+                                                                    ...userData,
+                                                                    acceptedPrivacyPolicy: e.target.checked, // Actualiza el estado cuando cambia
+                                                                })}
+                                                            />
+                                                            <label className="form-check-label" htmlFor="dataPolicyCheckbox">
+                                                                Acepto la
+                                                                {' '}
+                                                                <a href="https://cumbi.co/aviso-de-privacidad" target="_blank" rel="noopener noreferrer">Aviso de Privacidad</a>
+                                                                {' '}
+                                                                y confirmo que los he leído y entendido.
                                                             </label>
                                                         </div>
                                                     </div>
@@ -497,6 +528,8 @@ export default function Register() {
                                                                 Acepto los
                                                                 {' '}
                                                                 <a href="https://cumbi.co/terminos-y-condiciones" target="_blank" rel="noopener noreferrer">Términos y Condiciones</a>
+                                                                {' '}
+                                                                y confirmo que los he leído y entendido.
                                                             </label>
                                                         </div>
                                                     </div>
@@ -518,6 +551,31 @@ export default function Register() {
                                                                 Acepto la
                                                                 {' '}
                                                                 <a href="https://cumbi.co/politica-de-tratamiento-de-datos" target="_blank" rel="noopener noreferrer">Política de Tratamiento de Datos</a>
+                                                                {' '}
+                                                                y confirmo que los he leído y entendido.
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    {/* Aviso de Privacidad */}
+                                                    <div className="col-12">
+                                                        <div className="form-check">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="form-check-input"
+                                                                id="dataPolicyCheckbox"
+                                                                required
+                                                                checked={userData.acceptedPrivacyPolicy} // Usa el valor del estado
+                                                                onChange={(e) => setUserData({
+                                                                    ...userData,
+                                                                    acceptedPrivacyPolicy: e.target.checked, // Actualiza el estado cuando cambia
+                                                                })}
+                                                            />
+                                                            <label className="form-check-label" htmlFor="dataPolicyCheckbox">
+                                                                Acepto la
+                                                                {' '}
+                                                                <a href="https://cumbi.co/aviso-de-privacidad" target="_blank" rel="noopener noreferrer">Aviso de Privacidad</a>
+                                                                {' '}
+                                                                y confirmo que los he leído y entendido.
                                                             </label>
                                                         </div>
                                                     </div>
