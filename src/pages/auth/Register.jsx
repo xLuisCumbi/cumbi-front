@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Alert from '../../components/Alert';
 import ApiService from '../../services/ApiService';
+import FileDropzone from '../../components/FileDropzone';
+
+const maxSizeDoc = 5 * 1024 * 1024; // 5 MB en bytes
 
 export default function Register() {
-    const maxSizeDoc = 5;
     const navigate = useNavigate();
     const [countryList, setCountryList] = useState([]);
     const [userData, setUserData] = useState({
@@ -44,18 +46,31 @@ export default function Register() {
             (response) => {
                 if (response.status === 'success') {
                     setCountryList(response.countries);
-                    setBusinessData({
-                        ...businessData,
+                    setBusinessData((prevData) => ({
+                        ...prevData,
                         country: response.countries[0]._id,
-                    });
+                    }));
                 }
             },
             (error) => {
-                Alert('failed', 'Error fetching', 3);
+                Alert('failed', 'Error fetching countries', 3);
                 console.error(error);
             },
         );
     }, []);
+
+    // Función de Dropzone para manejar archivos
+    const onDropPerson = (acceptedFiles) => {
+        const file = acceptedFiles[0];
+        if (file.size <= maxSizeDoc) {
+            setUserData((prevData) => ({
+                ...prevData,
+                document: file,
+            }));
+        } else {
+            Alert('failed', `El archivo es demasiado grande. Debe ser menor de ${maxSizeDoc / 1024 / 1024} MB.`, 3);
+        }
+    };
 
     function verifyFile(file) {
         // Verificar el tamaño del archivo (en bytes)
@@ -75,15 +90,12 @@ export default function Register() {
         return true;
     }
 
-    const handleFilePerson = (e) => {
-        const selectedFile = e.target.files[0];
-
-        if (verifyFile(selectedFile)) {
-            setUserData({
-                ...userData,
-                document: selectedFile,
-            });
-        }
+    const handleFilePerson = (acceptedFiles) => {
+        // Aquí manejarías el archivo aceptado
+        setUserData({
+            ...userData,
+            document: acceptedFiles[0],
+        });
     };
 
     const handleFileBusiness = (e) => {
@@ -219,7 +231,7 @@ export default function Register() {
                             <div className="col-lg-6 col-md-6 d-flex flex-column align-items-center justify-content-center">
                                 <div className="d-flex justify-content-center py-4">
                                     <a
-                                        href="/admin//dashboard"
+                                        href="/"
                                         className="logo d-flex align-items-center w-auto text-decoration-none"
                                     >
                                         <img src="/images/Cumbi_Purple_horizontal.svg" height="120" alt="" />
@@ -301,9 +313,13 @@ export default function Register() {
                                                         />
                                                     </div>
                                                     <div className="col-12">
-                                                        <label className="form-label">Sube tu ID / Pasaporte / Foreign ID</label>
-                                                        <input type="file" accept=".pdf" onChange={handleFilePerson} />
+                                                        <label className="form-label">Sube tu documento de identidad </label>
+                                                        <FileDropzone onDrop={onDropPerson} />
+                                                        <small className="text-muted">
+                                                            Solo se permiten archivos PDF de hasta 5 MB.
+                                                        </small>
                                                     </div>
+
 
                                                     {/* Términos y Condiciones */}
                                                     <div className="col-12">
