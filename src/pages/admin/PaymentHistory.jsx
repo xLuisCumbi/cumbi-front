@@ -88,7 +88,7 @@ function PaymentHistory() {
             </a>
             <a
               className="btn"
-              href={`${config.paymentBaseUrl}/invoice/${row.original._id}`}
+              href={`https://api.cumbi.co/invoice/${row.original._id}`} //ToDo: fix this
               target="_blank"
               rel="noopener noreferrer"
               title="Open Payment Page"
@@ -402,7 +402,7 @@ function PaymentHistory() {
                               <strong>
                                 {' '}
                                 <a
-                                  href={`${config.paymentBaseUrl}/invoice/${selectedDeposit._id}`}
+                                  href={`https://api.cumbi.co/invoice/${row.original._id}`} //ToDo: fix this
                                   target="_blank"
                                   rel="noopener noreferrer"
                                 >
