@@ -323,8 +323,6 @@ export default function Register() {
                                                             Solo se permiten archivos PDF de hasta 5 MB.
                                                         </small>
                                                     </div>
-
-
                                                     {/* Términos y Condiciones */}
                                                     <div className="col-12">
                                                         <div className="form-check">
@@ -377,7 +375,7 @@ export default function Register() {
                                                             <input
                                                                 type="checkbox"
                                                                 className="form-check-input"
-                                                                id="dataPolicyCheckbox"
+                                                                id="dataPrivacyCheckbox"
                                                                 required
                                                                 checked={userData.acceptedPrivacyPolicy} // Usa el valor del estado
                                                                 onChange={(e) => setUserData({
@@ -385,7 +383,7 @@ export default function Register() {
                                                                     acceptedPrivacyPolicy: e.target.checked, // Actualiza el estado cuando cambia
                                                                 })}
                                                             />
-                                                            <label className="form-check-label" htmlFor="dataPolicyCheckbox">
+                                                            <label className="form-check-label" htmlFor="dataPrivacyCheckbox">
                                                                 Acepto la
                                                                 {' '}
                                                                 <a href="https://cumbi.co/aviso-de-privacidad" target="_blank" rel="noopener noreferrer">Aviso de Privacidad</a>
@@ -516,7 +514,7 @@ export default function Register() {
                                                             <input
                                                                 type="checkbox"
                                                                 className="form-check-input"
-                                                                id="termsCheckbox"
+                                                                id="termsCheckboxBusinnes"
                                                                 required
                                                                 checked={userBusinessData.acceptedTermsConditions} // Usa el valor del estado
                                                                 onChange={(e) => setUserBusinessData({
@@ -524,7 +522,7 @@ export default function Register() {
                                                                     acceptedTermsConditions: e.target.checked, // Actualiza el estado cuando cambia
                                                                 })}
                                                             />
-                                                            <label className="form-check-label" htmlFor="termsCheckbox">
+                                                            <label className="form-check-label" htmlFor="termsCheckboxBusinnes">
                                                                 Acepto los
                                                                 {' '}
                                                                 <a href="https://cumbi.co/terminos-y-condiciones" target="_blank" rel="noopener noreferrer">Términos y Condiciones</a>
@@ -539,7 +537,7 @@ export default function Register() {
                                                             <input
                                                                 type="checkbox"
                                                                 className="form-check-input"
-                                                                id="dataPolicyCheckbox"
+                                                                id="dataPolicyCheckboxBusinnes"
                                                                 required
                                                                 checked={userBusinessData.acceptedDataPolicy} // Usa el valor del estado
                                                                 onChange={(e) => setUserBusinessData({
@@ -547,7 +545,7 @@ export default function Register() {
                                                                     acceptedDataPolicy: e.target.checked, // Actualiza el estado cuando cambia
                                                                 })}
                                                             />
-                                                            <label className="form-check-label" htmlFor="dataPolicyCheckbox">
+                                                            <label className="form-check-label" htmlFor="dataPolicyCheckboxBusinnes">
                                                                 Acepto la
                                                                 {' '}
                                                                 <a href="https://cumbi.co/politica-de-tratamiento-de-datos" target="_blank" rel="noopener noreferrer">Política de Tratamiento de Datos</a>
@@ -562,15 +560,15 @@ export default function Register() {
                                                             <input
                                                                 type="checkbox"
                                                                 className="form-check-input"
-                                                                id="dataPolicyCheckbox"
+                                                                id="dataPrivacyCheckboxBusiness"
                                                                 required
-                                                                checked={userData.acceptedPrivacyPolicy} // Usa el valor del estado
-                                                                onChange={(e) => setUserData({
-                                                                    ...userData,
+                                                                checked={userBusinessData.acceptedPrivacyPolicy} // Usa el valor del estado
+                                                                onChange={(e) => setUserBusinessData({
+                                                                    ...userBusinessData,
                                                                     acceptedPrivacyPolicy: e.target.checked, // Actualiza el estado cuando cambia
                                                                 })}
                                                             />
-                                                            <label className="form-check-label" htmlFor="dataPolicyCheckbox">
+                                                            <label className="form-check-label" htmlFor="dataPrivacyCheckboxBusiness">
                                                                 Acepto la
                                                                 {' '}
                                                                 <a href="https://cumbi.co/aviso-de-privacidad" target="_blank" rel="noopener noreferrer">Aviso de Privacidad</a>
