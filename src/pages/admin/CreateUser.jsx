@@ -5,8 +5,8 @@ import ApiService from '../../services/ApiService';
 import ListUserBusiness from './ListUserBusiness';
 
 function CreateUser() {
-  const [roleCur, setRoleCur] = useState('')
-  const [businessData, setBusinessData] = useState([])
+  const [roleCur, setRoleCur] = useState('');
+  const [businessData, setBusinessData] = useState([]);
   const [userData, setUserData] = useState({
     username: '',
     business: '',
@@ -14,25 +14,23 @@ function CreateUser() {
     password: '',
     role: 'person',
     payment_fee: 0,
-    kyc: "pending"
+    kyc: 'pending',
   });
-  const [isEditing, setIsEditing] = useState(false)
-  const [textButton, setTextButton] = useState("Create User")
+  const [isEditing, setIsEditing] = useState(false);
+  const [textButton, setTextButton] = useState('Create User');
   const [seed, setSeed] = useState(1);
-
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
-    for (let key in userData) {
+    for (const key in userData) {
       if (key === 'business' && userData.role === 'person') {
         continue; // Omitir validación del campo "business" para roles "person".
       }
       if (key === 'payment_fee' && userData.role !== 'person') {
         continue; // Omitir validación del campo "payment_fee" para roles diferentes de "person".
       }
-      if (key === 'password')
-        continue
+      if (key === 'password') continue;
 
       if (userData[key] === '' && key !== 'business') {
         Alert('failed', `input ${key} is required`, 3);
@@ -41,38 +39,39 @@ function CreateUser() {
     }
 
     Alert('success', 'loading', 30);
-    if (isEditing)
-      ApiService.put('/' + userData._id, { ...userData }).then(
+    if (isEditing) {
+      ApiService.put(`/${userData._id}`, { ...userData }).then(
         (response) => {
           if (response.status === 'success') {
             Alert('success', 'User Updated', 3);
-            reset()
+            reset();
           }
         },
         (err) => {
           console.error('err', err);
           console.error('stack', err.stack);
           Alert('failed', 'Error updating user', 3);
-        }
+        },
       );
-    else
+    } else {
       ApiService.post('/signup', { ...userData }).then(
         (response) => {
           if (response.status === 'signUp_success') {
             Alert('success', 'User Created', 3);
-            reset()
+            reset();
           }
         },
         (err) => {
           Alert('failed', 'Error in creating user', 3);
-        }
+        },
       );
+    }
   };
 
   const reset = () => {
     setSeed(Math.random());
-    setTextButton("Create User")
-    setIsEditing(false)
+    setTextButton('Create User');
+    setIsEditing(false);
     setUserData({
       username: '',
       business: '',
@@ -80,33 +79,31 @@ function CreateUser() {
       password: '',
       role: 'person',
       payment_fee: 0,
-      kyc: "pending"
-    })
-  }
+      kyc: 'pending',
+    });
+  };
 
   useEffect(() => {
-
     const user = JSON.parse(localStorage.getItem('user'));
-    setRoleCur(user.role)
+    setRoleCur(user.role);
     // Si es admin puede crear usuarios de su misma empresa
-    if (user.role === 'admin')
+    if (user.role === 'admin') {
       setUserData({
         ...userData,
         business: user.business._id,
-      })
+      });
+    }
     ApiService.getBusiness('').then(
       (response) => {
         if (response.status === 'success') {
-          setBusinessData(response.businesses)
+          setBusinessData(response.businesses);
         }
       },
       (err) => {
         Alert('failed', 'Error fetching business', 3);
-      }
+      },
     );
-
   }, []);
-
 
   const editUser = (user) => {
     setUserData({
@@ -119,11 +116,11 @@ function CreateUser() {
       payment_fee: user.payment_fee ? user.payment_fee : 0,
       token: user.token,
       document: user.document,
-      kyc: user.kyc
-    })
-    setIsEditing(true)
-    setTextButton("Update User")
-  }
+      kyc: user.kyc,
+    });
+    setIsEditing(true);
+    setTextButton('Update User');
+  };
 
   return (
     <div>
@@ -141,12 +138,10 @@ function CreateUser() {
                 type="text"
                 className="form-control"
                 value={userData.username}
-                onChange={(e) =>
-                  setUserData({
-                    ...userData,
-                    username: e.target.value,
-                  })
-                }
+                onChange={(e) => setUserData({
+                  ...userData,
+                  username: e.target.value,
+                })}
                 required
               />
             </div>
@@ -156,12 +151,10 @@ function CreateUser() {
                 type="email"
                 className="form-control"
                 value={userData.email}
-                onChange={(e) =>
-                  setUserData({
-                    ...userData,
-                    email: e.target.value,
-                  })
-                }
+                onChange={(e) => setUserData({
+                  ...userData,
+                  email: e.target.value,
+                })}
                 required
               />
             </div>
@@ -171,12 +164,10 @@ function CreateUser() {
                 type="password"
                 className="form-control"
                 value={userData.password}
-                onChange={(e) =>
-                  setUserData({
-                    ...userData,
-                    password: e.target.value,
-                  })
-                }
+                onChange={(e) => setUserData({
+                  ...userData,
+                  password: e.target.value,
+                })}
                 required
               />
             </div>
@@ -190,9 +181,8 @@ function CreateUser() {
                   setUserData({
                     ...userData,
                     role: e.target.value,
-                  })
-                }
-                }
+                  });
+                }}
                 required
               >
                 {roleCur === 'superadmin' && <option value="person">Person</option>}
@@ -201,80 +191,74 @@ function CreateUser() {
               </select>
             </div>
             {/* solo el superadmin puede crear usuarios para empresas en específico */}
-            {roleCur === 'superadmin' && userData.role !== "person" &&
+            {roleCur === 'superadmin' && userData.role !== 'person' && (
               <div className="col-md-6 mt-3">
                 <label className="form-label">Business</label>
                 <select
                   type="text"
                   className="form-control"
                   value={userData.business}
-                  onChange={(e) =>
-                    setUserData({
-                      ...userData,
-                      business: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setUserData({
+                    ...userData,
+                    business: e.target.value,
+                  })}
                   required
                 >
-                  {businessData.map(business =>
-                    <option value={business._id} key={business._id}>{business.name}</option>)
-                  }
+                  {businessData.map((business) => <option value={business._id} key={business._id}>{business.name}</option>)}
                 </select>
               </div>
-            }
-            {userData.role === "person" &&
+            )}
+            {userData.role === 'person' && (
               <div className="col-md-6 mt-3">
                 <label className="form-label">Payment Fee [%]</label>
                 <input
                   type="number"
                   className="form-control"
                   value={userData.payment_fee}
-                  onChange={(e) =>
-                    setUserData({
-                      ...userData,
-                      payment_fee: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setUserData({
+                    ...userData,
+                    payment_fee: e.target.value,
+                  })}
                   required
                 />
               </div>
-            }
-            {roleCur === 'superadmin' &&
+            )}
+            {roleCur === 'superadmin'
+              && (
               <div className="col-md-6 mt-3">
                 <label className="form-label">KYC</label>
                 <select
                   type="text"
                   className="form-control"
                   value={userData.kyc}
-                  onChange={(e) =>
-                    setUserData({
-                      ...userData,
-                      kyc: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setUserData({
+                    ...userData,
+                    kyc: e.target.value,
+                  })}
                   required
                 >
-                  <option value="pending" >Pending</option>
+                  <option value="pending">Pending</option>
                   <option value="accepted">Accepted</option>
                   <option value="denied">Denied</option>
 
                 </select>
               </div>
-
-            }
+              )}
             <div className="col-md-12 mt-4 text-center">
               <button className="btn btn-primary text-white">
                 {textButton}
               </button>
-              {isEditing && <button type="button" className="btn btn-primary text-white" onClick={reset}>
+              {isEditing && (
+              <button type="button" className="btn btn-primary text-white" onClick={reset}>
                 New User
-              </button>}
+              </button>
+              )}
             </div>
           </div>
         </form>
-      </div >
+      </div>
       <ListUserBusiness key={seed} editUser={editUser} />
-    </div >
+    </div>
   );
 }
 

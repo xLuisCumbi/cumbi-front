@@ -9,8 +9,8 @@ function CreateCoin() {
     name: '',
     abbr: '',
   });
-  const [isEditing, setIsEditing] = useState(false)
-  const [textButton, setTextButton] = useState("Create")
+  const [isEditing, setIsEditing] = useState(false);
+  const [textButton, setTextButton] = useState('Create');
   const [seed, setSeed] = useState(1);
 
   const handleFormSubmit = (e) => {
@@ -26,34 +26,34 @@ function CreateCoin() {
     // }
 
     Alert('success', 'loading', 30);
-    if (isEditing)
-      ApiService.putCoin('/' + coin._id, { ...coin }).then(
+    if (isEditing) {
+      ApiService.putCoin(`/${coin._id}`, { ...coin }).then(
         (response) => {
           if (response.status === 'success') {
             Alert('success', 'Updated', 3);
-            reset()
+            reset();
           }
         },
         (error) => {
           Alert('failed', 'Error creating', 3);
-          console.error(error)
-        }
+          console.error(error);
+        },
       );
-    else
+    } else {
       ApiService.postCoin('/create', { ...coin }).then(
         (response) => {
           if (response.status === 'success') {
             Alert('success', 'Created', 3);
-            reset()
+            reset();
           }
         },
         (error) => {
           Alert('failed', 'Error creating', 3);
-          console.error(error)
-        }
+          console.error(error);
+        },
       );
+    }
   };
-
 
   const edit = (data) => {
     setData({
@@ -61,20 +61,20 @@ function CreateCoin() {
       _id: data._id,
       name: data.name,
       abbr: data.abbr,
-    })
-    setIsEditing(true)
-    setTextButton("Update")
-  }
+    });
+    setIsEditing(true);
+    setTextButton('Update');
+  };
 
   const reset = () => {
     setSeed(Math.random());
-    setTextButton("Create")
-    setIsEditing(false)
+    setTextButton('Create');
+    setIsEditing(false);
     setData({
       name: '',
       abbr: '',
-    })
-  }
+    });
+  };
 
   return (
     <div>
@@ -92,12 +92,10 @@ function CreateCoin() {
                 type="text"
                 className="form-control"
                 value={coin.name}
-                onChange={(e) =>
-                  setData({
-                    ...coin,
-                    name: e.target.value,
-                  })
-                }
+                onChange={(e) => setData({
+                  ...coin,
+                  name: e.target.value,
+                })}
                 required
               />
             </div>
@@ -107,12 +105,10 @@ function CreateCoin() {
                 type="text"
                 className="form-control"
                 value={coin.abbr}
-                onChange={(e) =>
-                  setData({
-                    ...coin,
-                    abbr: e.target.value,
-                  })
-                }
+                onChange={(e) => setData({
+                  ...coin,
+                  abbr: e.target.value,
+                })}
                 required
               />
             </div>
@@ -121,9 +117,11 @@ function CreateCoin() {
               <button className="btn btn-primary text-white">
                 {textButton}
               </button>
-              {isEditing && <button type="button" className="btn btn-primary text-white" onClick={reset}>
+              {isEditing && (
+              <button type="button" className="btn btn-primary text-white" onClick={reset}>
                 New
-              </button>}
+              </button>
+              )}
 
             </div>
           </div>

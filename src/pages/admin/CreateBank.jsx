@@ -9,34 +9,33 @@ function CreateBank() {
     name: '',
     country: '',
   });
-  const [countryList, setCountryList] = useState([])
-  const [isEditing, setIsEditing] = useState(false)
-  const [textButton, setTextButton] = useState("Create")
+  const [countryList, setCountryList] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [textButton, setTextButton] = useState('Create');
   const [seed, setSeed] = useState(1);
 
   useEffect(() => {
-    ApiService.getCountry("").then(
+    ApiService.getCountry('').then(
       (response) => {
         if (response.status === 'success') {
-          setCountryList(response.countries)
+          setCountryList(response.countries);
           setData({
             ...bank,
-            country: response.countries[0]._id
-          })
+            country: response.countries[0]._id,
+          });
         }
       },
       (error) => {
         Alert('failed', 'Error fetching', 3);
-        console.error(error)
-      }
+        console.error(error);
+      },
     );
-
   }, []);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
-    for (let key in bank) {
+    for (const key in bank) {
       console.log('bank', bank);
       console.log('key', key);
       // if (key === 'bank' || key === 'web')
@@ -54,59 +53,56 @@ function CreateBank() {
     }
 
     Alert('success', 'loading', 30);
-    if (isEditing)
-      ApiService.putBank('/' + bank._id, { ...bank }).then(
+    if (isEditing) {
+      ApiService.putBank(`/${bank._id}`, { ...bank }).then(
         (response) => {
           if (response.status === 'success') {
             Alert('success', 'Updated', 3);
-            reset()
+            reset();
           }
         },
         (error) => {
           Alert('failed', 'Error creating', 3);
-          console.error(error)
-        }
+          console.error(error);
+        },
       );
-    else {
+    } else {
       ApiService.postBank('/create', { ...bank }).then(
         (response) => {
           if (response.status === 'success') {
             Alert('success', 'Created', 3);
-            reset()
+            reset();
           }
         },
         (error) => {
           Alert('failed', 'Error creating', 3);
-          console.error(error)
-        }
+          console.error(error);
+        },
       );
     }
-
   };
 
-
   const edit = (data) => {
-    console.log(data)
+    console.log(data);
     setData({
       ...bank,
       _id: data._id,
       name: data.name,
       country: data.country._id,
-    })
-    setIsEditing(true)
-    setTextButton("Update")
-  }
+    });
+    setIsEditing(true);
+    setTextButton('Update');
+  };
 
   const reset = () => {
     setSeed(Math.random());
-    setTextButton("Create")
-    setIsEditing(false)
+    setTextButton('Create');
+    setIsEditing(false);
     setData({
       name: '',
       country: countryList[0]._id,
-    })
-  }
-
+    });
+  };
 
   return (
     <div>
@@ -124,12 +120,10 @@ function CreateBank() {
                 type="text"
                 className="form-control"
                 value={bank.name}
-                onChange={(e) =>
-                  setData({
-                    ...bank,
-                    name: e.target.value,
-                  })
-                }
+                onChange={(e) => setData({
+                  ...bank,
+                  name: e.target.value,
+                })}
                 required
               />
             </div>
@@ -143,15 +137,14 @@ function CreateBank() {
                   setData({
                     ...bank,
                     country: e.target.value,
-                  })
-                }
-                }
+                  });
+                }}
                 required
               >
-                <option value="">Selecciona un país...</option> {/* Opción por defecto */}
-                {countryList.map(country =>
-                  <option value={country._id} key={country._id}>{country.name}</option>)
-                }
+                <option value="">Selecciona un país...</option>
+                {' '}
+                {/* Opción por defecto */}
+                {countryList.map((country) => <option value={country._id} key={country._id}>{country.name}</option>)}
               </select>
             </div>
 
@@ -159,9 +152,11 @@ function CreateBank() {
               <button className="btn btn-primary text-white">
                 {textButton}
               </button>
-              {isEditing && <button type="button" className="btn btn-primary text-white" onClick={reset}>
+              {isEditing && (
+              <button type="button" className="btn btn-primary text-white" onClick={reset}>
                 New
-              </button>}
+              </button>
+              )}
 
             </div>
           </div>
