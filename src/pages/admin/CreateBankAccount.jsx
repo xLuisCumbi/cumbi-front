@@ -3,6 +3,7 @@ import PageTitle from '../../components/PageTitle';
 import Alert from '../../components/Alert';
 import ApiService from '../../services/ApiService';
 import ListBankAccount from './ListBankAccount';
+import FileDropzone from '../../components/FileDropzone'; // Importa el componente FileDropzone
 
 function CreateBankAccount() {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -19,6 +20,9 @@ function CreateBankAccount() {
   const [isEditing, setIsEditing] = useState(false);
   const [textButton, setTextButton] = useState('Create');
   const [seed, setSeed] = useState(1);
+  const [file, setFile] = useState(null);
+  const maxSizeDoc = 5 * 1024 * 1024; // 5 MB
+
 
   useEffect(() => {
     ApiService.getBank('').then(
@@ -50,36 +54,63 @@ function CreateBankAccount() {
     // );
   }, []);
 
+  const onDrop = (acceptedFiles) => {
+    const uploadedFile = acceptedFiles[0];
+    if (uploadedFile.size <= maxSizeDoc) {
+      setFile(uploadedFile);
+    } else {
+      Alert('failed', `El archivo es demasiado grande. Debe ser menor de ${maxSizeDoc / 1024 / 1024} MB.`, 3);
+    }
+  };
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
+    // Verificar que todos los campos necesarios están completos antes de enviar
     for (const key in bankAccount) {
       if (bankAccount[key] === '') {
-        Alert('failed', `input ${key} is required`, 3);
+        Alert('failed', `The field ${key} is required`, 3);
         return;
       }
     }
 
+    // Crear un objeto FormData para enviar los datos del formulario y el archivo
+    const formData = new FormData();
+    formData.append('user', bankAccount.user);
+    formData.append('bank', bankAccount.bank);
+    formData.append('type', bankAccount.type);
+    formData.append('number', bankAccount.number);
+    formData.append('name', bankAccount.name);
+    formData.append('active', bankAccount.active);
+
+    // Añadir el archivo al objeto FormData si existe
+    if (file) {
+      formData.append('document', file);
+    }
+
+    // Mostrar alerta de carga
     Alert('success', 'loading', 30);
+
+    // Realizar la petición POST o PUT dependiendo si es edición o creación
     if (isEditing) {
-      ApiService.putBankAccount(`/${bankAccount._id}`, { ...bankAccount }).then(
+      ApiService.putBankAccount(`/${bankAccount._id}`, formData).then(
         (response) => {
           if (response.status === 'success') {
             Alert('success', 'Updated', 3);
-            reset();
+            reset(); // Resetea el formulario después de la actualización
           }
         },
         (error) => {
-          Alert('failed', 'Error creating', 3);
+          Alert('failed', 'Error updating', 3);
           console.error(error);
         },
       );
     } else {
-      ApiService.postBankAccount('/create', { ...bankAccount }).then(
+      ApiService.postBankAccount('/create', formData).then(
         (response) => {
           if (response.status === 'success') {
             Alert('success', 'Created', 3);
-            reset();
+            reset(); // Resetea el formulario después de la creación
           }
         },
         (error) => {
@@ -206,20 +237,26 @@ function CreateBankAccount() {
                   })}
                 />
                 <label className="form-check-label" htmlFor="flexSwitchCheckDefault" />
+                <div className="form-text" id="basic-addon4">Solo se permite una cuenta activa</div>
 
               </div>
             </div>
-            <br />
-            <div className="form-text" id="basic-addon4">Solo se permite una cuenta activa</div>
-
+            {/* Añade la sección de carga de archivos */}
+            <div className="col-12">
+              <label className="form-label">Sube la referencia bancaria de la cuenta de banco, debe estar a tu nombre, asociada al ID subido al momento del registro</label>
+              <FileDropzone onDrop={onDrop} />
+              <small className="text-muted">
+                Solo se permiten archivos PDF de hasta 5 MB.
+              </small>
+            </div>
             <div className="col-md-12 mt-4 text-center">
               <button className="btn btn-primary text-white">
                 {textButton}
               </button>
               {isEditing && (
-              <button type="button" className="btn btn-primary text-white" onClick={reset}>
-                New
-              </button>
+                <button type="button" className="btn btn-primary text-white" onClick={reset}>
+                  New
+                </button>
               )}
 
             </div>

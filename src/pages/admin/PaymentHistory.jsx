@@ -124,6 +124,8 @@ function PaymentHistory() {
   const handleShowPaymentDetails = (i) => {
     const d = deposits[i];
     setSelectedDeposit(d);
+    console.log('selectedDeposit', d);
+
     setIsModalOpen(true);
     new bootstrap.Modal(document.getElementById('largeModal')).show();
   };
@@ -402,7 +404,7 @@ function PaymentHistory() {
                               <strong>
                                 {' '}
                                 <a
-                                  href={`https://api.cumbi.co/invoice/${row.original._id}`} //ToDo: fix this
+                                  href={`https://api.cumbi.co/invoice/${selectedDeposit._id}`} //ToDo: fix this
                                   target="_blank"
                                   rel="noopener noreferrer"
                                 >
@@ -426,15 +428,15 @@ function PaymentHistory() {
                                 </a>
                               </strong>
                             </div>
-                            <div className="col-12 col-sm-4 mt-3">
+                            {/*<div className="col-12 col-sm-6 mt-4">
                               <button
                                 className="btn btn-primary text-white"
                                 type="button"
                                 onClick={() => cancelTransaction(selectedDeposit._id)}
                               >
-                                Cancel Transaction
+                                Cancelar Transacción
                               </button>
-                            </div>
+                            </div>*/}
                           </div>
                         </div>
 

@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Alert from '../../components/Alert';
 import ApiService from '../../services/ApiService';
-import FileDropzone from '../../components/FileDropzone';
-
-const maxSizeDoc = 5 * 1024 * 1024; // 5 MB en bytes
 
 export default function Register() {
     const navigate = useNavigate();
@@ -14,10 +11,10 @@ export default function Register() {
         password: '',
         role: 'person',
         payment_fee: 0,
-        document: null,
         acceptedDataPolicy: false,
         acceptedTermsConditions: false,
         acceptedPrivacyPolicy: false,
+        phone: '',
     });
 
     const [businessData, setBusinessData] = useState({
@@ -28,7 +25,6 @@ export default function Register() {
         email: '',
         payment_fee: 0,
         role: 'business',
-        // document: null,
     });
 
     const [userBusinessData, setUserBusinessData] = useState({
@@ -37,10 +33,10 @@ export default function Register() {
         password: '',
         role: 'admin',
         payment_fee: 0,
-        // document: null,
         acceptedDataPolicy: false,
         acceptedTermsConditions: false,
         acceptedPrivacyPolicy: false,
+        phone: '',
     });
 
     useEffect(() => {
@@ -61,56 +57,6 @@ export default function Register() {
         );
     }, []);
 
-    // Función de Dropzone para manejar archivos
-    const onDropPerson = (acceptedFiles) => {
-        const file = acceptedFiles[0];
-        if (file.size <= maxSizeDoc) {
-            setUserData((prevData) => ({
-                ...prevData,
-                document: file,
-            }));
-        } else {
-            Alert('failed', `El archivo es demasiado grande. Debe ser menor de ${maxSizeDoc / 1024 / 1024} MB.`, 3);
-        }
-    };
-
-    function verifyFile(file) {
-        // Verificar el tamaño del archivo (en bytes)
-        if (file && file.size > 1024 * 1024 * maxSizeDoc) {
-            alert(`El archivo es demasiado grande. Debe ser menor de ${maxSizeDoc} MB.`);
-            e.target.value = null; // Limpia el campo de entrada para que el usuario seleccione otro archivo.
-            return false;
-        }
-
-        // Verificar el tipo de archivo
-        if (file && !file.type.includes('pdf')) {
-            // Verificar que el tipo de archivo sea PDF
-            alert('El archivo debe ser un PDF.');
-            e.target.value = null; // Limpia el campo de entrada para que el usuario seleccione otro archivo.
-            return false;
-        }
-        return true;
-    }
-
-    const handleFilePerson = (acceptedFiles) => {
-        // Aquí manejarías el archivo aceptado
-        setUserData({
-            ...userData,
-            document: acceptedFiles[0],
-        });
-    };
-
-    const handleFileBusiness = (e) => {
-        const selectedFile = e.target.files[0];
-
-        if (verifyFile(selectedFile)) {
-            setBusinessData({
-                ...businessData,
-                document: selectedFile,
-            });
-        }
-    };
-
     const handleSubmitPerson = async (e) => {
         e.preventDefault();
 
@@ -129,9 +75,6 @@ export default function Register() {
         // Crear un objeto FormData
         const formData = new FormData();
 
-        // Añadir el archivo al objeto FormData
-        formData.append('document', userData.document);
-
         // Añadir los datos JSON al objeto FormData
         formData.append('email', userData.email);
         formData.append('password', userData.password);
@@ -140,15 +83,16 @@ export default function Register() {
         formData.append('acceptedDataPolicy', JSON.stringify(userData.acceptedDataPolicy));
         formData.append('acceptedTermsConditions', JSON.stringify(userData.acceptedTermsConditions));
         formData.append('acceptedPrivacyPolicy', JSON.stringify(userData.acceptedPrivacyPolicy));
+        formData.append('phone', userData.phone);
 
         // Enviar la solicitud
         ApiService.publicSignUp(formData)
             .then((response) => {
                 if (response.status === 'signUp_success') {
-                    Alert('success', 'User Registered', 3);
+                    Alert('success', 'Usuario Registrado', 3);
                     setTimeout(() => {
                         navigate('/');
-                    }, 2000);
+                    }, 3000);
                 }
             })
             .catch((err) => {
@@ -159,7 +103,6 @@ export default function Register() {
 
     const handleSubmitBusiness = async (e) => {
         e.preventDefault();
-        console.log('business');
 
         if (!userBusinessData.acceptedDataPolicy || !userBusinessData.acceptedTermsConditions || !userBusinessData.acceptedPrivacyPolicy) {
             Alert('failed', 'Debes aceptar los Términos y Condiciones y la Política de Tratamiento de Datos', 3);
@@ -183,7 +126,6 @@ export default function Register() {
         ApiService.postBusiness('/create', { ...businessData }).then(
             (response) => {
                 if (response.status === 'success') {
-                    console.log(response.business._id);
                     createUserWithBusiness(response.business._id);
                 }
             },
@@ -196,9 +138,6 @@ export default function Register() {
     const createUserWithBusiness = (_id) => {
         // Crear un objeto FormData
         const formData = new FormData();
-
-        // Añadir el archivo al objeto FormData
-        // formData.append('document', userBusinessData.document);
 
         // Añadir los datos JSON al objeto FormData
         formData.append('business', _id);
@@ -317,11 +256,16 @@ export default function Register() {
                                                         />
                                                     </div>
                                                     <div className="col-12">
-                                                        <label className="form-label">Sube tu documento de identidad </label>
-                                                        <FileDropzone onDrop={onDropPerson} />
-                                                        <small className="text-muted">
-                                                            Solo se permiten archivos PDF de hasta 5 MB.
-                                                        </small>
+                                                        <label className="form-label">Teléfono</label>
+                                                        <input
+                                                            type="tel"
+                                                            className="form-control"
+                                                            value={userData.phone}
+                                                            onChange={(e) => setUserData({
+                                                                ...userData,
+                                                                phone: e.target.value
+                                                            })}
+                                                        />
                                                     </div>
                                                     {/* Términos y Condiciones */}
                                                     <div className="col-12">
@@ -384,7 +328,7 @@ export default function Register() {
                                                                 })}
                                                             />
                                                             <label className="form-check-label" htmlFor="dataPrivacyCheckbox">
-                                                                Acepto la
+                                                                Acepto el
                                                                 {' '}
                                                                 <a href="https://cumbi.co/aviso-de-privacidad" target="_blank" rel="noopener noreferrer">Aviso de Privacidad</a>
                                                                 {' '}
@@ -397,7 +341,7 @@ export default function Register() {
                                                             className="btn btn-primary w-100"
                                                             type="submit"
                                                         >
-                                                            Register
+                                                            Registrar
                                                         </button>
                                                     </div>
                                                 </form>
@@ -411,7 +355,7 @@ export default function Register() {
                                                     onSubmit={handleSubmitBusiness}
                                                 >
                                                     <div className="col-12">
-                                                        <label className="form-label">ID Tax</label>
+                                                        <label className="form-label">Número de Identificacion Comercial</label>
                                                         <input
                                                             type="text"
                                                             className="form-control"
@@ -424,7 +368,7 @@ export default function Register() {
                                                         />
                                                     </div>
                                                     <div className="col-12">
-                                                        <label className="form-label">Name Business</label>
+                                                        <label className="form-label">Nombre Empresa</label>
                                                         <input
                                                             type="text"
                                                             className="form-control"
@@ -449,7 +393,7 @@ export default function Register() {
                                                         />
                                                     </div>
                                                     <div className="col-12">
-                                                        <label className="form-label">Email Business</label>
+                                                        <label className="form-label">Correo empresarial</label>
                                                         <input
                                                             type="email"
                                                             className="form-control"
@@ -462,7 +406,7 @@ export default function Register() {
                                                         />
                                                     </div>
                                                     <div className="col-12">
-                                                        <label className="form-label">Country</label>
+                                                        <label className="form-label">País</label>
                                                         <select
                                                             type="text"
                                                             className="form-control"
@@ -478,12 +422,8 @@ export default function Register() {
                                                             {countryList.map((country) => <option value={country._id} key={country._id}>{country.name}</option>)}
                                                         </select>
                                                     </div>
-                                                    {/* <div className="col-12">
-                                                            <label className="form-label">Identification Document</label>
-                                                            <input type="file" accept=".pdf" onChange={handleFileBusiness} />
-                                                        </div> */}
                                                     <div className="col-12">
-                                                        <label className="form-label">Email Admin</label>
+                                                        <label className="form-label">Correo Usuario</label>
                                                         <input
                                                             type="email"
                                                             className="form-control"
@@ -496,7 +436,7 @@ export default function Register() {
                                                         />
                                                     </div>
                                                     <div className="col-12">
-                                                        <label className="form-label">Password Admin</label>
+                                                        <label className="form-label">Contraseña</label>
                                                         <input
                                                             type="password"
                                                             className="form-control"
@@ -505,6 +445,16 @@ export default function Register() {
                                                                 ...userBusinessData,
                                                                 password: e.target.value,
                                                             })}
+                                                            required
+                                                        />
+                                                    </div>
+                                                    <div className="col-12">
+                                                        <label className="form-label">Teléfono</label>
+                                                        <input
+                                                            type="tel"
+                                                            className="form-control"
+                                                            value={businessData.phone}
+                                                            onChange={(e) => setBusinessData({ ...businessData, phone: e.target.value })}
                                                             required
                                                         />
                                                     </div>
@@ -569,7 +519,7 @@ export default function Register() {
                                                                 })}
                                                             />
                                                             <label className="form-check-label" htmlFor="dataPrivacyCheckboxBusiness">
-                                                                Acepto la
+                                                                Acepto el
                                                                 {' '}
                                                                 <a href="https://cumbi.co/aviso-de-privacidad" target="_blank" rel="noopener noreferrer">Aviso de Privacidad</a>
                                                                 {' '}
@@ -582,7 +532,7 @@ export default function Register() {
                                                             className="btn btn-primary w-100"
                                                             type="submit"
                                                         >
-                                                            Register
+                                                            Registrar
                                                         </button>
                                                     </div>
                                                 </form>

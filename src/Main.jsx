@@ -43,7 +43,7 @@ const CreatePayment = Loadable(
 const PaymentHistory = Loadable(
   lazy(() => import('./pages/admin/PaymentHistory')),
 );
-const Settings = Loadable(lazy(() => import('./pages/admin/Settings')));
+const Profile = Loadable(lazy(() => import('./pages/admin/Profile')));
 const SettingCumbi = Loadable(lazy(() => import('./pages/admin/SettingCumbi')));
 const Mnemonic = Loadable(lazy(() => import('./pages/admin/Mnemonic')));
 const ApiTokens = Loadable(lazy(() => import('./pages/admin/ApiTokens')));
@@ -87,8 +87,8 @@ const router = createBrowserRouter([
         element: <PaymentHistory />,
       },
       {
-        path: 'settings',
-        element: <Settings />,
+        path: 'profile',
+        element: <Profile />,
       },
       {
         path: 'setting-cumbi',

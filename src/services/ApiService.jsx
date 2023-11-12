@@ -38,6 +38,7 @@ const ApiService = {
    */
   post(endpoint, data = {}, headers = {}) {
     return new Promise((resolve, reject) => {
+      
       axios
         .post(`${this.baseURL}${endpoint}`, data, {
           headers: {
@@ -46,11 +47,20 @@ const ApiService = {
           },
         })
         .then(
-          (response) => resolve(response.data),
+          (response) => {
+            if (response && response.data) {
+              resolve(response.data);
+            } else {
+              reject(new Error('Response or response data is undefined'));
+            }
+          },
           (err) => {
             reject(err);
           },
-        );
+        )
+        .catch((err) => {
+          reject(err);
+        });
     });
   },
 
@@ -460,7 +470,7 @@ const ApiService = {
       axios
         .post(`${this.baseURL}/public-signup`, data, {
           headers: {
-            ...headers, // Permite agregar otros encabezados personalizados
+            ...headers,
           },
         })
         .then(
