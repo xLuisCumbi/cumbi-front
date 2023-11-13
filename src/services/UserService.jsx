@@ -11,9 +11,7 @@ function Login(email, password) {
         if (response.status === 'success') {
           localStorage.setItem('user', JSON.stringify(response.user));
           localStorage.setItem('userRole', response.user.role);
-          console.log('response', response);
           const userString = localStorage.getItem('user');
-          console.log('userString', userString);
         }
         resolve(response);
       },
