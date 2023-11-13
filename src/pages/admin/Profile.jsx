@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageTitle from '../../components/PageTitle';
 import Alert from '../../components/Alert';
 import ApiService from '../../services/ApiService';
@@ -8,6 +8,8 @@ import { updateLocalUser } from '../../helpers/authHeader';
 function Profile() {
   const user = JSON.parse(localStorage.getItem('user'));
   const [documentFile, setDocumentFile] = useState(null);
+  const [reloadComponent, setReloadComponent] = useState(false);
+
   const [settingsFormData, setSettingsFormData] = useState({
     username: user.username || '',
     email: user.email || '',
@@ -15,37 +17,49 @@ function Profile() {
     password: '',
   });
 
+  useEffect(() => {
+  }, [reloadComponent]); // Dependencia del efecto: se ejecutará cada vez que cambie el estado 'reloadComponent'
+
   const handleDropFile = (acceptedFiles) => {
     setDocumentFile(acceptedFiles[0]);
   };
 
   let kycDisclaimer;
+  let showUploadDocumentOption = false;
+
+  // Determinar el mensaje de KYC y si mostrar la opción de subir documento
   if (user.kyc === 'denied') {
     kycDisclaimer = (
       <div className="alert alert-danger mt-3">
-        Tu proceso de KYC ha sido denegado. Si tienes dudas, por favor comunícate a través de nuestro <a href="https://wa.me/573044433331">WhatsApp</a>.
+        <h5>Estado del KYC: Denegado</h5>
+        <p>Tu proceso de Verificación de Conocimiento del Cliente (KYC) ha sido denegado. Si necesitas más información o asistencia, por favor, comunícate con nosotros a través de <a href="https://wa.me/573044433331" target="_blank" rel="noopener noreferrer">WhatsApp</a>.</p>
       </div>
     );
-  } else if (user.kyc === 'pending') {
+  } else if (user.kyc === 'pending' || (user.kyc === 'initial' && user.document)) {
     kycDisclaimer = (
       <div className="alert alert-info mt-3">
-        Estamos validando tu información. El proceso de KYC puede tardar algunos días. Agradecemos tu paciencia.
+        <h5>Estado del KYC: En Proceso</h5>
+        <p>Estamos actualmente en el proceso de verificar tu información de KYC. Te notificaremos por email una vez que tu estado KYC haya sido actualizado. Este proceso puede tomar algunos días. Agradecemos tu paciencia y comprensión.</p>
       </div>
     );
+    showUploadDocumentOption = false;
   } else if (user.kyc === 'accepted') {
     kycDisclaimer = (
       <div className="alert alert-success mt-3">
-        Tu proceso de KYC ha sido validado exitosamente.
+        <h5>Estado del KYC: Aceptado</h5>
+        <p>¡Felicidades! Tu proceso de KYC ha sido completado y validado exitosamente. Ahora tienes acceso completo a todas las funcionalidades de nuestra plataforma.</p>
       </div>
     );
   } else {
     kycDisclaimer = (
       <div className="alert alert-info mt-3">
-        <strong>Proceso de Verificación de Identidad (KYC):</strong>
-        <p>Es importante completar este proceso para la activación total de tu cuenta. Sube tu documento de identidad en formato PDF (máximo 5 MB).</p>
+        <h5>Estado del KYC: Pendiente</h5>
+        <p>Para activar completamente tu cuenta y acceder a todas las funciones, es importante completar el proceso de KYC. Por favor, sube tu documento de identidad en formato PDF (máximo 5 MB).</p>
       </div>
     );
+    showUploadDocumentOption = true;
   }
+
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -71,6 +85,7 @@ function Profile() {
           // ToDo: actualizar el form con los datos nuevos del usuario sin tener que cerrar sesión
           updateLocalUser(response.user);
           Alert('success', 'Perfil actualizado correctamente', 3);
+          setReloadComponent(!reloadComponent); // Cambiar el estado para forzar la recarga del componente
         }
       },
       (err) => {
@@ -78,7 +93,6 @@ function Profile() {
       },
     );
   };
-
 
   return (
     <div>
@@ -122,6 +136,7 @@ function Profile() {
                   ...settingsFormData,
                   password: e.target.value,
                 })}
+                autoComplete="new-password"
                 required
               />
             </div>
@@ -138,32 +153,17 @@ function Profile() {
               />
             </div>
             {
-              (!user.document || user.kyc === 'pending' || user.kyc === 'initial') ? (
+              showUploadDocumentOption ? (
                 <div className="col-md-6 mt-3">
                   <label className="form-label">Sube tu documento de identidad</label>
                   <FileDropzone onDrop={handleDropFile} />
                   <small className="text-muted">
                     Solo se permiten archivos PDF de hasta 5 MB.
                   </small>
-                  {kycDisclaimer}
                 </div>
-              ) : (
-                <div className="col-md-6 mt-3">
-                  {
-                    (!user.document || user.kyc === 'initial') && (
-                      <div className="col-md-6 mt-3">
-                        <label className="form-label">Sube tu documento de identidad</label>
-                        <FileDropzone onDrop={handleDropFile} />
-                        <small className="text-muted">
-                          Solo se permiten archivos PDF de hasta 5 MB.
-                        </small>
-                      </div>
-                    )
-                  }
-                  {kycDisclaimer}
-                </div>
-              )
+              ) : null
             }
+            {kycDisclaimer}
           </div>
           <div className="col-md-12 mt-4 text-center">
             <button className="btn btn-primary text-white">

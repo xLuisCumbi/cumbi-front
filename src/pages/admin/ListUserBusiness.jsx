@@ -84,7 +84,7 @@ function ListUserBusiness(props) {
     if (reqRef.current) return;
     reqRef.current = true;
 
-    ApiService.get(`business/${user.id}`)
+    ApiService.get(`business/${user._id}`)
       .then((response) => {
         if (response.status === 'success') {
           setUsers(response.users || []);
