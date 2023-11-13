@@ -10,7 +10,10 @@ function Login(email, password) {
       (response) => {
         if (response.status === 'success') {
           localStorage.setItem('user', JSON.stringify(response.user));
-          localStorage.setItem('userRole', response.user.role); // Save the user's role
+          localStorage.setItem('userRole', response.user.role);
+          console.log('response', response);
+          const userString = localStorage.getItem('user');
+          console.log('userString', userString);
         }
         resolve(response);
       },
@@ -18,7 +21,7 @@ function Login(email, password) {
         console.error('Error in login request:', err);
         resolve({
           status: 'failed',
-          message: 'request error: kindly try again',
+          message: 'Error: Por favor intente de nuevo o póngase en contacto con el administrador.',
         });
       },
     );
@@ -42,11 +45,24 @@ function isLogin() {
   return false;
 }
 
+function fetchUserData(userId) {
+  return new Promise((resolve, reject) => {
+    ApiService.get(`${userId}`)
+      .then(response => {
+        resolve(response.data);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+}
+
 const UserService = {
   Login,
   logout,
   isLogin,
   getCurrentUserRole,
+  fetchUserData,
 };
 
 export default UserService;

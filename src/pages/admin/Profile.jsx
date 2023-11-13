@@ -3,15 +3,15 @@ import PageTitle from '../../components/PageTitle';
 import Alert from '../../components/Alert';
 import ApiService from '../../services/ApiService';
 import FileDropzone from '../../components/FileDropzone';
+import { updateLocalUser } from '../../helpers/authHeader';
 
 function Profile() {
   const user = JSON.parse(localStorage.getItem('user'));
   const [documentFile, setDocumentFile] = useState(null);
-  const maxSizeDoc = 5 * 1024 * 1024; // 5 MB en bytes
-  const [phoneNumber, setPhoneNumber] = useState(user.phone || '');
   const [settingsFormData, setSettingsFormData] = useState({
-    username: user.username,
-    email: user.email,
+    username: user.username || '',
+    email: user.email || '',
+    phone: user.phone || '',
     password: '',
   });
 
@@ -60,29 +60,25 @@ function Profile() {
     if (documentFile) {
       formData.append('document', documentFile);
     }
-    if (phoneNumber !== user.phone) {
-      formData.append('phone', phoneNumber);
+    if (settingsFormData.phone !== user.phone) {
+      formData.append('phone', settingsFormData.phone);
     }
 
-    if (documentFile) {
-      formData.append('document', documentFile);
-    }
-    for (var pair of formData.entries()) {
-      console.log(pair[0]+ ', ' + pair[1]);
-    }
     Alert('success', 'loading', 30);
-    ApiService.post('/update-profile', formData).then(
+    ApiService.postUpdateProfile(user, formData).then(
       (response) => {
         if (response.status === 'success') {
+          // ToDo: actualizar el form con los datos nuevos del usuario sin tener que cerrar sesión
+          updateLocalUser(response.user);
           Alert('success', 'Perfil actualizado correctamente', 3);
-          // Actualizar información del usuario en localStorage o estado global si es necesario
         }
       },
       (err) => {
-        Alert('failed', 'Error updating profile', 3);
+        Alert('failed', 'Error updating profile ' + err, 3);
       },
     );
   };
+
 
   return (
     <div>
@@ -134,8 +130,11 @@ function Profile() {
               <input
                 type="tel"
                 className="form-control"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                value={settingsFormData.phone}
+                onChange={(e) => setSettingsFormData({
+                  ...settingsFormData,
+                  phone: e.target.value,
+                })}
               />
             </div>
             {
