@@ -13,14 +13,17 @@ function CreatePayment() {
   const [user, setUser] = useState({
     payment_fee: 0,
   });
+
   const [business, setBusiness] = useState({
     payment_fee: 0,
   });
+
   const [setting, setSetting] = useState({
     trm: 0,
     perc_buy_house: 0,
     perc_cumbi: 0,
   });
+
   const [paymentFormData, setPaymentFormData] = useState({
     title: 'Nombre...',
     type: 'app-payment',
@@ -28,13 +31,14 @@ function CreatePayment() {
     network: 'TRON',
     coin: 'USDT',
     description: 'Detalle de la factura...',
-    user: userLocal.id, // use the user's ID from local storage
+    user: userLocal._id, // use the user's ID from local storage
     trm: 0,
     trm_house: 0,
     amount_fiat: 0,
     coin_fiat: 'COP',
     payment_fee: 0,
     type_payment_fee: 'cumbi',
+    kyc: userLocal.kyc,
   });
 
   const [paymentCreated, setPaymentCreated] = useState({
@@ -47,10 +51,9 @@ function CreatePayment() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
-
     // Verificar el estado KYC y si el documento está presente
     const isDocumentMissing = !user.document;
-    if (!user.kyc || user.kyc !== 'accepted') {
+    if (!userLocal.kyc || userLocal.kyc !== 'accepted') {
       setShowKycModal(true); // Muestra la modal
       setIsDocumentMissing(isDocumentMissing); // Actualiza el estado de si falta el documento
       return;
@@ -68,7 +71,7 @@ function CreatePayment() {
     }
 
     Alert('success', 'loading', 30);
-    ApiService.postDeposit('/create-app', { ...paymentFormData }).then(
+    ApiService.postDeposit('/create-deposit', { ...paymentFormData }).then(
       (response) => {
         if (response.status === 'success') {
           setPaymentCreated({
@@ -233,12 +236,12 @@ function CreatePayment() {
               <div className="col-md-8">
                 <div className="row">
                   <div className="col-md-12 mt-3">
-                    <p>
+                    <div>
                       <label className="form-label"><b>¿Cuánto es el monto de la transacción?*</b></label>
                       <div className="text-muted" style={{ fontSize: 'small' }}>
                         Agrega el monto en dólares (USD)
                       </div>
-                    </p>
+                    </div>
                     <input
                       type="text" // Changed to text to allow formatted string
                       className="form-control"
@@ -251,12 +254,12 @@ function CreatePayment() {
 
                   </div>
                   <div className="col-md-12 mt-3">
-                    <p>
+                    <div>
                       <label className="form-label"><b>Nombre de la Factura</b></label>
                       <div className="text-muted" style={{ fontSize: 'small' }}>
                         Agrega el título de la factura (Ej: Pagina web cumbi.co)
                       </div>
-                    </p>
+                    </div>
                     <input
                       type="text"
                       className="form-control"
@@ -269,12 +272,12 @@ function CreatePayment() {
                     />
                   </div>
                   <div className="col-md-12 mt-3">
-                    <p>
+                    <div>
                       <label className="form-label"><b>Descripción de la Factura</b></label>
                       <div className="text-muted" style={{ fontSize: 'small' }}>
                         Agrega el detalle de la factura que estás cobrando
                       </div>
-                    </p>
+                    </div>
                     <textarea
                       type="text"
                       className="form-control"
@@ -410,7 +413,7 @@ function CreatePayment() {
             className="bi bi-check-circle text-success"
           />
 
-          <p>Link de pago creado correctamente</p>
+          <div>Link de pago creado correctamente</div>
 
           <div
             onClick={handleLinkCopy}
@@ -420,7 +423,7 @@ function CreatePayment() {
           </div>
 
           <small style={{ fontSize: '80%' }} className="small">
-            <p> Clic en el link para copiar</p>
+            <div> Clic en el link para copiar</div>
           </small>
         </div>
       )}
