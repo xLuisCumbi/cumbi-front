@@ -36,27 +36,23 @@ function ListBankAccount(props) {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'ID',
-        accessor: '_id',
-      },
-      {
-        Header: 'Name',
+        Header: 'Nombre',
         accessor: 'name',
       },
       {
-        Header: 'Bank',
+        Header: 'Banco',
         accessor: 'bank.name',
       },
       {
-        Header: 'Type',
+        Header: 'Tipo de Cuenta',
         accessor: 'type',
       },
       {
-        Header: 'Number',
+        Header: 'Número',
         accessor: 'number',
       },
       {
-        Header: 'Active',
+        Header: 'Estado',
         accessor: 'active',
         Cell: ({ row }) => (
           <div className="form-check form-switch">
@@ -65,7 +61,7 @@ function ListBankAccount(props) {
         ),
       },
       {
-        Header: 'Action',
+        Header: 'Acción',
         Cell: ({ row }) => (
           <a className="btn" onClick={() => edit(row.original)}>
             <i className="bi bi-pencil" />
@@ -105,7 +101,7 @@ function ListBankAccount(props) {
     loadingStatus ? <PageLoading />
       : (
         <>
-          <PageTitle title="List Bank Accounts" />
+          <PageTitle title="Mis Cuentas de Banco" />
           <section id="list_user" className="card bg-white p-4">
             <div className="col-md-12">
               <table style={{ fontSize: '90%' }} {...getTableProps()} className="table datatable">
@@ -140,18 +136,18 @@ function ListBankAccount(props) {
                       <div className="pagination d-flex justify-content-between align-items-center">
                         <div className="pagination-navigation">
                           <button onClick={() => previousPage()} disabled={!canPreviousPage} className="btn btn-light btn-sm">
-                            Previous
+                            Anterior
                           </button>
                           <button onClick={() => nextPage()} disabled={!canNextPage} className="btn btn-light btn-sm">
-                            Next
+                            Siguiente
                           </button>
                         </div>
                         <div className="pagination-info">
-                          Page
+                          Página
                           {' '}
                           {pageIndex + 1}
                           {' '}
-                          of
+                          de
                           {pageCount}
                         </div>
                       </div>

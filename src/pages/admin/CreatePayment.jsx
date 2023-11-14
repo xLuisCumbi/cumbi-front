@@ -2,45 +2,63 @@ import { useEffect, useMemo, useState } from 'react';
 import PageTitle from '../../components/PageTitle';
 import Alert from '../../components/Alert';
 import ApiService from '../../services/ApiService';
+import KYCModal from '../../components/KYCModal';
 
 function CreatePayment() {
   // Get the user data from local storage
   const userLocal = JSON.parse(localStorage.getItem('user'));
+  const [showKycModal, setShowKycModal] = useState(false);
+  const [isDocumentMissing, setIsDocumentMissing] = useState(false);
 
   const [user, setUser] = useState({
     payment_fee: 0,
   });
+
   const [business, setBusiness] = useState({
     payment_fee: 0,
   });
+
   const [setting, setSetting] = useState({
     trm: 0,
     perc_buy_house: 0,
     perc_cumbi: 0,
   });
+
   const [paymentFormData, setPaymentFormData] = useState({
-    title: 'Título',
+    title: '',
     type: 'app-payment',
     amount: 0,
     network: 'TRON',
     coin: 'USDT',
-    description: 'Descripción corta de la cuenta de cobro',
-    user: userLocal.id, // use the user's ID from local storage
+    description: '',
+    user: userLocal._id, // use the user's ID from local storage
     trm: 0,
     trm_house: 0,
     amount_fiat: 0,
     coin_fiat: 'COP',
     payment_fee: 0,
     type_payment_fee: 'cumbi',
+    kyc: userLocal.kyc,
   });
+
   const [paymentCreated, setPaymentCreated] = useState({
     value: false,
     link: '',
   });
+
   const [userCommission, typePercUser] = useMemo(() => getCommissionUser(), [user, business, setting]);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+
+    // Verificar el estado KYC y si el documento está presente
+    const isDocumentMissing = !user.document;
+    if (!userLocal.kyc || userLocal.kyc !== 'accepted') {
+      setShowKycModal(true); // Muestra la modal
+      setIsDocumentMissing(isDocumentMissing); // Actualiza el estado de si falta el documento
+      return;
+    }
+
     for (const i in paymentFormData) {
       if (paymentFormData[i] === '') {
         Alert('failed', `input ${i} is required`, 3);
@@ -53,7 +71,7 @@ function CreatePayment() {
     }
 
     Alert('success', 'loading', 30);
-    ApiService.postDeposit('/create-app', { ...paymentFormData }).then(
+    ApiService.postDeposit('/create-deposit', { ...paymentFormData }).then(
       (response) => {
         if (response.status === 'success') {
           setPaymentCreated({
@@ -66,14 +84,27 @@ function CreatePayment() {
       (err) => {
         console.error('err', err);
         console.error('err.stack', err.stack);
-        Alert('failed', 'Error in creating invoice', 3);
+        Alert('failed', 'Error al crear la transacción', 3);
       },
     );
   };
 
+  // Function to format the number to the local currency string
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+      currencyDisplay: 'narrowSymbol' // To display only the symbol without currency code
+    }).format(value);
+  };
+
   // Función para actualizar paymentFormData.amount y calcular amountBankFiat
   const handleAmountChange = (e) => {
-    const amountToConvert = parseFloat(e.target.value); // monto en USD
+    // Remove all non-digits, allow only one decimal point
+    const value = e.target.value.replace(/\D/g, ''); // Remove all non-digits
+    const amountToConvert = parseInt(value, 10); // Convert to a whole number
 
     // Calcular el valor de amountBankFiat
     const amountConvertedToFiat = paymentFormData.trm_house * amountToConvert; // Monto en fiat convertido
@@ -108,7 +139,7 @@ function CreatePayment() {
 
   const handleLinkCopy = () => {
     navigator.clipboard.writeText(paymentCreated.link);
-    Alert('success', 'Link copied successfully', 2);
+    Alert('success', 'Link copiado satisfactoriamente', 2);
   };
 
   function getSettingCumbi() {
@@ -160,9 +191,9 @@ function CreatePayment() {
   }
 
   /**
-     *
-     * @returns This function gets the percentage fee that the user/business has
-     */
+   *
+   * @returns This function gets the percentage fee that the user/business has
+   */
   function getCommissionUser() {
     let payment_fee = 0; let
       type_payment_fee = '';
@@ -191,7 +222,7 @@ function CreatePayment() {
 
   return (
     <div>
-      <PageTitle title="Create Payment / Invoice" />
+      <PageTitle title="Crear una Transacción / Pago / Factura" />
 
       {!paymentCreated.value ? (
         <div className="col-12 mb-3">
@@ -205,19 +236,30 @@ function CreatePayment() {
               <div className="col-md-8">
                 <div className="row">
                   <div className="col-md-12 mt-3">
-                    <label className="form-label">Monto en USD</label>
+                    <div>
+                      <label className="form-label"><b>¿Cuánto es el monto de la transacción?*</b></label>
+                      <div className="text-muted" style={{ fontSize: 'small' }}>
+                        Agrega el monto en dólares (USD)
+                      </div>
+                    </div>
                     <input
-                      type="number"
+                      type="text" // Changed to text to allow formatted string
                       className="form-control"
-                      placeholder={paymentFormData.amount}
-                      value={paymentFormData.amount}
+                      value={formatCurrency(paymentFormData.amount)} // Format the value for display
                       onChange={handleAmountChange}
                       required
+                      placeholder="Monto en USD"
                       min={0}
                     />
+
                   </div>
                   <div className="col-md-12 mt-3">
-                    <label className="form-label">Título</label>
+                    <div>
+                      <label className="form-label"><b>Nombre de la Factura</b></label>
+                      <div className="text-muted" style={{ fontSize: 'small' }}>
+                        Agrega el título de la factura (Ej: Pagina web cumbi.co)
+                      </div>
+                    </div>
                     <input
                       type="text"
                       className="form-control"
@@ -229,8 +271,26 @@ function CreatePayment() {
                       required
                     />
                   </div>
+                  <div className="col-md-12 mt-3">
+                    <div>
+                      <label className="form-label"><b>Descripción de la Factura</b></label>
+                      <div className="text-muted" style={{ fontSize: 'small' }}>
+                        Agrega el detalle de la factura que estás cobrando
+                      </div>
+                    </div>
+                    <textarea
+                      type="text"
+                      className="form-control"
+                      placeholder={paymentFormData.description}
+                      onChange={(e) => setPaymentFormData({
+                        ...paymentFormData,
+                        description: e.target.value,
+                      })}
+                      required
+                    />
+                  </div>
                   <div className="col-md-6 mt-3">
-                    <label className="form-label">Crypto Network</label>
+                    <label className="form-label"><b>Red de Criptomoneda</b></label>
                     <select
                       type="text"
                       className="form-control"
@@ -246,7 +306,7 @@ function CreatePayment() {
                     </select>
                   </div>
                   <div className="col-md-6 mt-3">
-                    <label className="form-label">Crypto Coin</label>
+                    <label className="form-label"><b>Criptomoneda</b></label>
                     <select
                       type="text"
                       className="form-control"
@@ -260,19 +320,6 @@ function CreatePayment() {
                       <option>USDT</option>
                       <option>USDC</option>
                     </select>
-                  </div>
-                  <div className="col-md-12 mt-3">
-                    <label className="form-label">Description</label>
-                    <textarea
-                      type="text"
-                      className="form-control"
-                      placeholder={paymentFormData.description}
-                      onChange={(e) => setPaymentFormData({
-                        ...paymentFormData,
-                        description: e.target.value,
-                      })}
-                      required
-                    />
                   </div>
                 </div>
               </div>
@@ -351,26 +398,11 @@ function CreatePayment() {
 
               </div>
               <div className="col-md-12 mt-4 text-center">
-                {user.kyc && user.kyc === 'accepted' && (
-                <button className="btn btn-primary text-white">
-                  Create Invoice
+                <button className="btn btn-primary text-white" onClick={handleFormSubmit}>
+                  Generar Transacción
                 </button>
-                )}
-                {(!user.kyc || user.kyc !== 'accepted')
-                                        && (
-                                        <label>
-                                          Estamos verificando su identidad,
-                                          {' '}
-                                          <br />
-                                          Tu seguridad es nuestra prioridad.
-                                          {' '}
-                                          <br />
-                                          Verificar tu identidad nos ayuda a mantener la comunidad y el ecosistema seguros.
-                                          <br />
-                                          Pronto podrás Cumbear!
-                                        </label>
-                                        )}
               </div>
+
             </div>
           </form>
         </div>
@@ -381,7 +413,7 @@ function CreatePayment() {
             className="bi bi-check-circle text-success"
           />
 
-          <p>Link de pago creado correctamente</p>
+          <div>Link de pago creado correctamente</div>
 
           <div
             onClick={handleLinkCopy}
@@ -391,10 +423,16 @@ function CreatePayment() {
           </div>
 
           <small style={{ fontSize: '80%' }} className="small">
-            <p> Clic en el link para copiar</p>
+            <div> Clic en el link para copiar</div>
           </small>
         </div>
       )}
+      <KYCModal
+        show={showKycModal}
+        onClose={() => setShowKycModal(false)}
+        isDocumentMissing={isDocumentMissing}
+      />
+
     </div>
   );
 }

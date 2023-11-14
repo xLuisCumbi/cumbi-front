@@ -38,19 +38,39 @@ const ApiService = {
    */
   post(endpoint, data = {}, headers = {}) {
     return new Promise((resolve, reject) => {
+      // Determina si los datos son un objeto FormData
+      const isFormData = data instanceof FormData;
+
+      // Configura los encabezados, excluyendo 'Content-Type' si los datos son FormData
+      const config = {
+        headers: {
+          Authorization: `Bearer ${authToken()}`,
+          ...headers,
+        },
+      };
+
+      // Si los datos son FormData, elimina el encabezado 'Content-Type' para permitir que Axios lo establezca automáticamente
+      if (isFormData) {
+        delete config.headers['Content-Type'];
+      }
+
       axios
-        .post(`${this.baseURL}${endpoint}`, data, {
-          headers: {
-            Authorization: `Bearer ${authToken()}`,
-            ...headers,
-          },
-        })
+        .post(`${this.baseURL}${endpoint}`, data, config)
         .then(
-          (response) => resolve(response.data),
+          (response) => {
+            if (response && response.data) {
+              resolve(response.data);
+            } else {
+              reject(new Error('Response or response data is undefined'));
+            }
+          },
           (err) => {
             reject(err);
           },
-        );
+        )
+        .catch((err) => {
+          reject(err);
+        });
     });
   },
 
@@ -195,7 +215,6 @@ const ApiService = {
         .post(`${this.baseURL}${endpoint}`, data, {
           headers: {
             ...additionalHeaders,
-            Authorization: `Bearer ${authToken()}`,
           },
           withCredentials: true,
         })
@@ -321,6 +340,7 @@ const ApiService = {
         .post(config.bankAccountUrl + endpoint, data, {
           headers: {
             Authorization: `Bearer ${authToken()}`,
+            'Content-Type': 'multipart/form-data',
           },
         })
         .then(
@@ -338,6 +358,7 @@ const ApiService = {
         .put(config.bankAccountUrl + endpoint, data, {
           headers: {
             Authorization: `Bearer ${authToken()}`,
+            'Content-Type': 'multipart/form-data',
           },
         })
         .then(
@@ -455,15 +476,39 @@ const ApiService = {
     });
   },
 
-  // Método para registro público
-  publicSignUp(data = {}, headers = {}) {
+  publicSignUp(data = {}) {
     return new Promise((resolve, reject) => {
-      axios
-        .post(`${this.baseURL}/public-signup`, data, {
-          headers: {
-            ...headers, // Permite agregar otros encabezados personalizados
-          },
+      axios.post(`${this.baseURL}/public-signup`, data) // Aquí envías un objeto JSON
+        .then(response => {
+          resolve(response.data);
         })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  },
+
+  /**
+   *
+   * Update user profile
+   * @param {*} userData
+   * @param {*} newProfileData
+   * @returns
+   */
+  postUpdateProfile(user, newProfileData) {
+    return new Promise((resolve, reject) => {
+
+      newProfileData.append('authToken', user.authToken);
+
+      // Configura los encabezados
+      const config = {
+        headers: {
+          Authorization: `Bearer ${authToken()}`,
+        },
+      };
+
+      axios
+        .post(`${this.baseURL}/update-profile`, newProfileData, config)
         .then(
           (response) => {
             if (response && response.data) {
@@ -481,7 +526,7 @@ const ApiService = {
         });
     });
   },
-
 };
+
 
 export default ApiService;

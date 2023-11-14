@@ -35,21 +35,21 @@ function Sidebar() {
         <li className="nav-item">
           <a className={route == '/' || route == 'dashboard' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/dashboard')}>
             <i className="bi bi-grid" />
-            <span>Dashboard</span>
+            <span>Inicio</span>
           </a>
         </li>
 
         <li className="nav-item">
           <a className={route == 'create-payment' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/create-payment')}>
             <i className="bi bi-receipt" />
-            <span>Create Payment</span>
+            <span>Hacer una Transacción</span>
           </a>
         </li>
 
         <li className="nav-item">
           <a className={route == 'payment-history' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/payment-history')}>
             <i className="bi bi-cash" />
-            <span>Payment History</span>
+            <span>Historial de Transacciones</span>
           </a>
         </li>
 
@@ -60,7 +60,7 @@ function Sidebar() {
               onClick={() => navigate('/admin/create-bank-account')}
             >
               <i className="bi bi-bank" />
-              <span>Bank Accounts</span>
+              <span>Mis Cuentas Bancarias</span>
             </a>
           </li>
         )}
@@ -68,10 +68,10 @@ function Sidebar() {
         <li className="nav-item">
           <a
             className={route == 'settings' ? 'nav-link' : 'nav-link collapsed'}
-            onClick={() => navigate('/admin/settings')}
+            onClick={() => navigate('/admin/profile')}
           >
             <i className="bi bi-gear" />
-            <span>Settings</span>
+            <span>Mi Perfil</span>
           </a>
         </li>
         {(userRole === 'admin' || userRole === 'superadmin') && (
@@ -108,25 +108,25 @@ function Sidebar() {
             <li className="nav-item">
               <a className={route == 'setting_cumbi' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/setting-cumbi')}>
                 <i className="bi bi-gear" />
-                <span>Settings Cumbi</span>
+                <span>Configuración de Cumbi</span>
               </a>
             </li>
             <li className="nav-item">
               <a className={route == 'create-business' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/create-business')}>
                 <i className="bi bi-building-fill-gear" />
-                <span>Create Business</span>
+                <span>Crear Negocio</span>
               </a>
             </li>
-            <li className="nav-item">
+            {/*<li className="nav-item">
               <a className={route == 'mnemonic' ? 'nav-link' : 'nav-link collapsed'} onClick={() => navigate('/admin/mnemonic')}>
                 <i className="bi bi-puzzle" />
                 <span>Mnemonic</span>
               </a>
-            </li>
+            </li>*/}
             <li className="nav-item dropdown">
               <a className="nav-link dropdown-toggle" href="#" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i className="bi bi-database" />
-                <span>Create</span>
+                <span>Tablas Dinámicas</span>
               </a>
               <ul className="dropdown-menu">
                 <li>
@@ -134,7 +134,7 @@ function Sidebar() {
                     className={route == 'create-bank' ? 'nav-link' : 'nav-link collapsed'}
                     onClick={() => navigate('/admin/create-bank')}
                   >
-                    Bank
+                    Bancos
                   </a>
                 </li>
                 <li>
@@ -142,7 +142,7 @@ function Sidebar() {
                     className={route == 'create-coin' ? 'nav-link' : 'nav-link collapsed'}
                     onClick={() => navigate('/admin/create-coin')}
                   >
-                    Coin
+                    Tokens
                   </a>
                 </li>
                 <li>
@@ -150,7 +150,7 @@ function Sidebar() {
                     className={route == 'create-country' ? 'nav-link' : 'nav-link collapsed'}
                     onClick={() => navigate('/admin/create-country')}
                   >
-                    Country
+                    Países
                   </a>
                 </li>
               </ul>
@@ -161,7 +161,7 @@ function Sidebar() {
         <li className="nav-item">
           <a className="nav-link collapsed" onClick={() => handleLogout()}>
             <i className="bi bi-box-arrow-left" />
-            <span>Logout</span>
+            <span>Cerrar Sesión</span>
           </a>
         </li>
 

@@ -14,7 +14,6 @@ function CreateUser() {
     password: '',
     role: 'person',
     payment_fee: 0,
-    kyc: 'pending',
   });
   const [isEditing, setIsEditing] = useState(false);
   const [textButton, setTextButton] = useState('Create User');
@@ -79,7 +78,7 @@ function CreateUser() {
       password: '',
       role: 'person',
       payment_fee: 0,
-      kyc: 'pending',
+      kyc: 'initial',
     });
   };
 
