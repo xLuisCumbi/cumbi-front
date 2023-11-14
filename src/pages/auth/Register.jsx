@@ -14,7 +14,6 @@ export default function Register() {
         acceptedDataPolicy: false,
         acceptedTermsConditions: false,
         acceptedPrivacyPolicy: false,
-        phone: '',
     });
 
     const [businessData, setBusinessData] = useState({
@@ -36,7 +35,6 @@ export default function Register() {
         acceptedDataPolicy: false,
         acceptedTermsConditions: false,
         acceptedPrivacyPolicy: false,
-        phone: '',
     });
 
     useEffect(() => {
@@ -72,21 +70,8 @@ export default function Register() {
             }
         }
 
-        // Crear un objeto FormData
-        const formData = new FormData();
-
-        // Añadir los datos JSON al objeto FormData
-        formData.append('email', userData.email);
-        formData.append('password', userData.password);
-        formData.append('role', userData.role);
-        formData.append('payment_fee', userData.payment_fee);
-        formData.append('acceptedDataPolicy', JSON.stringify(userData.acceptedDataPolicy));
-        formData.append('acceptedTermsConditions', JSON.stringify(userData.acceptedTermsConditions));
-        formData.append('acceptedPrivacyPolicy', JSON.stringify(userData.acceptedPrivacyPolicy));
-        formData.append('phone', userData.phone);
-
         // Enviar la solicitud
-        ApiService.publicSignUp(formData)
+        ApiService.publicSignUp(userData)
             .then((response) => {
                 if (response.status === 'signUp_success') {
                     Alert('success', 'Usuario Registrado', 3);
@@ -136,21 +121,10 @@ export default function Register() {
     };
 
     const createUserWithBusiness = (_id) => {
-        // Crear un objeto FormData
-        const formData = new FormData();
 
-        // Añadir los datos JSON al objeto FormData
-        formData.append('business', _id);
-        formData.append('email', userBusinessData.email);
-        formData.append('password', userBusinessData.password);
-        formData.append('role', userBusinessData.role);
-        formData.append('payment_fee', userBusinessData.payment_fee);
-        formData.append('acceptedDataPolicy', JSON.stringify(userBusinessData.acceptedDataPolicy));
-        formData.append('acceptedTermsConditions', JSON.stringify(userBusinessData.acceptedTermsConditions));
-        formData.append('acceptedPrivacyPolicy', JSON.stringify(userBusinessData.acceptedPrivacyPolicy));
-
-        // Enviar la solicitud
-        ApiService.publicSignUp(formData)
+        userBusinessData.business = _id;
+      // Enviar la solicitud
+        ApiService.publicSignUp(userBusinessData)
             .then((response) => {
                 if (response.status === 'signUp_success') {
                     Alert('success', 'Registro exitoso', 3);
@@ -455,7 +429,6 @@ export default function Register() {
                                                             className="form-control"
                                                             value={businessData.phone}
                                                             onChange={(e) => setBusinessData({ ...businessData, phone: e.target.value })}
-                                                            required
                                                         />
                                                     </div>
                                                     {/* Términos y Condiciones */}

@@ -475,28 +475,13 @@ const ApiService = {
     });
   },
 
-  // Método para registro público
-  publicSignUp(data = {}, headers = {}) {
+  publicSignUp(data = {}) {
     return new Promise((resolve, reject) => {
-      axios
-        .post(`${this.baseURL}/public-signup`, data, {
-          headers: {
-            ...headers,
-          },
+      axios.post(`${this.baseURL}/public-signup`, data) // Aquí envías un objeto JSON
+        .then(response => {
+          resolve(response.data);
         })
-        .then(
-          (response) => {
-            if (response && response.data) {
-              resolve(response.data);
-            } else {
-              reject(new Error('Response or response data is undefined'));
-            }
-          },
-          (err) => {
-            reject(err);
-          },
-        )
-        .catch((err) => {
+        .catch(err => {
           reject(err);
         });
     });

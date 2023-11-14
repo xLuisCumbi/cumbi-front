@@ -25,12 +25,12 @@ function CreatePayment() {
   });
 
   const [paymentFormData, setPaymentFormData] = useState({
-    title: 'Nombre...',
+    title: '',
     type: 'app-payment',
     amount: 0,
     network: 'TRON',
     coin: 'USDT',
-    description: 'Detalle de la factura...',
+    description: '',
     user: userLocal._id, // use the user's ID from local storage
     trm: 0,
     trm_house: 0,

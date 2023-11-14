@@ -7,7 +7,7 @@ const KYCModal = ({ show, onClose, isDocumentMissing }) => {
     if (!show) return null;
 
     const message = isDocumentMissing
-        ? "Debes completar la validación de tu perfil en la sección de perfil subiendo tu documento de identidad."
+        ? "Debes completar la validación de usuario en la sección de perfil subiendo tu documento de identificación."
         : "Tu estado de KYC está pendiente o denegado. No puedes proceder con la creación de la factura hasta que tu KYC sea aceptado.";
 
     // Función para navegar a la página de perfil
