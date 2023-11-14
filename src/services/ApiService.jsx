@@ -339,6 +339,7 @@ const ApiService = {
         .post(config.bankAccountUrl + endpoint, data, {
           headers: {
             Authorization: `Bearer ${authToken()}`,
+            'Content-Type': 'multipart/form-data',
           },
         })
         .then(
@@ -356,6 +357,7 @@ const ApiService = {
         .put(config.bankAccountUrl + endpoint, data, {
           headers: {
             Authorization: `Bearer ${authToken()}`,
+            'Content-Type': 'multipart/form-data',
           },
         })
         .then(
@@ -516,7 +518,6 @@ const ApiService = {
       const config = {
         headers: {
           Authorization: `Bearer ${authToken()}`,
-          // 'Content-Type' no es necesario especificar para FormData, Axios lo establece automáticamente
         },
       };
 

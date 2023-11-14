@@ -20,37 +20,25 @@ function PaymentHistory() {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'ID',
+        Header: 'Nro',
         accessor: '_id',
         Cell: ({ row }) => `...${row.original._id.substr(row.original._id.length - 4)}`,
       },
       {
-        Header: 'Invoice/Deposit ID',
-        accessor: 'deposit_id',
-        Cell: ({ row }) => (row.original.deposit_id.length > 4
-          ? `...${row.original.deposit_id.substr(row.original.deposit_id.length - 4)}`
-          : row.original.deposit_id)
-        ,
-      },
-      {
-        Header: 'Type',
-        accessor: 'type',
-      },
-      {
-        Header: 'Amount',
+        Header: 'Cantidad',
         accessor: 'amount',
         Cell: ({ row }) => `$ ${row.original.amount.toLocaleString()}`,
       },
       {
-        Header: 'Network',
+        Header: 'Red Blockchain',
         accessor: 'network',
       },
       {
-        Header: 'Coin',
+        Header: 'Token',
         accessor: 'coin',
       },
       {
-        Header: 'Status',
+        Header: 'Estado',
         accessor: 'status',
       },
       {
@@ -71,18 +59,18 @@ function PaymentHistory() {
         ),
       },
       {
-        Header: 'Date',
+        Header: 'Fecha',
         Cell: ({ row }) => string2date(row.original.createdAt),
       },
       {
-        Header: 'Actions', // Empty header for the icon button
+        Header: 'Acciones',
         accessor: 'action',
         Cell: ({ row }) => (
           <div className="d-flex justify-content-between align-items-center">
             <a
               className="btn"
               onClick={() => handleShowPaymentDetails(row.index)}
-              title="View Payment Details"
+              title="Ver detalles de la transacción"
             >
               <i className="bi bi-info-circle" />
             </a>
@@ -91,7 +79,7 @@ function PaymentHistory() {
               href={`https://api.cumbi.co/invoice/${row.original._id}`} //ToDo: fix this
               target="_blank"
               rel="noopener noreferrer"
-              title="Open Payment Page"
+              title="Ver página de pago"
             >
               <i className="bi bi-link" />
             </a>
@@ -100,7 +88,7 @@ function PaymentHistory() {
               href={`https://tronscan.org/#/address/${row.original.address}`}
               target="_blank"
               rel="noopener noreferrer"
-              title="Open Transaction Page"
+              title="Abrir transacción en blockchain"
             >
               <i className="bi bi-database-lock" />
             </a>
@@ -130,6 +118,13 @@ function PaymentHistory() {
     new bootstrap.Modal(document.getElementById('largeModal')).show();
   };
 
+  /**
+   *
+   * Cuando un pago no se ha consolifado, podemos darle clic
+   * a un botón para consolidar todo
+   *
+   * @param {*} deposit_id
+   */
   const handlePaymentConsolidation = (deposit_id) => {
     Alert('success', 'loading', 30);
     ApiService.postDeposit('/consolidate-payment', { deposit_id })
@@ -205,7 +200,7 @@ function PaymentHistory() {
     loadingStatus ? <PageLoading />
       : (
         <>
-          <PageTitle title="Payment History" />
+          <PageTitle title="Transacciones" />
           <section id="payment_history" className="card bg-white p-4">
             <div className="col-md-12">
               <table style={{ fontSize: '90%' }} {...getTableProps()} className="table datatable">
@@ -240,10 +235,10 @@ function PaymentHistory() {
                       <div className="pagination d-flex justify-content-between align-items-center">
                         <div className="pagination-navigation">
                           <button onClick={() => previousPage()} disabled={!canPreviousPage} className="btn btn-light btn-sm">
-                            Previous
+                            Anterior
                           </button>
                           <button onClick={() => nextPage()} disabled={!canNextPage} className="btn btn-light btn-sm">
-                            Next
+                            Siguiente
                           </button>
                         </div>
                         <div className="pagination-info">
@@ -410,7 +405,7 @@ function PaymentHistory() {
                                 >
                                   <i className="bi bi-info-circle" />
                                   {' '}
-                                  Open The Payment Page
+                                  Ver página de pago
                                 </a>
                               </strong>
 
@@ -424,7 +419,7 @@ function PaymentHistory() {
                                 >
                                   <i className="bi bi-database-lock" />
                                   {' '}
-                                  Open Transaction Page
+                                  Abrir transacción en blockchain
                                 </a>
                               </strong>
                             </div>
