@@ -176,7 +176,7 @@ function CreatePayment() {
   }
 
   function getCurrentUser() {
-    ApiService.get(userLocal.id).then(
+    ApiService.get(userLocal._id).then(
       (response) => {
         if (response.status === 'success') {
           setUser(response.user);

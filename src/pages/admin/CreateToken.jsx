@@ -20,9 +20,10 @@ function CreateToken() {
 
     // Retrieve user data from localStorage (or your chosen storage)
     const user = JSON.parse(localStorage.getItem('user'));
+    console.log('user', user);
     Alert('success', 'loading', 30);
     // Include user data in your API call
-    ApiService.post('/create-token', { ...tokenFormData, user: user.id })
+    ApiService.post('/create-token', { ...tokenFormData, user: user._id })
       .then((response) => {
         if (response.status === 'success') {
           Alert('success', 'token successfully created', 3);
